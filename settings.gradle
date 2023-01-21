@@ -1,2 +1,2 @@
-include('desktop')
-rootProject.name = 'Cpu-Mining-Learn'
+include ':desktop'
+rootProject.name = 'Cpu Mining Learn'
