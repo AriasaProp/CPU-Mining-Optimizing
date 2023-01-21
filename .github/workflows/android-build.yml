@@ -1,9 +1,12 @@
-name: Build Test
+name: Build & Publish Android Artifacts
 
-on: push
+on:
+  push:
+    paths:
+      - 'android/revision.txt'
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Check
@@ -19,4 +22,9 @@ jobs:
       with:
         gradle-version: 7.6
     - name: Build Gradle
-      run: gradle :desktop:run
+      run: gradle :android:build
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: buildAPK
+        path: ${{github.workspace}}/android/build/outputs/apk/release/android-release.apk

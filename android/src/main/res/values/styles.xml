@@ -1,0 +1,6 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="BaseTheme" parent="android:Theme.Material">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+    <style name="MainTheme" parent="BaseTheme" />
+</resources>

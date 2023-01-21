@@ -1,8 +1,11 @@
 plugins {
+    id 'java'
     id 'application'
 }
 
-apply plugin: 'java'
+dependencies {
+		project(':core')
+}
 
 application {
     mainClass = 'com.ariasaproject.cpumininglearn.Main'

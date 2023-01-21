@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:padding="1dp"
+		tools:context=".MainActivity">
+		<LinearLayout
+				android:weightSum="1"
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+				<TextView
+						android:id="@+id/uri_lb"
+						android:textStyle="bold"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:ellipsize="middle"
+				    android:text="Host:" />
+				<EditText
+						android:id="@+id/uri_value"
+				    android:layout_weight="1"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:hint="Ex: stratum+tcp://miningpool.org:8080/"
+				    android:inputType="textUri">
+						<requestFocus />
+				</EditText>
+		</LinearLayout>
+		<LinearLayout
+				android:weightSum="1"
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+				<TextView
+						android:id="@+id/user_lb"
+						android:textStyle="bold"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text="auth:" />
+				<EditText
+						android:id="@+id/username_value"
+				    android:layout_weight="0.5"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:hint="username"
+				    android:inputType="text">
+						<requestFocus />
+				</EditText>
+				<TextView
+						android:id="@+id/password_lb"
+						android:textStyle="bold"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text=":" />
+				<EditText
+						android:id="@+id/password_value"
+				    android:layout_weight="0.5"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:hint="userpass"
+				    android:inputType="text">
+						<requestFocus />
+				</EditText>
+		</LinearLayout>
+    <Button
+    		android:id="@+id/mining_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="startstopMining"
+        android:text="Mining Start" />
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+				android:orientation="vertical"
+    		android:id="@+id/log_container">
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    		<TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Log........." />
+    </LinearLayout>
+</LinearLayout>

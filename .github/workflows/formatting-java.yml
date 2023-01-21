@@ -1,0 +1,16 @@
+name: Formating Java Code
+
+on:
+  push:
+    paths:
+      - 'java-formatting.txt'
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: formating_goole
+      uses: axel-op/googlejavaformat-action@v3
+      with:
+        args: "--replace"
