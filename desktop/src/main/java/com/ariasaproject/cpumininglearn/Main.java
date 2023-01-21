@@ -12,5 +12,6 @@ public class Main {
     tokens = split(getMessage());
     String result = join(tokens);
     System.out.println(result);
+    System.out.println("By cruel World! :-)");
   }
 }
