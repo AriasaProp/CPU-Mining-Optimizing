@@ -34,12 +34,11 @@ public class MainActivity extends Activity {
     username_value = (EditText) findViewById(R.id.username_value);
     password_value = (EditText) findViewById(R.id.password_value);
     final ViewGroup ctr = (ViewGroup) findViewById(R.id.log_container);
-    co = new ConsoleMessage() {;
+    co = new ConsoleMessage() {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
 
           @Override
           public void sendLog(ConsoleMessage.Message lvl, String msg) {
-          	
             int i = 0;
             TextView vt = (TextView) ctr.getChildAt(0);
             int color = vt.getCurrentTextColor(), color1;
@@ -97,10 +96,10 @@ public class MainActivity extends Activity {
   	runOnUiThread(new Runnable(){
     		@Override
     		public void run() {
-    			co.sendLog(lvl, ls)
+    			co.sendLog(lvl, ls);
     		}
   		
-  	})
+  	});
   }
   //URL m_url;
   public void startstopMining(final View v) {
@@ -108,18 +107,18 @@ public class MainActivity extends Activity {
     		@Override
     		public void run(){
     			try {
-    				sendAL(ConsoleMessage.Message.SUCCESS, "Begin Thread Run!")
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec")
+    				sendAL(ConsoleMessage.Message.SUCCESS, "Begin Thread Run!");
+    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
     				Thread.sleep(1000);
-    				sendAL(ConsoleMessage.Message.WARNING, "Thread being proccess!")
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for 2 sec")
+    				sendAL(ConsoleMessage.Message.WARNING, "Thread being proccess!");
+    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for 2 sec");
     				Thread.sleep(2000);
-    				sendAL(ConsoleMessage.Message.INFO, "Information Update!")
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec")
+    				sendAL(ConsoleMessage.Message.INFO, "Information Update!");
+    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
     				Thread.sleep(1000);
-    				sendAL(ConsoleMessage.Message.ERROR, "Thread Ended!")
+    				sendAL(ConsoleMessage.Message.ERROR, "Thread Ended!");
     			} catch (InterruptedException e) {}
     		}
-     }).start();;
+     }).start();
   }
 }
