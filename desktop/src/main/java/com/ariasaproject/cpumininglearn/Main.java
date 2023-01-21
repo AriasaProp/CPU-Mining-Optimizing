@@ -1,6 +1,6 @@
 package com.ariasaproject.cpumininglearn;
 
-import static com.ariasaproject.cpumininglearn.app.MessageUtils.getMessage;
+import static com.ariasaproject.cpumininglearn.MessageUtils.getMessage;
 import static com.ariasaproject.cpumininglearn.utilities.StringUtils.join;
 import static com.ariasaproject.cpumininglearn.utilities.StringUtils.split;
 
