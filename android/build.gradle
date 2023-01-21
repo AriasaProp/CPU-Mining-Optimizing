@@ -30,5 +30,4 @@ android {
 
 dependencies {
 		project(':core')
-    classpath 'com.android.tools.build:gradle:7.0.4'
 }
