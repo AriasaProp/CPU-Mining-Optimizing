@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     username_value = (EditText) findViewById(R.id.username_value);
     password_value = (EditText) findViewById(R.id.password_value);
     final ViewGroup ctr = (ViewGroup) findViewById(R.id.log_container);
+    final int j = ctr.getChildCount();
     co = new ConsoleMessage() {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
           @Override
@@ -57,7 +58,7 @@ public class MainActivity extends Activity {
                 vt.setTextColor(0xffff0000);
                 break;
             }
-            while (i < 20) {
+            while (i < j) {
               vt = (TextView) ctr.getChildAt(++i);
               eT1 = vt.getText();
               vt.setText(eT);
@@ -76,11 +77,13 @@ public class MainActivity extends Activity {
     }
     */
     super.onCreate(b);
+    /*
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None!");
     co.sendLog(ConsoleMessage.Message.DEBUG, "Login App!");
+    */
   }
 
   @Override
