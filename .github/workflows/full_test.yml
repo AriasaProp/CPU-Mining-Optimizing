@@ -14,10 +14,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'gradle'
-    - name: formating_goole
-      uses: axel-op/googlejavaformat-action@v3
-      with:
-        args: "--replace"
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.3.2
       with:
