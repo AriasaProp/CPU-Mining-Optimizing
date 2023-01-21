@@ -35,38 +35,32 @@ public class MainActivity extends Activity {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
           @Override
           public void sendLog(ConsoleMessage.Message lvl, String msg) {
-            int i = 0;
-            TextView vt = (TextView) ctr.getChildAt(0);
-            int color = vt.getCurrentTextColor(), color1;
-            CharSequence eT = vt.getText(), eT1;
-            vt.setText(logDateFormat.format(new Date()) + msg);
+          	TextView cur = (TextView) ctr.getChildAt(j-1), next;
+            for (int i = j-2; i >= 0; i--) {
+              next = (TextView) ctr.getChildAt(i);
+              cur.setTextColor(next.getCurrentTextColor());
+              cur.setText(next.getText());
+              cur = next;
+            }
             switch (lvl) {
               default:
               case DEBUG:
-                vt.setTextColor(0xffa3a3a3);
+                cur.setTextColor(0xffa3a3a3);
                 break;
               case INFO:
-                vt.setTextColor(0xffffffff);
+                cur.setTextColor(0xffffffff);
                 break;
               case SUCCESS:
-                vt.setTextColor(0xff00ff00);
+                cur.setTextColor(0xff00ff00);
                 break;
               case WARNING:
-                vt.setTextColor(0xffffff00);
+                cur.setTextColor(0xffffff00);
                 break;
               case ERROR:
-                vt.setTextColor(0xffff0000);
+                cur.setTextColor(0xffff0000);
                 break;
             }
-            while (i < j) {
-              vt = (TextView) ctr.getChildAt(++i);
-              eT1 = vt.getText();
-              vt.setText(eT);
-              color1 = vt.getCurrentTextColor();
-              vt.setTextColor(color);
-              eT = eT1;
-              color = color1;
-            }
+            cur.setText(logDateFormat.format(new Date()) + msg);
           }
         };
     /*
@@ -77,13 +71,13 @@ public class MainActivity extends Activity {
     }
     */
     super.onCreate(b);
-    /*
+    
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None!");
     co.sendLog(ConsoleMessage.Message.DEBUG, "Login App!");
-    */
+    
   }
 
   @Override
