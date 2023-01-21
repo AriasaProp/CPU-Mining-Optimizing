@@ -1,10 +1,9 @@
 plugins {
-    id 'com.ariasaproject.cpumininglearn.java-application-conventions'
+    id 'java'
 }
 
 dependencies {
     implementation 'org.apache.commons:commons-text'
-    implementation project(':utilities')
 }
 
 application {
