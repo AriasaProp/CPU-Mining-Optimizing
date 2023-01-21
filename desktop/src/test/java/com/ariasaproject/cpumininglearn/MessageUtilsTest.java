@@ -1,4 +1,4 @@
-package com.ariasaproject.cpumininglearn.app;
+package com.ariasaproject.cpumininglearn;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
