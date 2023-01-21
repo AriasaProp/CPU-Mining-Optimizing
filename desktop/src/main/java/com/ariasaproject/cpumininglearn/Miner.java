@@ -37,21 +37,23 @@ public class Miner implements Observer {
   public void log(String str) {
     System.out.println(logDateFormat.format(new Date()) + str);
   }
+  public void join() {
+  	try {
+  		m_thread.join();
+  	}catch (InterruptedException e) {}
+  }
 
   public void update(Observable o, Object arg) {
     Worker.Notification n = (Worker.Notification) arg;
     if (n == Worker.Notification.SYSTEM_ERROR) {
       log("System error");
-      m_thread.interrupt();
-      m_thread.join();
+      worker.stop();
     } else if (n == Worker.Notification.PERMISSION_ERROR) {
       log("Permission error");
-      m_thread.interrupt();
-      m_thread.join();
+      worker.stop();
     } else if (n == Worker.Notification.AUTHENTICATION_ERROR) {
       log("Invalid worker username or password");
-      m_thread.interrupt();
-      m_thread.join();
+      worker.stop();
     } else if (n == Worker.Notification.CONNECTION_ERROR) {
       log("Connection error, retrying in " + worker.getRetryPause() / 1000L + " seconds");
     } else if (n == Worker.Notification.COMMUNICATION_ERROR) {

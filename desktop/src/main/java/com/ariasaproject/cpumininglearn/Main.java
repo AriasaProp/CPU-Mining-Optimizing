@@ -19,7 +19,8 @@ public class Main {
     long retryPause = DEFAULT_RETRY_PAUSE;
 
     try {
-      new Miner(url, auth, scanTime, retryPause, nThread, throttle);
+      Miner m = new Miner(url, auth, scanTime, retryPause, nThread, throttle);
+      m.join();
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }
