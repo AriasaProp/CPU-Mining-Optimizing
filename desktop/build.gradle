@@ -1,0 +1,12 @@
+plugins {
+    id 'com.ariasaproject.cpumininglearn.java-application-conventions'
+}
+
+dependencies {
+    implementation 'org.apache.commons:commons-text'
+    implementation project(':utilities')
+}
+
+application {
+    mainClass = 'com.ariasaproject.cpumininglearn.app.App'
+}
