@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.text.Editable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,7 +34,6 @@ public class MainActivity extends Activity {
     co =
         new ConsoleMessage() {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
-
           @Override
           public void sendLog(ConsoleMessage.Message lvl, String msg) {
             int i = 0;
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
             }
             while (i < 20) {
               vt = (TextView) ctr.getChildAt(++i);
-              eT1 = vt.getTetxt();
+              eT1 = vt.getText();
               vt.setText(eT);
               color1 = vt.getCurrentTextColor();
               vt.setTextColor(color);
