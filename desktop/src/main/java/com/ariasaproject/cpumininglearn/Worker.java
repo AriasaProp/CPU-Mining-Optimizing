@@ -79,7 +79,7 @@ public class Worker extends Observable implements Runnable {
 	    running = true;
 	    synchronized (this) {
 	      threads = new Thread[1 + nThreads];
-			  final int step = Math.pow(2, Math.ceil(Math.log(nThreads)/Math.log(2)+1e-10);
+			  final int step = (int) Math.pow(2, Math.ceil(Math.log(nThreads)/Math.log(2)+1e-10));
 	      for (int i = 0; i < nThreads; ++i) {
 	      	final int index = i;
 	      	threads[1 + i] = new Thread(new Runnable(){
