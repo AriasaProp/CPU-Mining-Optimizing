@@ -1,7 +1,16 @@
 plugins {
-    id 'java'
+    id 'application'
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:31.1-jre' 
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1' 
 }
 
 application {
     mainClass = 'com.ariasaproject.cpumininglearn.Main'
+}
+
+tasks.named('test') {
+    useJUnitPlatform() 
 }
