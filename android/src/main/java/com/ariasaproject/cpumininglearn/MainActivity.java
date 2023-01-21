@@ -25,14 +25,12 @@ public class MainActivity extends Activity {
   @Override
   protected void onCreate(Bundle b) {
     setContentView(R.layout.main);
-    super.onCreate(b);
     mining_switch = (Button) findViewById(R.id.mining_switch);
     uri_value = (EditText) findViewById(R.id.uri_value);
     username_value = (EditText) findViewById(R.id.username_value);
     password_value = (EditText) findViewById(R.id.password_value);
     final ViewGroup ctr = (ViewGroup) findViewById(R.id.log_container);
-    co =
-        new ConsoleMessage() {
+    co = new ConsoleMessage() {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
           @Override
           public void sendLog(ConsoleMessage.Message lvl, String msg) {
@@ -70,11 +68,14 @@ public class MainActivity extends Activity {
             }
           }
         };
+    /*
     if (b != null && b.containsKey(PREF_URI)) {
       uri_value.setText(b.getString(PREF_URI));
       username_value.setText(b.getString(PREF_USERNAME));
       password_value.setText(b.getString(PREF_PASSWORD));
     }
+    */
+    super.onCreate(b);
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
