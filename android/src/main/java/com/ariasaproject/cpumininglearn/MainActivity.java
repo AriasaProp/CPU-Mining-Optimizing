@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
             int i = 0;
             TextView vt = (TextView) ctr.getChildAt(0);
             int color = vt.getCurrentTextColor(), color1;
-            Editable eT = vt.getText(), eT1;
+            CharSequence eT = vt.getText(), eT1;
             vt.setText(logDateFormat.format(new Date()) + msg);
             switch (lvl) {
               default:
