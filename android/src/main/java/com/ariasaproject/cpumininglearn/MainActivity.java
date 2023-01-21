@@ -7,13 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.net.URI;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -25,6 +20,7 @@ public class MainActivity extends Activity {
   Button mining_switch;
 
   ConsoleMessage co;
+
   @Override
   protected void onCreate(Bundle b) {
     setContentView(R.layout.main);
@@ -34,7 +30,8 @@ public class MainActivity extends Activity {
     username_value = (EditText) findViewById(R.id.username_value);
     password_value = (EditText) findViewById(R.id.password_value);
     final ViewGroup ctr = (ViewGroup) findViewById(R.id.log_container);
-    co = new ConsoleMessage() {
+    co =
+        new ConsoleMessage() {
           final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
 
           @Override
@@ -47,26 +44,26 @@ public class MainActivity extends Activity {
             switch (lvl) {
               default:
               case DEBUG:
-            		vt.setTextColor(0xffa3a3a3);
+                vt.setTextColor(0xffa3a3a3);
                 break;
               case INFO:
-            		vt.setTextColor(0xffffffff);
+                vt.setTextColor(0xffffffff);
                 break;
               case SUCCESS:
-            		vt.setTextColor(0xff00ff00);
+                vt.setTextColor(0xff00ff00);
                 break;
               case WARNING:
-            		vt.setTextColor(0xffffff00);
+                vt.setTextColor(0xffffff00);
                 break;
               case ERROR:
-            		vt.setTextColor(0xffff0000);
+                vt.setTextColor(0xffff0000);
                 break;
             }
-            while(i<20) {
-            	vt = (TextView) ctr.getChildAt(++i);
-            	eT1 = vt.getTetxt();
+            while (i < 20) {
+              vt = (TextView) ctr.getChildAt(++i);
+              eT1 = vt.getTetxt();
               vt.setText(eT);
-            	color1 = vt.getCurrentTextColor();
+              color1 = vt.getCurrentTextColor();
               vt.setTextColor(color);
               eT = eT1;
               color = color1;
@@ -74,9 +71,9 @@ public class MainActivity extends Activity {
           }
         };
     if (b != null && b.containsKey(PREF_URI)) {
-    	uri_value.setText(b.getString(PREF_URI));
-    	username_value.setText(b.getString(PREF_USERNAME));
-    	password_value.setText(b.getString(PREF_PASSWORD));
+      uri_value.setText(b.getString(PREF_URI));
+      username_value.setText(b.getString(PREF_USERNAME));
+      password_value.setText(b.getString(PREF_PASSWORD));
     }
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
     co.sendLog(ConsoleMessage.Message.DEBUG, "None");
@@ -92,33 +89,37 @@ public class MainActivity extends Activity {
     b.putString(PREF_USERNAME, username_value.getText().toString());
     b.putString(PREF_PASSWORD, password_value.getText().toString());
   }
+
   void sendAL(final ConsoleMessage.Message lvl, final String ls) {
-  	runOnUiThread(new Runnable(){
-    		@Override
-    		public void run() {
-    			co.sendLog(lvl, ls);
-    		}
-  		
-  	});
+    runOnUiThread(
+        new Runnable() {
+          @Override
+          public void run() {
+            co.sendLog(lvl, ls);
+          }
+        });
   }
-  //URL m_url;
+  // URL m_url;
   public void startstopMining(final View v) {
-     new Thread(new Runnable(){
-    		@Override
-    		public void run(){
-    			try {
-    				sendAL(ConsoleMessage.Message.SUCCESS, "Begin Thread Run!");
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
-    				Thread.sleep(1000);
-    				sendAL(ConsoleMessage.Message.WARNING, "Thread being proccess!");
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for 2 sec");
-    				Thread.sleep(2000);
-    				sendAL(ConsoleMessage.Message.INFO, "Information Update!");
-    				sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
-    				Thread.sleep(1000);
-    				sendAL(ConsoleMessage.Message.ERROR, "Thread Ended!");
-    			} catch (InterruptedException e) {}
-    		}
-     }).start();
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  sendAL(ConsoleMessage.Message.SUCCESS, "Begin Thread Run!");
+                  sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
+                  Thread.sleep(1000);
+                  sendAL(ConsoleMessage.Message.WARNING, "Thread being proccess!");
+                  sendAL(ConsoleMessage.Message.DEBUG, "Wait for 2 sec");
+                  Thread.sleep(2000);
+                  sendAL(ConsoleMessage.Message.INFO, "Information Update!");
+                  sendAL(ConsoleMessage.Message.DEBUG, "Wait for a sec");
+                  Thread.sleep(1000);
+                  sendAL(ConsoleMessage.Message.ERROR, "Thread Ended!");
+                } catch (InterruptedException e) {
+                }
+              }
+            })
+        .start();
   }
 }

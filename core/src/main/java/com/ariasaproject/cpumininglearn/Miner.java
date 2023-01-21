@@ -14,7 +14,8 @@ public class Miner implements Observer {
   private long lastWorkTime;
   private long lastWorkHashes;
 
-  public Miner(String url, String auth, long scanTime, long retryPause, int nThread, double throttle) {
+  public Miner(
+      String url, String auth, long scanTime, long retryPause, int nThread, double throttle) {
     if (nThread < 1) throw new IllegalArgumentException("Invalid number of threads: " + nThread);
     if (throttle <= 0.0 || throttle > 1.0)
       throw new IllegalArgumentException("Invalid throttle: " + throttle);
@@ -37,10 +38,12 @@ public class Miner implements Observer {
   public void log(String str) {
     System.out.println(logDateFormat.format(new Date()) + str);
   }
+
   public void join() {
-  	try {
-  		m_thread.join();
-  	}catch (InterruptedException e) {}
+    try {
+      m_thread.join();
+    } catch (InterruptedException e) {
+    }
   }
 
   public void update(Observable o, Object arg) {

@@ -9,10 +9,10 @@ import java.security.GeneralSecurityException;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
-import java.lang.Math;
 
 public class Worker extends Observable implements Runnable {
   private static final long WORK_TIMEOUT = 60 * 1000; // ms
+
   public static enum Notification {
     SYSTEM_ERROR,
     PERMISSION_ERROR,
@@ -43,10 +43,13 @@ public class Worker extends Observable implements Runnable {
   public Worker(URL url, String auth, long scanMillis, long pauseMillis) {
     this(url, auth, scanMillis, pauseMillis, Runtime.getRuntime().availableProcessors());
   }
+
   public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads) {
     this(url, auth, scanMillis, pauseMillis, nThreads, 1.0);
   }
-  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle) {
+
+  public Worker(
+      URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle) {
     this.url = url;
     this.auth = auth;
     this.scanTime = scanMillis;
@@ -64,64 +67,73 @@ public class Worker extends Observable implements Runnable {
   public long getHashes() {
     return hashes.get();
   }
+
   private volatile boolean running = false;
+
   public synchronized void stop() {
     running = false;
     this.notifyAll();
   }
 
-	final long THROTTLE_WAIT_TIME = 100L * 1000000L; // ns
+  final long THROTTLE_WAIT_TIME = 100L * 1000000L; // ns
+
   public void run() {
     Thread[] threads;
     running = true;
     synchronized (this) {
       threads = new Thread[1 + nThreads];
-		  final int step = (int) Math.pow(2, Math.ceil(Math.log(nThreads)/Math.log(2)+1e-10));
+      final int step = (int) Math.pow(2, Math.ceil(Math.log(nThreads) / Math.log(2) + 1e-10));
       for (int i = 0; i < nThreads; ++i) {
-      	final int index = i;
-      	threads[1 + i] = new Thread(new Runnable(){
-			    @Override
-			    public void run() {
-			      try {
-			        Hasher hasher = new Hasher();
-			        int nonce = index;
-			        long dt, t0 = System.nanoTime();
-			        while (running) {
-			          try {
-			            if (curWork.meetsTarget(nonce, hasher)) {
-			              //submit nonce
-			              try {
-							        boolean result = curWork.submit(nonce);
-							        setChanged();
-							        notifyObservers(result ? Notification.POW_TRUE : Notification.POW_FALSE);
-							      } catch (IOException e) { }
-			              if (lpUrl == null) {
-			                synchronized (Worker.this) {
-			                  curWork = null;
-			                  Worker.this.notify();
-			                }
-			              }
-			            }
-			            nonce += step;
-			            hashes.incrementAndGet();
-			            if (throttleFactor > 0.0 && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
-			              LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
-			              t0 = System.nanoTime();
-			            }
-			          } catch (NullPointerException e) {
-			            try {
-			              Thread.sleep(1L);
-			            } catch (InterruptedException ie) {}
-			          }
-			        }
-			      } catch (GeneralSecurityException e) {
-			        setChanged();
-			        notifyObservers(Notification.SYSTEM_ERROR);
-			        stop();
-			      }
-			    }
-      	});
-      	threads[1+i].start();
+        final int index = i;
+        threads[1 + i] =
+            new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      Hasher hasher = new Hasher();
+                      int nonce = index;
+                      long dt, t0 = System.nanoTime();
+                      while (running) {
+                        try {
+                          if (curWork.meetsTarget(nonce, hasher)) {
+                            // submit nonce
+                            try {
+                              boolean result = curWork.submit(nonce);
+                              setChanged();
+                              notifyObservers(
+                                  result ? Notification.POW_TRUE : Notification.POW_FALSE);
+                            } catch (IOException e) {
+                            }
+                            if (lpUrl == null) {
+                              synchronized (Worker.this) {
+                                curWork = null;
+                                Worker.this.notify();
+                              }
+                            }
+                          }
+                          nonce += step;
+                          hashes.incrementAndGet();
+                          if (throttleFactor > 0.0
+                              && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
+                            LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
+                            t0 = System.nanoTime();
+                          }
+                        } catch (NullPointerException e) {
+                          try {
+                            Thread.sleep(1L);
+                          } catch (InterruptedException ie) {
+                          }
+                        }
+                      }
+                    } catch (GeneralSecurityException e) {
+                      setChanged();
+                      notifyObservers(Notification.SYSTEM_ERROR);
+                      stop();
+                    }
+                  }
+                });
+        threads[1 + i].start();
       }
       do {
         try {
@@ -143,7 +155,7 @@ public class Worker extends Observable implements Runnable {
           if (!running) break;
           wait(Math.min(scanTime, Math.max(1L, WORK_TIMEOUT - curWork.getAge())));
         } catch (InterruptedException e) {
-      		running = false;
+          running = false;
         } catch (NullPointerException e) {
         }
       } while (running);
@@ -151,10 +163,9 @@ public class Worker extends Observable implements Runnable {
     }
     if (lpConn != null) lpConn.disconnect();
     try {
-	    for (Thread t : threads)
-	    	if (t != null)
-	    		t.join();
-    } catch (InterruptedException e) {}
+      for (Thread t : threads) if (t != null) t.join();
+    } catch (InterruptedException e) {
+    }
     curWork = null;
     setChanged();
     notifyObservers(Notification.TERMINATED);
@@ -214,7 +225,8 @@ public class Worker extends Observable implements Runnable {
           notifyObservers(Notification.LONG_POLLING_FAILED);
           try {
             Thread.sleep(retryPause);
-          } catch (InterruptedException ie) {}
+          } catch (InterruptedException ie) {
+          }
         }
       }
       lpUrl = null;
