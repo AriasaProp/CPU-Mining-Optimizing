@@ -1,4 +1,4 @@
-package org.litecoinpool.miner;
+package com.ariasaproject.cpumininglearn;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;

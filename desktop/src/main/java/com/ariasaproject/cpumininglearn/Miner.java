@@ -1,4 +1,4 @@
-package org.litecoinpool.miner;
+package com.ariasaproject.cpumininglearn;
 
 import java.net.MalformedURLException;
 import java.net.URL;

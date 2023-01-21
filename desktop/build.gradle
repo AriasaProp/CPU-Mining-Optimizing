@@ -8,5 +8,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.ariasaproject.cpumininglearn.app.App'
+    mainClass = 'com.ariasaproject.cpumininglearn.Main'
 }

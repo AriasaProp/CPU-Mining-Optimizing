@@ -1,4 +1,4 @@
-package org.litecoinpool.miner;
+package com.ariasaproject.cpumininglearn;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

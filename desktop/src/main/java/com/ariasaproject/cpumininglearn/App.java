@@ -1,4 +1,4 @@
-package com.ariasaproject.cpumininglearn.app;
+package com.ariasaproject.cpumininglearn;
 
 import com.ariasaproject.cpumininglearn.list.LinkedList;
 
