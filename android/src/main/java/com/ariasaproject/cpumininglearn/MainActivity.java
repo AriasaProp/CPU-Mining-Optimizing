@@ -114,7 +114,7 @@ public class MainActivity extends Activity {
   		new URL(uri);
   		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d);
   	} catch (Exception e) {
-  		sendALog()
+  		sendALog(ConsoleMessage.Message.ERROR, e.getMessage());
   		s.setEnabled(true);
   		s.setText("Start Mining");
   		return;
