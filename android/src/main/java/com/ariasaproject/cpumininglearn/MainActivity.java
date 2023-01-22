@@ -35,7 +35,6 @@ public class MainActivity extends Activity {
     password_value = (EditText) findViewById(R.id.password_value);
     log_container = (ViewGroup) findViewById(R.id.log_container);
     co = new ConsoleMessage() {
-          final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
           @Override
           public void sendLog(ConsoleMessage.Message lvl, String msg) {
           	runOnUiThread(new Runnable(){
@@ -62,11 +61,12 @@ public class MainActivity extends Activity {
     
   }
 
+  final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss|");
   void sendALog(final ConsoleMessage.Message lvl, final String msg) {
-  	final int j = ctr.getChildCount();
-  	TextView cur = (TextView) ctr.getChildAt(j-1), next;
+  	final int j = log_container.getChildCount();
+  	TextView cur = (TextView) log_container.getChildAt(j-1), next;
     for (int i = j-2; i >= 0; i--) {
-      next = (TextView) ctr.getChildAt(i);
+      next = (TextView) log_container.getChildAt(i);
       cur.setTextColor(next.getCurrentTextColor());
       cur.setText(next.getText());
       cur = next;
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
   boolean onMining = false;
   public void startstopMining(final View v) {
   	
-    SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
     SharedPreferences.Editor edit = sharedPref.edit();
     edit.putString(PREF_URI, uri_value.getText().toString());
     edit.putString(PREF_USERNAME, username_value.getText().toString());
