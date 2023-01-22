@@ -15,17 +15,13 @@ public class Miner implements Observer {
   private long lastWorkHashes;
   private final ConsoleMessage console_msg;
 
-  public Miner(String url, String auth, long scanTime, long retryPause, int nThread, double throttle, ConsoleMessage cm) {
+  public Miner(URL url, String auth, long scanTime, long retryPause, int nThread, double throttle, ConsoleMessage cm) {
     if (nThread < 1) throw new IllegalArgumentException("Invalid number of threads: " + nThread);
     if (throttle <= 0.0 || throttle > 1.0)
       throw new IllegalArgumentException("Invalid throttle: " + throttle);
     if (scanTime < 1L) throw new IllegalArgumentException("Invalid scan time: " + scanTime);
     if (retryPause < 0L) throw new IllegalArgumentException("Invalid retry pause: " + retryPause);
-    try {
-      worker = new Worker(new URL(url), auth, scanTime, retryPause, nThread, throttle);
-    } catch (MalformedURLException e) {
-      throw new IllegalArgumentException("Invalid URL: " + url);
-    }
+    worker = new Worker(url, auth, scanTime, retryPause, nThread, throttle);
     worker.addObserver(this);
     console_msg = cm;
     m_thread = new Thread(worker);
@@ -42,6 +38,7 @@ public class Miner implements Observer {
 
   public void join() {
     try {
+    	worker.stop();
       m_thread.join();
     } catch (InterruptedException e) {
     }

@@ -48,8 +48,7 @@ public class Worker extends Observable implements Runnable {
     this(url, auth, scanMillis, pauseMillis, nThreads, 1.0);
   }
 
-  public Worker(
-      URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle) {
+  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle) {
     this.url = url;
     this.auth = auth;
     this.scanTime = scanMillis;
@@ -85,54 +84,53 @@ public class Worker extends Observable implements Runnable {
       final int step = (int) Math.pow(2, Math.ceil(Math.log(nThreads) / Math.log(2) + 1e-10));
       for (int i = 0; i < nThreads; ++i) {
         final int index = i;
-        threads[1 + i] =
-            new Thread(
-                new Runnable() {
-                  @Override
-                  public void run() {
+      	threads[1 + i] = new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  Hasher hasher = new Hasher();
+                  int nonce = index;
+                  long dt, t0 = System.nanoTime();
+                  while (running) {
                     try {
-                      Hasher hasher = new Hasher();
-                      int nonce = index;
-                      long dt, t0 = System.nanoTime();
-                      while (running) {
+                      if (curWork.meetsTarget(nonce, hasher)) {
+                        // submit nonce
                         try {
-                          if (curWork.meetsTarget(nonce, hasher)) {
-                            // submit nonce
-                            try {
-                              boolean result = curWork.submit(nonce);
-                              setChanged();
-                              notifyObservers(
-                                  result ? Notification.POW_TRUE : Notification.POW_FALSE);
-                            } catch (IOException e) {
-                            }
-                            if (lpUrl == null) {
-                              synchronized (Worker.this) {
-                                curWork = null;
-                                Worker.this.notify();
-                              }
-                            }
-                          }
-                          nonce += step;
-                          hashes.incrementAndGet();
-                          if (throttleFactor > 0.0
-                              && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
-                            LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
-                            t0 = System.nanoTime();
-                          }
-                        } catch (NullPointerException e) {
-                          try {
-                            Thread.sleep(1L);
-                          } catch (InterruptedException ie) {
+                          boolean result = curWork.submit(nonce);
+                          setChanged();
+                          notifyObservers(
+                              result ? Notification.POW_TRUE : Notification.POW_FALSE);
+                        } catch (IOException e) {
+                        }
+                        if (lpUrl == null) {
+                          synchronized (Worker.this) {
+                            curWork = null;
+                            Worker.this.notify();
                           }
                         }
                       }
-                    } catch (GeneralSecurityException e) {
-                      setChanged();
-                      notifyObservers(Notification.SYSTEM_ERROR);
-                      stop();
+                      nonce += step;
+                      hashes.incrementAndGet();
+                      if (throttleFactor > 0.0
+                          && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
+                        LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
+                        t0 = System.nanoTime();
+                      }
+                    } catch (NullPointerException e) {
+                      try {
+                        Thread.sleep(1L);
+                      } catch (InterruptedException ie) {
+                      }
                     }
                   }
-                });
+                } catch (GeneralSecurityException e) {
+                  setChanged();
+                  notifyObservers(Notification.SYSTEM_ERROR);
+                  stop();
+                }
+              }
+            });
         threads[1 + i].start();
       }
       do {

@@ -102,7 +102,6 @@ public class MainActivity extends Activity {
 	    new Thread(new Runnable() {
 		    @Override
 		    public void run() {
-		  		m.stop();
 		  		m.join();
 		      runOnUiThread(new Runnable() {
 				    @Override
