@@ -21,13 +21,13 @@ public class Miner implements Observer {
       throw new IllegalArgumentException("Invalid throttle: " + throttle);
     if (scanTime < 1L) throw new IllegalArgumentException("Invalid scan time: " + scanTime);
     if (retryPause < 0L) throw new IllegalArgumentException("Invalid retry pause: " + retryPause);
-    worker = new Worker(url, auth, scanTime, retryPause, nThread, throttle);
+    worker = new Worker(url, auth, scanTime, retryPause, nThread, throttle, cm);
     worker.addObserver(this);
     console_msg = cm;
     m_thread = new Thread(worker);
     m_thread.setPriority(Thread.MIN_PRIORITY);
     m_thread.start();
-    log(nThread + " miner threads started");
+    log(1, nThread + " miner threads started");
   }
 
   private static final DateFormat logDateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss] ");
