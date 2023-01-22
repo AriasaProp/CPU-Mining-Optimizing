@@ -29,22 +29,12 @@ public class Work {
   private byte[] target; // little-endian
   private byte[] header; // big-endian
 
-  public Work(URL url, String auth) throws IOException {
-    this(url, url, auth);
-  }
-
-  public Work(URL url, URL mainUrl, String auth) throws IOException {
-    this((HttpURLConnection) url.openConnection(), url, auth);
-  }
-
-  public Work(HttpURLConnection conn, URL mainUrl, String auth) throws IOException {
-    String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
-
-    conn = getJsonRpcConnection(conn, request, auth);
+  public Work(HttpURLConnection conn, URL url, String auth) throws IOException {
+  	final String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
+    getJsonRpcConnection(conn, request, auth);
     int response = conn.getResponseCode();
     if (response == 401 || response == 403) throw new IllegalArgumentException("Access denied");
     String content = getConnectionContent(conn);
-
     responseTime = System.currentTimeMillis();
     Matcher m = dataPattern.matcher(content);
     if (!m.find()) throw new RuntimeException(content);
@@ -56,7 +46,7 @@ public class Work {
     target = hexStringToByteArray(sTarget);
     header = headerByData(data);
     xLongPolling = conn.getHeaderField("X-Long-Polling");
-    this.url = mainUrl;
+    this.url = url;
     this.auth = auth;
   }
 
@@ -67,9 +57,9 @@ public class Work {
     d[77] = (byte) (nonce >> 16);
     d[76] = (byte) (nonce >> 24);
     String sData = byteArrayToHexString(d);
-    String request = "{\"method\": \"getwork\", \"params\": [ \"" + sData + "\" ], \"id\":1}";
-
-    HttpURLConnection conn = getJsonRpcConnection(url, request, auth);
+    final String request = "{\"method\": \"getwork\", \"params\": [ \"" + sData + "\" ], \"id\":1}";
+    HttpURLConnection conn = url.openConnection();
+    getJsonRpcConnection(conn, request, auth);
     String content = getConnectionContent(conn);
 
     Matcher m = resultPattern.matcher(content);
@@ -173,13 +163,7 @@ public class Work {
     return new String(ar);
   }
 
-  public static HttpURLConnection getJsonRpcConnection(URL url, String request, String auth)
-      throws IOException {
-    return getJsonRpcConnection((HttpURLConnection) url.openConnection(), request, auth);
-  }
-
-  public static HttpURLConnection getJsonRpcConnection(
-      HttpURLConnection conn, String request, String auth) throws IOException {
+  public void getJsonRpcConnection(HttpURLConnection conn, String request, String auth) throws IOException {
     if (conn.getConnectTimeout() == 0) conn.setConnectTimeout(DEFAULT_TIMEOUT);
     if (conn.getReadTimeout() == 0) conn.setReadTimeout(DEFAULT_TIMEOUT);
     conn.setRequestMethod("POST");
@@ -190,11 +174,9 @@ public class Work {
     conn.setAllowUserInteraction(false);
     conn.setUseCaches(false);
     conn.setDoOutput(true);
-
     DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
     wr.writeBytes(request);
     wr.close();
-    return conn;
   }
 
   public static String getConnectionContent(HttpURLConnection conn) throws IOException {
@@ -212,12 +194,9 @@ public class Work {
 
   public static boolean test() {
     try {
-      byte[] header =
-          hexStringToByteArray(
-              "01000000f615f7ce3b4fc6b8f61e8f89aedb1d0852507650533a9e3b10b9bbcc30639f279fcaa86746e1ef52d3edb3c4ad8259920d509bd073605c9bf1d59983752a6b06b817bb4ea78e011d012d59d4");
+      byte[] header = hexStringToByteArray("01000000f615f7ce3b4fc6b8f61e8f89aedb1d0852507650533a9e3b10b9bbcc30639f279fcaa86746e1ef52d3edb3c4ad8259920d509bd073605c9bf1d59983752a6b06b817bb4ea78e011d012d59d4");
       byte[] hash = new Hasher().hash(header);
-      return byteArrayToHexString(hash)
-          .equals("d9eb8663ffec241c2fb118adb7de97a82c803b6ff46d57667935c81001000000");
+      return byteArrayToHexString(hash).equals("d9eb8663ffec241c2fb118adb7de97a82c803b6ff46d57667935c81001000000");
     } catch (GeneralSecurityException e) {
       return false;
     }

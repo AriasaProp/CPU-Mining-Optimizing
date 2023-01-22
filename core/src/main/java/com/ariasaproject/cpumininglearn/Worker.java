@@ -166,9 +166,10 @@ public class Worker extends Observable implements Runnable {
   private synchronized Work getWork() {
     while (running) {
       try {
-        return new Work(url, auth);
+        return new Work(url.openConnection(), url, auth);
       } catch (Exception e) {
         if (!running) break;
+      	console_log.sendLog(4, e.getMessage());
         setChanged();
         if (e instanceof IllegalArgumentException) {
           notifyObservers(Notification.AUTHENTICATION_ERROR);
@@ -179,7 +180,6 @@ public class Worker extends Observable implements Runnable {
           stop();
           break;
         } else if (e instanceof IOException) {
-        	console_log.sendLog(4, e.getMessage());
           notifyObservers(Notification.CONNECTION_ERROR);
         } else {
           notifyObservers(Notification.COMMUNICATION_ERROR);
