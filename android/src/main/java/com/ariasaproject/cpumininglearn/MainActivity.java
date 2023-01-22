@@ -13,6 +13,7 @@ import android.text.Editable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.net.URL;
 
 import com.ariasaproject.cpumininglearn.Miner;
 
@@ -37,24 +38,22 @@ public class MainActivity extends Activity {
     password_value = (EditText) findViewById(R.id.password_value);
     log_container = (ViewGroup) findViewById(R.id.log_container);
     co = new ConsoleMessage() {
-          @Override
-          public void sendLog(ConsoleMessage.Message lvl, String msg) {
-          	runOnUiThread(new Runnable(){
-          		@Override
-          		public void run (){
-          			sendALog(lvl, msg);
-          		}
-          	});
-          }
-        };
+      @Override
+      public void sendLog(ConsoleMessage.Message lvl, String msg) {
+      	runOnUiThread(new Runnable(){
+      		@Override
+      		public void run (){
+      			sendALog(lvl, msg);
+      		}
+      	});
+      }
+    };
     SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
     if (sharedPref.contains(PREF_URI)) {
       uri_value.setText(sharedPref.getString(PREF_URI, ""));
       username_value.setText(sharedPref.getString(PREF_USERNAME, ""));
       password_value.setText(sharedPref.getString(PREF_PASSWORD,  ""));
     }
-    
-    
     sendALog(ConsoleMessage.Message.DEBUG, "None");
     sendALog(ConsoleMessage.Message.DEBUG, "None");
     sendALog(ConsoleMessage.Message.DEBUG, "None");
@@ -100,37 +99,39 @@ public class MainActivity extends Activity {
   		s.setEnabled(false);
   		s.setText("Stoping...");
   		m = null;
-  	} else {
-	  	s.setEnabled(false);
-	  	s.setText("Starting...");
-  	}
-    Thread t = new Thread(new Runnable() {
-	    @Override
-	    public void run() {
-	    	if (m != null) {
+	    new Thread(new Runnable() {
+		    @Override
+		    public void run() {
 		  		m.stop();
 		  		m.join();
 		      runOnUiThread(new Runnable() {
 				    @Override
 				    public void run() {
-				  		s.setEnabled(true);
 				  		s.setText("Start Mining");
+				  		s.setEnabled(true);
 				    }
 		      });
-	    	} else {
+		    }
+	    }).start();
+  	} else {
+	  	s.setEnabled(false);
+	  	s.setText("Starting...");
+	    new Thread(new Runnable() {
+		    @Override
+		    public void run() {
 			  	String uri = uri_value.getText().toString();
 			  	String user = username_value.getText().toString();
 			  	String pass = password_value.getText().toString();
 			  	try {
 			  		new URL(uri);
-			  		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d);
+			  		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d, co);
 			  	} catch (Exception e) {
 			  		runOnUiThread(new Runnable() {
 					    @Override
 					    public void run() {
 					  		sendALog(ConsoleMessage.Message.ERROR, e.getMessage());
-					  		s.setEnabled(true);
 					  		s.setText("Start Mining");
+					  		s.setEnabled(true);
 					    }
 			  		});
 			  		return;
@@ -144,14 +145,13 @@ public class MainActivity extends Activity {
 					    edit.putString(PREF_USERNAME, user);
 					    edit.putString(PREF_PASSWORD, pass);
 					  	edit.apply();
-							s.setEnabled(true);
 							s.setText("Stop Mining");
+							s.setEnabled(true);
 				    }
 		      });
 	    	}
-	    }
-	  });
-	  t.start();
+		  }).start();
+  	}
   }
   
 }
