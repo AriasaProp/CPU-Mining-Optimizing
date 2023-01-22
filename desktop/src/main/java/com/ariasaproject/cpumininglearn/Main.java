@@ -1,5 +1,6 @@
 package com.ariasaproject.cpumininglearn;
 
+import java.net.URL;
 
 public class Main {
 
@@ -20,7 +21,7 @@ public class Main {
     long retryPause = DEFAULT_RETRY_PAUSE;
 
     try {
-      Miner m = new Miner(url, auth, scanTime, retryPause, nThread, throttle);
+      Miner m = new Miner(new URL(url), auth, scanTime, retryPause, nThread, throttle);
       m.join();
     } catch (Exception e) {
       System.err.println(e.getMessage());

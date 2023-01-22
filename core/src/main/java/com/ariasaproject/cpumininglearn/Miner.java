@@ -35,10 +35,11 @@ public class Miner implements Observer {
   public void log(String str) {
     console_msg.sendLog(ConsoleMessage.Message.INFO, str);
   }
-
+  public void stop() {
+  	worker.stop();
+  }
   public void join() {
     try {
-    	worker.stop();
       m_thread.join();
     } catch (InterruptedException e) {
     }

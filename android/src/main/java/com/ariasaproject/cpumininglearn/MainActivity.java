@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
 	    new Thread(new Runnable() {
 		    @Override
 		    public void run() {
+		  		m.stop();
 		  		m.join();
 		      runOnUiThread(new Runnable() {
 				    @Override
@@ -122,8 +123,7 @@ public class MainActivity extends Activity {
 			  	String user = username_value.getText().toString();
 			  	String pass = password_value.getText().toString();
 			  	try {
-			  		new URL(uri);
-			  		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d, co);
+			  		m = new Miner(new URL(uri), user+":"+pass, 5000, 10000, 1, 1.0d, co);
 			  	} catch (Exception e) {
 			  		runOnUiThread(new Runnable() {
 					    @Override
