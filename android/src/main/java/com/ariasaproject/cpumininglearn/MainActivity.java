@@ -95,53 +95,63 @@ public class MainActivity extends Activity {
   boolean onMining = false;
   Miner m = null;
   public void startstopMining(final View v) {
-  	Button s = (Button) v;
+  	final Button s = (Button) v;
   	if (m != null) {
   		s.setEnabled(false);
   		s.setText("Stoping...");
-  		m.stop();
-  		m.join();
-  		s.setEnabled(true);
-  		s.setText("Start Mining");
   		m = null;
+  	} else {
+	  	s.setEnabled(false);
+	  	s.setText("Starting...");
   	}
-  	s.setEnabled(false);
-  	s.setText("Starting...");
-  	String uri = uri_value.getText().toString();
-  	String user = username_value.getText().toString();
-  	String pass = password_value.getText().toString();
-  	try {
-  		new URL(uri);
-  		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d);
-  	} catch (Exception e) {
-  		sendALog(ConsoleMessage.Message.ERROR, e.getMessage());
-  		s.setEnabled(true);
-  		s.setText("Start Mining");
-  		return;
-  	}
-    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-    SharedPreferences.Editor edit = sharedPref.edit();
-    edit.putString(PREF_URI, uri);
-    edit.putString(PREF_USERNAME, user);
-    edit.putString(PREF_PASSWORD, pass);
-  	edit.apply();
-  	
-		s.setEnabled(true);
-		s.setText("Stop Mining");
-    //new Thread(miningThread).start();
+    Thread t = new Thread(new Runnable() {
+	    @Override
+	    public void run() {
+	    	if (m != null) {
+		  		m.stop();
+		  		m.join();
+		      runOnUiThread(new Runnable() {
+				    @Override
+				    public void run() {
+				  		s.setEnabled(true);
+				  		s.setText("Start Mining");
+				    }
+		      });
+	    	} else {
+			  	String uri = uri_value.getText().toString();
+			  	String user = username_value.getText().toString();
+			  	String pass = password_value.getText().toString();
+			  	try {
+			  		new URL(uri);
+			  		m = new Miner(uri, user+":"+pass, 5000, 10000, 1, 1.0d);
+			  	} catch (Exception e) {
+			  		runOnUiThread(new Runnable() {
+					    @Override
+					    public void run() {
+					  		sendALog(ConsoleMessage.Message.ERROR, e.getMessage());
+					  		s.setEnabled(true);
+					  		s.setText("Start Mining");
+					    }
+			  		});
+			  		return;
+			  	}
+		      runOnUiThread(new Runnable() {
+				    @Override
+				    public void run() {
+					    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+					    SharedPreferences.Editor edit = sharedPref.edit();
+					    edit.putString(PREF_URI, uri);
+					    edit.putString(PREF_USERNAME, user);
+					    edit.putString(PREF_PASSWORD, pass);
+					  	edit.apply();
+							s.setEnabled(true);
+							s.setText("Stop Mining");
+				    }
+		      });
+	    	}
+	    }
+	  });
+	  t.start();
   }
-  /*
-  final Runnable miningThread = new Runnable() {
-    @Override
-    public void run() {
-      try {
-        co.sendLog(ConsoleMessage.Message.SUCCESS, "Begin Thread Run!");
-        co.sendLog(ConsoleMessage.Message.WARNING, "Thread being proccess!");
-        co.sendLog(ConsoleMessage.Message.INFO, "Information Update!");
-        co.sendLog(ConsoleMessage.Message.ERROR, "Thread Ended!");
-      } catch (InterruptedException e) {
-      }
-    }
-  };
-  */
+  
 }
