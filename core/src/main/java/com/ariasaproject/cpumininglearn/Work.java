@@ -17,8 +17,7 @@ public class Work {
   private static final int DEFAULT_TIMEOUT = 10000; // ms
 
   private static final Pattern dataPattern = Pattern.compile("\"data\"\\s*:\\s*\"([0-9a-f]+)\"");
-  private static final Pattern targetPattern =
-      Pattern.compile("\"target\"\\s*:\\s*\"([0-9a-f]+)\"");
+  private static final Pattern targetPattern = Pattern.compile("\"target\"\\s*:\\s*\"([0-9a-f]+)\"");
   private static final Pattern resultPattern = Pattern.compile("\"result\"\\s*:\\s*([0-9A-Za-z]+)");
 
   private URL url;

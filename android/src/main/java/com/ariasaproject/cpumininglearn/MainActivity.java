@@ -95,7 +95,8 @@ public class MainActivity extends Activity {
   Miner m = null;
   public void startstopMining(final View v) {
   	final Button s = (Button) v;
-  	if (m != null) {
+  	if (onMining) {
+  		onMining = false;
   		s.setEnabled(false);
   		s.setText("Stoping...");
   		m = null;
@@ -114,6 +115,7 @@ public class MainActivity extends Activity {
 		    }
 	    }).start();
   	} else {
+  		onMining = true;
 	  	s.setEnabled(false);
 	  	s.setText("Starting...");
 	    new Thread(new Runnable() {
