@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,7 +29,7 @@ public class Work {
   private byte[] target; // little-endian
   private byte[] header; // big-endian
 
-  public Work(HttpURLConnection conn, URL url, String auth) throws IOException {
+  public Work(URLConnection conn, URL url, String auth) throws IOException {
   	final String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
     getJsonRpcConnection(conn, request, auth);
     int response = conn.getResponseCode();
@@ -58,7 +58,7 @@ public class Work {
     d[76] = (byte) (nonce >> 24);
     String sData = byteArrayToHexString(d);
     final String request = "{\"method\": \"getwork\", \"params\": [ \"" + sData + "\" ], \"id\":1}";
-    HttpURLConnection conn = url.openConnection();
+    URLConnection conn = url.openConnection();
     getJsonRpcConnection(conn, request, auth);
     String content = getConnectionContent(conn);
 
@@ -163,7 +163,7 @@ public class Work {
     return new String(ar);
   }
 
-  public void getJsonRpcConnection(HttpURLConnection conn, String request, String auth) throws IOException {
+  public void getJsonRpcConnection(URLConnection conn, String request, String auth) throws IOException {
     if (conn.getConnectTimeout() == 0) conn.setConnectTimeout(DEFAULT_TIMEOUT);
     if (conn.getReadTimeout() == 0) conn.setReadTimeout(DEFAULT_TIMEOUT);
     conn.setRequestMethod("POST");
@@ -179,7 +179,7 @@ public class Work {
     wr.close();
   }
 
-  public static String getConnectionContent(HttpURLConnection conn) throws IOException {
+  public static String getConnectionContent(URLConnection conn) throws IOException {
     InputStream is = conn.getInputStream();
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     int len;

@@ -1,7 +1,7 @@
 package com.ariasaproject.cpumininglearn;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.AccessControlException;
@@ -37,7 +37,7 @@ public class Worker extends Observable implements Runnable {
 
   private volatile Work curWork = null;
   private URL lpUrl = null;
-  private HttpURLConnection lpConn = null;
+  private URLConnection lpConn = null;
   private AtomicLong hashes = new AtomicLong(0L);
   private final ConsoleMessage console_log;
 
@@ -200,7 +200,7 @@ public class Worker extends Observable implements Runnable {
     public void run() {
       while (running) {
         try {
-          lpConn = (HttpURLConnection) lpUrl.openConnection();
+          lpConn = (URLConnection) lpUrl.openConnection();
           lpConn.setReadTimeout(READ_TIMEOUT);
           curWork = new Work(lpConn, url, auth);
           if (!running) break;
