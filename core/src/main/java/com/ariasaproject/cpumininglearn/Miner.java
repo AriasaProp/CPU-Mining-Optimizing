@@ -13,9 +13,9 @@ public class Miner implements Observer {
   private Thread m_thread;
   private long lastWorkTime;
   private long lastWorkHashes;
+  private final console_msg;
 
-  public Miner(
-      String url, String auth, long scanTime, long retryPause, int nThread, double throttle) {
+  public Miner(String url, String auth, long scanTime, long retryPause, int nThread, double throttle, ConsoleMessage cm) {
     if (nThread < 1) throw new IllegalArgumentException("Invalid number of threads: " + nThread);
     if (throttle <= 0.0 || throttle > 1.0)
       throw new IllegalArgumentException("Invalid throttle: " + throttle);
@@ -27,6 +27,7 @@ public class Miner implements Observer {
       throw new IllegalArgumentException("Invalid URL: " + url);
     }
     worker.addObserver(this);
+    console_msg = cm;
     m_thread = new Thread(worker);
     m_thread.setPriority(Thread.MIN_PRIORITY);
     m_thread.start();
@@ -36,7 +37,7 @@ public class Miner implements Observer {
   private static final DateFormat logDateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss] ");
 
   public void log(String str) {
-    System.out.println(logDateFormat.format(new Date()) + str);
+    console_msg.sendLog(ConsoleMessage.Message.INFO, str);
   }
 
   public void join() {
