@@ -92,14 +92,13 @@ public class MainActivity extends Activity {
     cur.setText(logDateFormat.format(new Date()) + msg);
   }
   boolean onMining = false;
-  Miner m = null;
+  Miner m;
   public void startstopMining(final View v) {
   	final Button s = (Button) v;
   	if (onMining) {
   		onMining = false;
   		s.setEnabled(false);
   		s.setText("Stoping...");
-  		m = null;
 	    new Thread(new Runnable() {
 		    @Override
 		    public void run() {
