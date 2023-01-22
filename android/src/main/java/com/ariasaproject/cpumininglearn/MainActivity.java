@@ -1,6 +1,7 @@
 package com.ariasaproject.cpumininglearn;
 
-import android.app.Context;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -45,11 +46,11 @@ public class MainActivity extends Activity {
           	});
           }
         };
-    SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
     if (sharedPref.contains(PREF_URI)) {
       uri_value.setText(sharedPref.getString(PREF_URI, ""));
       username_value.setText(sharedPref.getString(PREF_USERNAME, ""));
-      password_value.setText(sharedPref.getString(PREF_PASSWORD  ""));
+      password_value.setText(sharedPref.getString(PREF_PASSWORD,  ""));
     }
     
     
