@@ -13,7 +13,7 @@ public class Miner implements Observer {
   private Thread m_thread;
   private long lastWorkTime;
   private long lastWorkHashes;
-  private final console_msg;
+  private final ConsoleMessage console_msg;
 
   public Miner(String url, String auth, long scanTime, long retryPause, int nThread, double throttle, ConsoleMessage cm) {
     if (nThread < 1) throw new IllegalArgumentException("Invalid number of threads: " + nThread);
