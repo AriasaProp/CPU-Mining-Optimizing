@@ -39,16 +39,10 @@ public class Worker extends Observable implements Runnable {
   private URL lpUrl = null;
   private HttpURLConnection lpConn = null;
   private AtomicLong hashes = new AtomicLong(0L);
+  private final ConsoleMessage console_log;
 
-  public Worker(URL url, String auth, long scanMillis, long pauseMillis) {
-    this(url, auth, scanMillis, pauseMillis, Runtime.getRuntime().availableProcessors());
-  }
-
-  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads) {
-    this(url, auth, scanMillis, pauseMillis, nThreads, 1.0);
-  }
-
-  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle) {
+  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle, ConsoleMessage cm) {
+    this.console_log = cm;
     this.url = url;
     this.auth = auth;
     this.scanTime = scanMillis;
@@ -185,6 +179,7 @@ public class Worker extends Observable implements Runnable {
           stop();
           break;
         } else if (e instanceof IOException) {
+        	console_log.sendLog(4, e.getMessage());
           notifyObservers(Notification.CONNECTION_ERROR);
         } else {
           notifyObservers(Notification.COMMUNICATION_ERROR);

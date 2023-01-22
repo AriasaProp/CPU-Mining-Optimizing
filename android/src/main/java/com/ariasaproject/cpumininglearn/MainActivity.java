@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
     log_container = (ViewGroup) findViewById(R.id.log_container);
     co = new ConsoleMessage() {
       @Override
-      public void sendLog(ConsoleMessage.Message lvl, String msg) {
+      public void sendLog(int lvl, String msg) {
       	runOnUiThread(new Runnable(){
       		@Override
       		public void run (){
@@ -54,15 +54,15 @@ public class MainActivity extends Activity {
       username_value.setText(sharedPref.getString(PREF_USERNAME, ""));
       password_value.setText(sharedPref.getString(PREF_PASSWORD,  ""));
     }
-    sendALog(ConsoleMessage.Message.DEBUG, "None");
-    sendALog(ConsoleMessage.Message.DEBUG, "None");
-    sendALog(ConsoleMessage.Message.DEBUG, "None");
-    sendALog(ConsoleMessage.Message.DEBUG, "None!");
-    sendALog(ConsoleMessage.Message.DEBUG, "Login App!");
+    sendALog(0, "None");
+    sendALog(0, "None");
+    sendALog(0, "None");
+    sendALog(1, "None!");
+    sendALog(1, "Login App!");
     
   }
 	private static final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss| ");
-  void sendALog(final ConsoleMessage.Message lvl, final String msg) {
+  void sendALog(final int lvl, final String msg) {
   	final int j = log_container.getChildCount();
   	TextView cur = (TextView) log_container.getChildAt(j-1), next;
     for (int i = j-2; i >= 0; i--) {
@@ -73,19 +73,19 @@ public class MainActivity extends Activity {
     }
     switch (lvl) {
       default:
-      case DEBUG:
+      case 0:
         cur.setTextColor(0xffa3a3a3);
         break;
-      case INFO:
+      case 1:
         cur.setTextColor(0xffffffff);
         break;
-      case SUCCESS:
+      case 2:
         cur.setTextColor(0xff00ff00);
         break;
-      case WARNING:
+      case 3:
         cur.setTextColor(0xffffff00);
         break;
-      case ERROR:
+      case 4:
         cur.setTextColor(0xffff0000);
         break;
     }
@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
 			  		runOnUiThread(new Runnable() {
 					    @Override
 					    public void run() {
-					  		sendALog(ConsoleMessage.Message.ERROR, e.getMessage());
+					  		sendALog(4, e.getMessage());
 					  		s.setText("Start Mining");
 					  		s.setEnabled(true);
 					    }

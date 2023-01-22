@@ -32,8 +32,8 @@ public class Miner implements Observer {
 
   private static final DateFormat logDateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss] ");
 
-  public void log(String str) {
-    console_msg.sendLog(ConsoleMessage.Message.INFO, str);
+  public void log(int lvl, String str) {
+    console_msg.sendLog(1, str);
   }
   public void stop() {
   	worker.stop();
@@ -48,33 +48,33 @@ public class Miner implements Observer {
   public void update(Observable o, Object arg) {
     Worker.Notification n = (Worker.Notification) arg;
     if (n == Worker.Notification.SYSTEM_ERROR) {
-      log("System error");
+      log(4, "System error");
       worker.stop();
     } else if (n == Worker.Notification.PERMISSION_ERROR) {
-      log("Permission error");
+      log(4, "Permission error");
       worker.stop();
     } else if (n == Worker.Notification.AUTHENTICATION_ERROR) {
-      log("Invalid worker username or password");
+      log(4, "Invalid worker username or password");
       worker.stop();
     } else if (n == Worker.Notification.CONNECTION_ERROR) {
-      log("Connection error, retrying in " + worker.getRetryPause() / 1000L + " seconds");
+      log(3, "Connection error, retrying in " + worker.getRetryPause() / 1000L + " seconds");
     } else if (n == Worker.Notification.COMMUNICATION_ERROR) {
-      log("Communication error");
+      log(3, "Communication error");
     } else if (n == Worker.Notification.LONG_POLLING_FAILED) {
-      log("Long polling failed");
+      log(4, "Long polling failed");
     } else if (n == Worker.Notification.LONG_POLLING_ENABLED) {
-      log("Long polling activated");
+      log(2, "Long polling activated");
     } else if (n == Worker.Notification.NEW_BLOCK_DETECTED) {
-      log("LONGPOLL detected new block");
+      log(1, "LONGPOLL detected new block");
     } else if (n == Worker.Notification.POW_TRUE) {
-      log("PROOF OF WORK RESULT: true (yay!!!)");
+      log(2, "PROOF OF WORK RESULT: true (yay!!!)");
     } else if (n == Worker.Notification.POW_FALSE) {
-      log("PROOF OF WORK RESULT: false (booooo)");
+      log(3, "PROOF OF WORK RESULT: false (booooo)");
     } else if (n == Worker.Notification.NEW_WORK) {
       if (lastWorkTime > 0L) {
         long hashes = worker.getHashes() - lastWorkHashes;
         float speed = (float) hashes / Math.max(1, System.currentTimeMillis() - lastWorkTime);
-        log(String.format("%d hashes, %.2f khash/s", hashes, speed));
+        log(1, String.format("%d hashes, %.2f khash/s", hashes, speed));
       }
       lastWorkTime = System.currentTimeMillis();
       lastWorkHashes = worker.getHashes();
