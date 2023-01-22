@@ -32,7 +32,7 @@ public class Work {
   public Work(URLConnection conn, URL url, String auth) throws IOException {
   	final String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
     getJsonRpcConnection(conn, request, auth);
-    int response = conn.getResponseCode();
+    int response = ((HttpURLConnection)conn).getResponseCode();
     if (response == 401 || response == 403) throw new IllegalArgumentException("Access denied");
     String content = getConnectionContent(conn);
     responseTime = System.currentTimeMillis();
@@ -166,7 +166,7 @@ public class Work {
   public void getJsonRpcConnection(URLConnection conn, String request, String auth) throws IOException {
     if (conn.getConnectTimeout() == 0) conn.setConnectTimeout(DEFAULT_TIMEOUT);
     if (conn.getReadTimeout() == 0) conn.setReadTimeout(DEFAULT_TIMEOUT);
-    conn.setRequestMethod("POST");
+    ((HttpURLConnection)conn).setRequestMethod("POST");
     if (auth != null) conn.setRequestProperty("Authorization", "Basic " + stringToBase64(auth));
     conn.setRequestProperty("Content-Type", "application/json");
     conn.setRequestProperty("Content-Length", Integer.toString(request.getBytes().length));

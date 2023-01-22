@@ -153,7 +153,7 @@ public class Worker extends Observable implements Runnable {
       } while (running);
       running = false;
     }
-    if (lpConn != null) lpConn.disconnect();
+    if (lpConn != null) ((HttpURLConnection)lpConn).disconnect();
     try {
       for (Thread t : threads) if (t != null) t.join();
     } catch (InterruptedException e) {
