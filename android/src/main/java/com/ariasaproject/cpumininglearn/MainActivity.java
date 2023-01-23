@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
   }
   boolean onMining = false;
   Miner m;
-  Socket client = new Socket();
+  Socket socket = new Socket();
   public void startstopMining(final View v) {
   	final Button s = (Button) v;
   	if (onMining) {
@@ -138,21 +138,17 @@ public class MainActivity extends Activity {
 			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.getCurrentThread().wait(500);
-			  		PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			  		wait(500);
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.getCurrentThread().wait(500);
-			  		PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			  		wait(500);
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.getCurrentThread().wait(500);
+			  		wait(500);
 			  		output.close();
 			  		input.close();
 			  		socket.close();
-			  		Thread.getCurrentThread().wait(500);
+			  		wait(500);
 			  	} catch (Exception e) {
 			  		runOnUiThread(new Runnable() {
 					    @Override
