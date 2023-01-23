@@ -87,8 +87,8 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       } catch (InterruptedException e) {
         MinyaLog.debug("Thread killed. Hashes= " + this.number_of_hashed);
         _console.write("Thread killed. #Hashes=" + this.number_of_hashed);
-        for (Throwable t : e.getStackTrace()) {
-        	_console.write("trace in " + t.getMessage());
+        for (StackTraceElement t : e.getStackTrace()) {
+        	_console.write("trace in " + t.toString());
         }
         calcSpeedPerThread(number_of_hashed);
         _last_time = System.currentTimeMillis();
