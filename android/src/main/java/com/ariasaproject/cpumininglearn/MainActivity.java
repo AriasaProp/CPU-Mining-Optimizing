@@ -136,8 +136,8 @@ public class MainActivity extends Activity {
   				final String message1 = "{\"jsonrpc\" : \"2.0\", \"id\": 1, \"method\": \"mining.subscribe\", \"params\": []}";
 			  	try (Socket socket = new Socket()) {
 	  				socket.connect(new InetSocketAddress(uri, 8080));
-				    DataInputStream input = new DataInputStream(socket.getInputStream());
-				    DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+				    BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				    PrintWriter output = new PrintWriter(socket.getOutputStream());
 				    
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
