@@ -2,8 +2,6 @@ package com.example.android.stratumminer.worker;
 
 import com.example.android.stratumminer.Console;
 import com.example.android.stratumminer.MiningWork;
-import com.example.android.stratumminer.MinyaException;
-import com.example.android.stratumminer.MinyaLog;
 import com.example.android.stratumminer.hasher.Hasher;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     private static final long serialVersionUID = -4176908211058342478L;
 
     void invokeNonceFound(MiningWork i_work, int i_nonce) {
-      MinyaLog.message("Nonce found! +" + ((0xffffffffffffffffL) & i_nonce));
+      _console.write("Nonce found! +" + ((0xffffffffffffffffL) & i_nonce));
       for (IWorkerEvent i : this) {
         i.onNonceFound(i_work, i_nonce);
       }
@@ -79,17 +77,9 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         e.printStackTrace();
         setChanged();
         notifyObservers(Notification.SYSTEM_ERROR);
-        try {
-          stopWork();
-        } catch (MinyaException e1) {
-          e1.printStackTrace();
-        }
+        stopWork();
       } catch (InterruptedException e) {
-        MinyaLog.debug("Thread killed. Hashes= " + this.number_of_hashed);
         _console.write("Thread killed. #Hashes=" + this.number_of_hashed);
-        for (StackTraceElement t : e.getStackTrace()) {
-        	_console.write("trace in " + t.toString());
-        }
         calcSpeedPerThread(number_of_hashed);
         _last_time = System.currentTimeMillis();
       }
@@ -122,8 +112,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   private double _speed = 0;
 
   @Override
-  public boolean doWork(MiningWork i_work) throws MinyaException {
-    MinyaLog.debug("Start doWork");
+  public boolean doWork(MiningWork i_work) {
     if (i_work != null) {
       this.stopWork();
       long hashes = 0;
@@ -136,7 +125,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       _speed = ((double) _num_hashed / delta_time);
       setChanged();
       notifyObservers(Notification.SPEED);
-      MinyaLog.message("Calculated " + (_speed) + " Hash/s");
     }
     this._last_time = System.currentTimeMillis();
     for (int i = this._number_of_thread - 1; i >= 0; i--) {
@@ -160,14 +148,14 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   }
 
   @Override
-  public void stopWork() throws MinyaException {
+  public void stopWork() {
     for (Worker t : _workr_thread) {
       if (t != null) {
         _console.write("Worker: Killing thread ID: " + t.getId());
         t.interrupt();
       }
     }
-    this._console.write("Worker: Threads killed");
+    _console.write("Worker: Threads killed");
   }
 
   @Override

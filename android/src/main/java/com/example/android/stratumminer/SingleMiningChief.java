@@ -9,7 +9,6 @@ import static com.example.android.stratumminer.Constants.STATUS_TERMINATED;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import com.example.android.stratumminer.connection.IConnectionEvent;
 import com.example.android.stratumminer.connection.IMiningConnection;
 import com.example.android.stratumminer.connection.StratumMiningConnection;
@@ -20,13 +19,11 @@ import java.util.EventListener;
 import java.util.Observable;
 import java.util.Observer;
 
-/** Created by Ben David on 01/08/2017. */
 public class SingleMiningChief implements Observer {
 
   private static final long DEFAULT_SCAN_TIME = 5000;
   private static final long DEFAULT_RETRY_PAUSE = 30000;
 
-  // private Worker worker;
   private IMiningConnection mc;
   private IMiningWorker imw;
   private long lastWorkTime;
@@ -39,7 +36,6 @@ public class SingleMiningChief implements Observer {
   private Console console;
   public IMiningConnection _connection;
   public IMiningWorker _worker;
-  // private IMiningWorker _worker;
   private EventListener _eventlistener;
 
   public String status = STATUS_NOT_MINING;
@@ -68,17 +64,15 @@ public class SingleMiningChief implements Observer {
     @Override
     public void onNewWork(MiningWork i_work) {
       try {
-        MinyaLog.message("New work detected!");
         console.write("New work detected!");
         setChanged();
         notifyObservers(IMiningWorker.Notification.NEW_BLOCK_DETECTED);
         setChanged();
         notifyObservers(IMiningWorker.Notification.NEW_WORK);
-        // 新規ワークの開始
         synchronized (this) {
           this._parent._worker.doWork(i_work);
         }
-      } catch (MinyaException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -87,21 +81,11 @@ public class SingleMiningChief implements Observer {
     public void onSubmitResult(MiningWork i_listener, int i_nonce, boolean i_result) {
       this._number_of_accept += (i_result ? 1 : 0);
       this._number_of_all++;
-      MinyaLog.message(
-          "SubmitStatus:"
-              + (i_result ? "Accepted" : "Reject")
-              + "("
-              + this._number_of_accept
-              + "/"
-              + this._number_of_all
-              + ")");
       setChanged();
-      notifyObservers(
-          i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
+      notifyObservers(i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
     }
 
     public boolean onDisconnect() {
-      // 再接続するならtrue
       return false;
     }
 
@@ -109,17 +93,13 @@ public class SingleMiningChief implements Observer {
     public void onNonceFound(MiningWork i_work, int i_nonce) {
       try {
         this._parent._connection.submitWork(i_work, i_nonce);
-      } catch (MinyaException e) {
-        // TODO Auto-generated catch block
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
   }
 
-  public SingleMiningChief(
-      IMiningConnection i_connection, IMiningWorker i_worker, Console cons, Handler h)
-      throws MinyaException {
-    Log.i("LC", "Miner:Miner()");
+  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Console cons, Handler h) throws Exception {
     status = STATUS_CONNECTING;
     speed = 0.0f;
     mainHandler = h;
@@ -131,16 +111,12 @@ public class SingleMiningChief implements Observer {
     this._worker.addListener(this._eventlistener);
   }
 
-  public void startMining() throws MinyaException {
-    // コネクションを接続
-    Log.i("LC", "Starting Worker Thread");
+  public void startMining() {
     console.write("Miner: Starting worker thread, priority: " + priority);
     ((StratumMiningConnection) _connection).addObserver(this);
     ((CpuMiningWorker) _worker).addObserver(this);
     MiningWork first_work = this._connection.connect();
-    // 情報リセット
     this._eventlistener.resetCounter();
-    // 初期ワークがあるならワーク開始
     if (first_work != null) {
       synchronized (this) {
         this._worker.doWork(first_work);
@@ -148,15 +124,11 @@ public class SingleMiningChief implements Observer {
     }
   }
 
-  public void stopMining() throws MinyaException {
-    // コネクションを切断
-    Log.i("LC", "Miner:stop()");
+  public void stopMining() {
     console.write("Miner: Worker stopping...");
     console.write("Miner: Worker cooling down");
     console.write("Miner: This can take a few minutes");
     this._connection.disconnect();
-    // ワーカーを停止
-    // Log.i("SingleMiningChief","before this._worker.stopWork() ");
     this._worker.stopWork();
     speed = 0;
   }
@@ -168,8 +140,6 @@ public class SingleMiningChief implements Observer {
 
     IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
     if (n == IMiningWorker.Notification.SYSTEM_ERROR) {
-      Log.i("LC", "system error");
-      android.util.Log.i("LC", "System error");
       console.write("Miner: System error");
       status = STATUS_ERROR;
       bundle.putString("status", status);
@@ -177,17 +147,13 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.PERMISSION_ERROR) {
-      Log.i("LC", "permission error");
-      android.util.Log.i("LC", "Permission error");
       console.write("Miner: Permission error");
       status = STATUS_ERROR;
-      ;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.TERMINATED) {
-      Log.i("LC", "Miner: Worker terminated");
       console.write("Miner: Worker terminated");
       status = STATUS_TERMINATED;
       bundle.putString("status", status);
@@ -206,7 +172,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.CONNECTING) {
-      Log.i("LC", "Miner: Worker connecting");
       console.write("Miner: Worker connecting");
       status = STATUS_CONNECTING;
       bundle.putString("status", status);
@@ -215,7 +180,6 @@ public class SingleMiningChief implements Observer {
       mainHandler.sendMessage(msg);
 
     } else if (n == IMiningWorker.Notification.AUTHENTICATION_ERROR) {
-      android.util.Log.i("LC", "Invalid worker username or password");
       status = STATUS_ERROR;
       console.write("Miner: Authentication error");
       bundle.putString("status", status);
@@ -223,7 +187,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.CONNECTION_ERROR) {
-      android.util.Log.i("LC", "Connection error, retrying in " + 3000 / 1000L + " seconds");
       status = STATUS_ERROR;
       console.write("Miner: Connection error");
       bundle.putString("status", status);
@@ -231,7 +194,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.COMMUNICATION_ERROR) {
-      android.util.Log.i("LC", "Communication error");
       status = STATUS_ERROR;
       console.write("Miner: Communication error");
       bundle.putString("status", status);
@@ -239,7 +201,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.LONG_POLLING_FAILED) {
-      android.util.Log.i("LC", "Long polling failed");
       status = STATUS_NOT_MINING;
       console.write("Miner: Long polling failed");
       bundle.putString("status", status);
@@ -247,7 +208,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.LONG_POLLING_ENABLED) {
-      android.util.Log.i("LC", "Long polling enabled");
       status = STATUS_MINING;
       console.write("Miner: Long polling enabled");
       console.write("Miner: Speed updates as work is completed");
@@ -256,7 +216,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.NEW_BLOCK_DETECTED) {
-      android.util.Log.i("LC", "Detected new block");
       status = STATUS_MINING;
       console.write("Miner: Detected new block");
       bundle.putString("status", status);
@@ -264,7 +223,6 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.POW_TRUE) {
-      android.util.Log.i("LC", "PROOF OF WORK RESULT: true");
       status = STATUS_MINING;
       console.write("Miner: PROOF OF WORK RESULT: true");
       accepted += 1;
@@ -280,7 +238,6 @@ public class SingleMiningChief implements Observer {
       mainHandler.sendMessage(msg);
 
     } else if (n == IMiningWorker.Notification.POW_FALSE) {
-      android.util.Log.i("LC", "PROOF OF WORK RESULT: false");
       status = STATUS_MINING;
       rejected += 1;
       bundle.putString("status", status);
@@ -294,10 +251,8 @@ public class SingleMiningChief implements Observer {
       bundle.putLong("rejected", rejected);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.SPEED) {
-      android.util.Log.i("LC", "Speed Update");
       if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
         speed = 0;
-        // Log.i("Thread.ActiveCount()" , "" + Thread.activeCount());
       } else {
         speed = (float) ((CpuMiningWorker) _worker).get_speed();
       }
@@ -309,21 +264,12 @@ public class SingleMiningChief implements Observer {
       if (lastWorkTime > 0L) {
         long hashes = _worker.getNumberOfHash() - lastWorkHashes;
         speed = (float) ((CpuMiningWorker) _worker).get_speed();
-        //                speed = (float) hashes / (System.currentTimeMillis() - lastWorkTime)/1000;
-        //                speed = (float) hashes / Math.max(1, System.currentTimeMillis() -
-        // lastWorkTime)/1000;
-        // speed= (float) hashes/((System.currentTimeMillis()-this._last_time)/1000);
-        // android.util.Log.i("LC", String.format("%d hashes, %.6f khash/s", hashes, speed));
-        android.util.Log.i("LC", String.format("%d hashes, %.6f hash/s", hashes, speed));
         status = STATUS_MINING;
-        // console.write("Miner: "+String.format("%d hashes, %.6f khash/s", hashes, speed));
         console.write("Miner: " + String.format("%d Hashes, %.6f Hash/s", hashes, speed));
-
         bundle.putString("status", status);
         msg.arg1 = MSG_STATUS_UPDATE;
         msg.setData(bundle);
         mainHandler.sendMessage(msg);
-
         msg = new Message();
         bundle = new Bundle();
         bundle.putFloat("speed", speed);

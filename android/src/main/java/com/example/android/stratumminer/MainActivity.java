@@ -64,28 +64,11 @@ public class MainActivity extends Activity {
     CheckBox cb_screen_awake;
 
     int  baseThreadCount;
-
     boolean mBound = false;
     MinerService mService;
-
     public int curScreenPos = 0;
-
-    public ServiceConnection mConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MinerService.LocalBinder binder = (MinerService.LocalBinder) service;
-            mService = binder.getService();
-            mBound=true;
-        }
-
-        public void onServiceDisconnected(ComponentName name) {  mBound=false;   }
-    };
-
-    private static int updateDelay=300;
     String unit = " h/s";
-
-    Handler statusHandler = new Handler() { };
-
+    Handler statusHandler = new Handler() {};
     final Runnable rConsole = new Runnable() {
         public void run() {
             TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
@@ -149,41 +132,40 @@ public class MainActivity extends Activity {
     public volatile  boolean firstRunFlag = true;
     public volatile  boolean ShutdownStarted = false;
     public volatile  boolean StartShutdown = false;
-
-    Thread updateThread = new Thread () {
+    
+    final ServiceConnection mConnection = new ServiceConnection() {
+    		@Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MinerService.LocalBinder binder = (MinerService.LocalBinder) service;
+            mService = binder.getService();
+            updateThread.start();
+        }
+        public void onServiceDisconnected(ComponentName name) {
+        		if (updateThread.isAlive()) updateThread.interrupt();
+        }
+    };
+    final Thread updateThread = new Thread () {
+    		@Override
         public void run() {
-            while (!mBound) {
-                try {
-                    sleep(50);
-                } catch (InterruptedException e) { }
-            }
-
-            // If the service is running make sure the button is changed to "Stop Mining" and vice versa
-            if(mService.running) { statusHandler.post(rBtnStop); }
-            else { statusHandler.post(rBtnStart); }
-            while (mBound)	{
-                try {
-                    sleep(updateDelay);
-                } catch (InterruptedException e) {}
-                statusHandler.post(rConsole);
-                statusHandler.post(rSpeed);
-                statusHandler.post(rAccepted);
-                statusHandler.post(rRejected);
-                statusHandler.post(rStatus);
-                if(mService.running) { statusHandler.post(rBtnStop);
-                } else {statusHandler.post(rBtnStart);}
-            } }
+            try {
+		        		for (;;) {
+		                if(mService.running) { statusHandler.post(rBtnStop);
+		                } else {statusHandler.post(rBtnStart);}
+                    sleep(1000);
+		                statusHandler.post(rConsole);
+		                statusHandler.post(rSpeed);
+		                statusHandler.post(rAccepted);
+		                statusHandler.post(rRejected);
+		                statusHandler.post(rStatus);
+		        		}
+            } catch (InterruptedException e) {}
+        }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Intent intent = new Intent(getApplicationContext(), MinerService.class);
-        startService(intent);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         et_serv = (EditText) findViewById(R.id.server_et);
         et_user = (EditText) findViewById((R.id.user_et));
@@ -192,6 +174,10 @@ public class MainActivity extends Activity {
         cb_service.setChecked(DEFAULT_BACKGROUND);
         cb_screen_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake) ;
         cb_screen_awake.setChecked(DEFAULT_SCREEN);
+        SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
+        et_serv.setText(settings.getString(PREF_URL,""));
+        et_user.setText(settings.getString(PREF_USER,""));
+        et_pass.setText(settings.getString(PREF_PASS,""));
         
         //set number of Threads posibility use
         try {
@@ -203,8 +189,11 @@ public class MainActivity extends Activity {
                 threadList.setAdapter(threads);
             }
         } catch (Exception e){}
-
-        updateThread.start();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Intent intent = new Intent(getApplicationContext(), MinerService.class);
+        startService(intent);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 		public void startstopMining(View v) {
 				final Button b = (Button) v;
@@ -298,7 +287,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onStop() {
-        if(updateThread.isAlive()) { updateThread.interrupt(); }
+        if(updateThread.isAlive()) updateThread.interrupt();
 
         SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
         if(!settings.getBoolean(PREF_BACKGROUND,DEFAULT_BACKGROUND )) {

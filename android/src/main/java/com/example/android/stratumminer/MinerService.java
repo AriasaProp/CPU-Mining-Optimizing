@@ -98,8 +98,9 @@ public class MinerService extends Service {
       smc = new SingleMiningChief(mc, imw, console, serviceHandler);
       smc.startMining();
       running = true;
-    } catch (MinyaException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+    	for (StackTraceElement t : e.getStackTrace())
+    			console.write("Error: "+t.toString());
     }
 
   }
@@ -110,7 +111,7 @@ public class MinerService extends Service {
     running = false;
     try {
       smc.stopMining();
-    } catch (MinyaException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
