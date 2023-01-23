@@ -18,6 +18,8 @@ import java.net.Socket;
 import java.net.InetSocketAddress;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.PrintWriter;
 
 import com.ariasaproject.cpumininglearn.Miner;
