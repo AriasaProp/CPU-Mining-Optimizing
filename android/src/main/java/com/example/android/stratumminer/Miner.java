@@ -1,28 +1,28 @@
-//package com.example.android.stratumminer;
+// package com.example.android.stratumminer;
 //
-//import android.os.Bundle;
-//import android.os.Handler;
-//import android.os.Message;
-//import android.util.Log;
+// import android.os.Bundle;
+// import android.os.Handler;
+// import android.os.Message;
+// import android.util.Log;
 //
-//import com.example.android.stratumminer.connection.IMiningConnection;
-//import com.example.android.stratumminer.connection.StratumMiningConnection;
-//import com.example.android.stratumminer.worker.CpuMiningWorker;
-//import com.example.android.stratumminer.worker.IMiningWorker;
+// import com.example.android.stratumminer.connection.IMiningConnection;
+// import com.example.android.stratumminer.connection.StratumMiningConnection;
+// import com.example.android.stratumminer.worker.CpuMiningWorker;
+// import com.example.android.stratumminer.worker.IMiningWorker;
 //
-//import java.net.MalformedURLException;
-//import java.net.URL;
-//import java.util.Observable;
-//import java.util.Observer;
+// import java.net.MalformedURLException;
+// import java.net.URL;
+// import java.util.Observable;
+// import java.util.Observer;
 //
-//import static com.example.android.stratumminer.Constants.DEFAULT_PASS;
-//import static com.example.android.stratumminer.Constants.DEFAULT_USER;
+// import static com.example.android.stratumminer.Constants.DEFAULT_PASS;
+// import static com.example.android.stratumminer.Constants.DEFAULT_USER;
 //
-///**
+/// **
 // * Created by Tal on 03/08/2017.
 // */
 //
-//public class Miner implements Observer {
+// public class Miner implements Observer {
 //    private static final long DEFAULT_SCAN_TIME = 5000;
 //    private static final long DEFAULT_RETRY_PAUSE = 30000;
 //
@@ -81,7 +81,8 @@
 //            //mc = new StratumMiningConnection(url,usr,pass);
 //            imw = new CpuMiningWorker(nThread);
 //            smc = new SingleMiningChief(mc,imw,console);
-//            //worker = new Worker(new URL(url), auth, scanTime, retryPause, nThread, throttle, console);
+//            //worker = new Worker(new URL(url), auth, scanTime, retryPause, nThread, throttle,
+// console);
 //            console.write("Miner: Worker created");
 //        } catch (MinyaException e) {
 //            Log.i("LC", "Invalid URL:");
@@ -163,7 +164,8 @@
 //            mainHandler.sendMessage(msg);
 //        }
 //        else if (n == Worker.Notification.CONNECTION_ERROR) {
-//            android.util.Log.i("LC", "Connection error, retrying in " + worker.getRetryPause()/1000L + " seconds");
+//            android.util.Log.i("LC", "Connection error, retrying in " +
+// worker.getRetryPause()/1000L + " seconds");
 //            status="Error";
 //            console.write("Miner: Connection error");
 //            bundle.putString("status", status);
@@ -266,4 +268,4 @@
 //
 //        }
 //    }
-//}
+// }

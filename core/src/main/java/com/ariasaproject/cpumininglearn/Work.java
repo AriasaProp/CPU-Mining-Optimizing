@@ -4,11 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +18,8 @@ public class Work {
   private static final int DEFAULT_TIMEOUT = 10000; // ms
 
   private static final Pattern dataPattern = Pattern.compile("\"data\"\\s*:\\s*\"([0-9a-f]+)\"");
-  private static final Pattern targetPattern = Pattern.compile("\"target\"\\s*:\\s*\"([0-9a-f]+)\"");
+  private static final Pattern targetPattern =
+      Pattern.compile("\"target\"\\s*:\\s*\"([0-9a-f]+)\"");
   private static final Pattern resultPattern = Pattern.compile("\"result\"\\s*:\\s*([0-9A-Za-z]+)");
 
   private URL url;
@@ -31,9 +32,9 @@ public class Work {
   private byte[] header; // big-endian
 
   public Work(URLConnection conn, URL url, String auth) throws IOException {
-  	final String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
+    final String request = "{\"method\": \"getwork\", \"params\": [], \"id\":0}";
     getJsonRpcConnection(conn, request, auth);
-    int response = ((HttpURLConnection)conn).getResponseCode();
+    int response = ((HttpURLConnection) conn).getResponseCode();
     if (response == 401 || response == 403) throw new IllegalArgumentException("Access denied");
     String content = getConnectionContent(conn);
     responseTime = System.currentTimeMillis();
@@ -164,10 +165,11 @@ public class Work {
     return new String(ar);
   }
 
-  public void getJsonRpcConnection(URLConnection conn, String request, String auth) throws IOException {
+  public void getJsonRpcConnection(URLConnection conn, String request, String auth)
+      throws IOException {
     if (conn.getConnectTimeout() == 0) conn.setConnectTimeout(DEFAULT_TIMEOUT);
     if (conn.getReadTimeout() == 0) conn.setReadTimeout(DEFAULT_TIMEOUT);
-    ((HttpURLConnection)conn).setRequestMethod("POST");
+    ((HttpURLConnection) conn).setRequestMethod("POST");
     if (auth != null) conn.setRequestProperty("Authorization", "Basic " + stringToBase64(auth));
     conn.setRequestProperty("Content-Type", "application/json");
     conn.setRequestProperty("Content-Length", Integer.toString(request.getBytes().length));
@@ -195,9 +197,12 @@ public class Work {
 
   public static boolean test() {
     try {
-      byte[] header = hexStringToByteArray("01000000f615f7ce3b4fc6b8f61e8f89aedb1d0852507650533a9e3b10b9bbcc30639f279fcaa86746e1ef52d3edb3c4ad8259920d509bd073605c9bf1d59983752a6b06b817bb4ea78e011d012d59d4");
+      byte[] header =
+          hexStringToByteArray(
+              "01000000f615f7ce3b4fc6b8f61e8f89aedb1d0852507650533a9e3b10b9bbcc30639f279fcaa86746e1ef52d3edb3c4ad8259920d509bd073605c9bf1d59983752a6b06b817bb4ea78e011d012d59d4");
       byte[] hash = new Hasher().hash(header);
-      return byteArrayToHexString(hash).equals("d9eb8663ffec241c2fb118adb7de97a82c803b6ff46d57667935c81001000000");
+      return byteArrayToHexString(hash)
+          .equals("d9eb8663ffec241c2fb118adb7de97a82c803b6ff46d57667935c81001000000");
     } catch (GeneralSecurityException e) {
       return false;
     }

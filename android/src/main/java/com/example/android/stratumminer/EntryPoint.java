@@ -1,17 +1,18 @@
-//package com.example.android.stratumminer;
+// package com.example.android.stratumminer;
 //
-//import com.example.android.stratumminer.connection.IMiningConnection;
-//import com.example.android.stratumminer.connection.StratumMiningConnection;
-//import com.example.android.stratumminer.worker.CpuMiningWorker;
-//import com.example.android.stratumminer.worker.IMiningWorker;
+// import com.example.android.stratumminer.connection.IMiningConnection;
+// import com.example.android.stratumminer.connection.StratumMiningConnection;
+// import com.example.android.stratumminer.worker.CpuMiningWorker;
+// import com.example.android.stratumminer.worker.IMiningWorker;
 //
-///**
+/// **
 // * Created by Ben David on 01/08/2017.
 // */
 //
-//public class EntryPoint
-//{
-////    private static final String DEFAULT_URL = "stratum+tcp://stratum-eu.nyan.luckyminers.com:3320";
+// public class EntryPoint
+// {
+////    private static final String DEFAULT_URL =
+// "stratum+tcp://stratum-eu.nyan.luckyminers.com:3320";
 ////    private static final String DEFAULT_USER = "user";
 ////    private static final String DEFAULT_PASS = "pass";
 //
@@ -23,7 +24,8 @@
 //    {
 //        try {
 ////			IMiningConnection mc=new TestStratumMiningConnection(0);
-//            IMiningConnection mc=new StratumMiningConnection(DEFAULT_URL,DEFAULT_USER,DEFAULT_PASS);
+//            IMiningConnection mc=new
+// StratumMiningConnection(DEFAULT_URL,DEFAULT_USER,DEFAULT_PASS);
 //            IMiningWorker imw=new CpuMiningWorker(4);
 //            SingleMiningChief smc=new SingleMiningChief(mc,imw);
 //            smc.startMining();
@@ -36,4 +38,4 @@
 //        }
 //    }
 //
-//}
+// }

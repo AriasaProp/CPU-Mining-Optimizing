@@ -1,10 +1,8 @@
 package com.ariasaproject.cpumininglearn;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,7 +13,14 @@ public class Miner implements Observer {
   private long lastWorkHashes;
   private final ConsoleMessage console_msg;
 
-  public Miner(URL url, String auth, long scanTime, long retryPause, int nThread, double throttle, ConsoleMessage cm) {
+  public Miner(
+      URL url,
+      String auth,
+      long scanTime,
+      long retryPause,
+      int nThread,
+      double throttle,
+      ConsoleMessage cm) {
     if (nThread < 1) throw new IllegalArgumentException("Invalid number of threads: " + nThread);
     if (throttle <= 0.0 || throttle > 1.0)
       throw new IllegalArgumentException("Invalid throttle: " + throttle);
@@ -35,9 +40,11 @@ public class Miner implements Observer {
   public void log(int lvl, String str) {
     console_msg.sendLog(1, str);
   }
+
   public void stop() {
-  	worker.stop();
+    worker.stop();
   }
+
   public void join() {
     try {
       m_thread.join();

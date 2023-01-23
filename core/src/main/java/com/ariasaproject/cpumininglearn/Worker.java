@@ -1,10 +1,10 @@
 package com.ariasaproject.cpumininglearn;
 
 import java.io.IOException;
-import java.net.URLConnection;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.AccessControlException;
 import java.security.GeneralSecurityException;
 import java.util.Observable;
@@ -42,7 +42,14 @@ public class Worker extends Observable implements Runnable {
   private AtomicLong hashes = new AtomicLong(0L);
   private final ConsoleMessage console_log;
 
-  public Worker(URL url, String auth, long scanMillis, long pauseMillis, int nThreads, double throttle, ConsoleMessage cm) {
+  public Worker(
+      URL url,
+      String auth,
+      long scanMillis,
+      long pauseMillis,
+      int nThreads,
+      double throttle,
+      ConsoleMessage cm) {
     this.console_log = cm;
     this.url = url;
     this.auth = auth;
@@ -79,53 +86,54 @@ public class Worker extends Observable implements Runnable {
       final int step = (int) Math.pow(2, Math.ceil(Math.log(nThreads) / Math.log(2) + 1e-10));
       for (int i = 0; i < nThreads; ++i) {
         final int index = i;
-      	threads[1 + i] = new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  Hasher hasher = new Hasher();
-                  int nonce = index;
-                  long dt, t0 = System.nanoTime();
-                  while (running) {
+        threads[1 + i] =
+            new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
                     try {
-                      if (curWork.meetsTarget(nonce, hasher)) {
-                        // submit nonce
+                      Hasher hasher = new Hasher();
+                      int nonce = index;
+                      long dt, t0 = System.nanoTime();
+                      while (running) {
                         try {
-                          boolean result = curWork.submit(nonce);
-                          setChanged();
-                          notifyObservers(
-                              result ? Notification.POW_TRUE : Notification.POW_FALSE);
-                        } catch (IOException e) {
-                        }
-                        if (lpUrl == null) {
-                          synchronized (Worker.this) {
-                            curWork = null;
-                            Worker.this.notify();
+                          if (curWork.meetsTarget(nonce, hasher)) {
+                            // submit nonce
+                            try {
+                              boolean result = curWork.submit(nonce);
+                              setChanged();
+                              notifyObservers(
+                                  result ? Notification.POW_TRUE : Notification.POW_FALSE);
+                            } catch (IOException e) {
+                            }
+                            if (lpUrl == null) {
+                              synchronized (Worker.this) {
+                                curWork = null;
+                                Worker.this.notify();
+                              }
+                            }
+                          }
+                          nonce += step;
+                          hashes.incrementAndGet();
+                          if (throttleFactor > 0.0
+                              && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
+                            LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
+                            t0 = System.nanoTime();
+                          }
+                        } catch (NullPointerException e) {
+                          try {
+                            Thread.sleep(1L);
+                          } catch (InterruptedException ie) {
                           }
                         }
                       }
-                      nonce += step;
-                      hashes.incrementAndGet();
-                      if (throttleFactor > 0.0
-                          && (dt = System.nanoTime() - t0) > THROTTLE_WAIT_TIME) {
-                        LockSupport.parkNanos(Math.max(0L, (long) (throttleFactor * dt)));
-                        t0 = System.nanoTime();
-                      }
-                    } catch (NullPointerException e) {
-                      try {
-                        Thread.sleep(1L);
-                      } catch (InterruptedException ie) {
-                      }
+                    } catch (GeneralSecurityException e) {
+                      setChanged();
+                      notifyObservers(Notification.SYSTEM_ERROR);
+                      stop();
                     }
                   }
-                } catch (GeneralSecurityException e) {
-                  setChanged();
-                  notifyObservers(Notification.SYSTEM_ERROR);
-                  stop();
-                }
-              }
-            });
+                });
         threads[1 + i].start();
       }
       do {
@@ -154,7 +162,7 @@ public class Worker extends Observable implements Runnable {
       } while (running);
       running = false;
     }
-    if (lpConn != null) ((HttpURLConnection)lpConn).disconnect();
+    if (lpConn != null) ((HttpURLConnection) lpConn).disconnect();
     try {
       for (Thread t : threads) if (t != null) t.join();
     } catch (InterruptedException e) {
@@ -170,7 +178,7 @@ public class Worker extends Observable implements Runnable {
         return new Work(url.openConnection(), url, auth);
       } catch (Exception e) {
         if (!running) break;
-      	console_log.sendLog(4, e.getMessage());
+        console_log.sendLog(4, e.getMessage());
         setChanged();
         if (e instanceof IllegalArgumentException) {
           notifyObservers(Notification.AUTHENTICATION_ERROR);
