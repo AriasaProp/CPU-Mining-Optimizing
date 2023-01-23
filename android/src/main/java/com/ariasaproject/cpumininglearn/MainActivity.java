@@ -131,11 +131,11 @@ public class MainActivity extends Activity {
 			  	String uri = uri_value.getText().toString();
 			  	String user = username_value.getText().toString();
 			  	String pass = password_value.getText().toString();
+  				final String message1 = "{\"jsonrpc\" : \"2.0\", \"id\": 1, \"method\": \"mining.subscribe\", \"params\": []}";
 			  	try (Socket socket = new Socket()) {
-	  				String message1 = "{\"jsonrpc\" : \"2.0\", \"id\": 1, \"method\": \"mining.subscribe\", \"params\": []}";
 	  				socket.connect(new InetSocketAddress(uri, 8080));
-				    input = new DataInputStream(socket.getInputStream());
-				    output = new DataOutputStream(socket.getOutputStream());
+				    DataInputStream input = new DataInputStream(socket.getInputStream());
+				    DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 				    
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
