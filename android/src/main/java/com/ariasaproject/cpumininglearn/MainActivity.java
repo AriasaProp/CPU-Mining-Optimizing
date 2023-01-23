@@ -97,8 +97,8 @@ public class MainActivity extends Activity {
     cur.setText(logDateFormat.format(new Date()) + msg);
   }
   boolean onMining = false;
-  Miner m;
-  Socket socket = new Socket();
+  //Miner m;
+  //Socket socket = new Socket();
   public void startstopMining(final View v) {
   	final Button s = (Button) v;
   	if (onMining) {
@@ -108,8 +108,10 @@ public class MainActivity extends Activity {
 	    new Thread(new Runnable() {
 		    @Override
 		    public void run() {
+		    	/*
 		  		m.stop();
 		  		m.join();
+		  		*/
 		      runOnUiThread(new Runnable() {
 				    @Override
 				    public void run() {
@@ -129,26 +131,23 @@ public class MainActivity extends Activity {
 			  	String uri = uri_value.getText().toString();
 			  	String user = username_value.getText().toString();
 			  	String pass = password_value.getText().toString();
-			  	try {
-			  		
-			  		//m = new Miner(new URL(uri), user+":"+pass, 5000, 10000, 1, 1.0d, co);
-			  		socket.connect(new InetSocketAddress(uri, 8080));
-			  		String message1 = "{\"jsonrpc\" : \"2.0\", \"id\": 1, \"method\": \"mining.subscribe\", \"params\": []}";
-			  		PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			  	try (Socket socket = new Socket()) {
+	  				String message1 = "{\"jsonrpc\" : \"2.0\", \"id\": 1, \"method\": \"mining.subscribe\", \"params\": []}";
+	  				socket.connect(new InetSocketAddress(uri, 8080));
+				    input = new DataInputStream(socket.getInputStream());
+				    output = new DataOutputStream(socket.getOutputStream());
+				    
+			  		output.write((message1 + "\\n"));
+			  		co.sendLog(1, input.readLine()); //Hangs here.
+			  		wait(500);
+			  		/*
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
 			  		wait(500);
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
 			  		wait(500);
-			  		output.write((message1 + "\\n"));
-			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		wait(500);
-			  		output.close();
-			  		input.close();
-			  		socket.close();
-			  		wait(500);
+			  		*/
 			  	} catch (Exception e) {
 			  		runOnUiThread(new Runnable() {
 					    @Override
