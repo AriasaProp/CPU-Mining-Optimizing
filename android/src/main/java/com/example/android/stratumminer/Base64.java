@@ -1,20 +1,20 @@
 package com.example.android.stratumminer;
 
-/** Created by Ben David on 01/08/2017. */
 public class Base64 {
-  private static final char[] BASE64_ALPHABET =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+  private static final char[] BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
   public static final String encode(String str) {
+  	
     byte[] buf = str.getBytes();
     int size = buf.length;
     char[] ar = new char[((size + 2) / 3) * 4];
     int a = 0;
     int i = 0;
+    byte b0,b1,b2;
     while (i < size) {
-      byte b0 = buf[i++];
-      byte b1 = (i < size) ? buf[i++] : 0;
-      byte b2 = (i < size) ? buf[i++] : 0;
+      b0 = buf[i++];
+      b1 = (i < size) ? buf[i++] : 0;
+      b2 = (i < size) ? buf[i++] : 0;
       ar[a++] = BASE64_ALPHABET[(b0 >> 2) & 0x3f];
       ar[a++] = BASE64_ALPHABET[((b0 << 4) | ((b1 & 0xFF) >> 4)) & 0x3f];
       ar[a++] = BASE64_ALPHABET[((b1 << 2) | ((b2 & 0xFF) >> 6)) & 0x3f];

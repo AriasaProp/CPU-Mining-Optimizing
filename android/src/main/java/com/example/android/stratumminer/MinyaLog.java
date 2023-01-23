@@ -3,7 +3,6 @@ package com.example.android.stratumminer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-/** Created by Ben David on 01/08/2017. */
 public class MinyaLog {
   public static interface ILogOutput {
     static final int LV_DEBUG = 1;

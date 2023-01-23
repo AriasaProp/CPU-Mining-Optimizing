@@ -27,36 +27,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 import com.example.android.stratumminer.connection.IMiningConnection;
 import com.example.android.stratumminer.connection.StratumMiningConnection;
 import com.example.android.stratumminer.worker.CpuMiningWorker;
 import com.example.android.stratumminer.worker.IMiningWorker;
 
-/** Created by Tal on 03/08/2017. */
 public class MinerService extends Service {
 
   IMiningConnection mc;
   IMiningWorker imw;
   SingleMiningChief smc;
-  // Miner miner;
   Console console;
-  // String news=null;
   Boolean running = false;
   float speed = 0;
   int accepted = 0;
   int rejected = 0;
   String status = STATUS_NOT_MINING;
   String cString = "";
-  // int baseThreadCount = Thread.activeCount();
 
-  Handler serviceHandler =
-      new Handler() {
+  Handler serviceHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
           Bundle bundle = msg.getData();
-          Log.i("LC", "Service: handleMessage() " + msg.arg1);
 
           if (msg.arg1 == MSG_CONSOLE_UPDATE) {
             cString = bundle.getString("console");
@@ -83,13 +76,10 @@ public class MinerService extends Service {
     }
   }
 
-  public MinerService() {
-    Log.i("LC", "Service: MinerService()");
-  }
+  public MinerService() {}
 
   public void startMiner() {
     console = new Console(serviceHandler);
-    Log.i("LC", "MinerService:startMiner()");
     SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
     String url, user, pass;
     speed = 0;
@@ -100,20 +90,6 @@ public class MinerService extends Service {
     url = settings.getString(PREF_URL, DEFAULT_URL);
     user = settings.getString(PREF_USER, DEFAULT_USER);
     pass = settings.getString(PREF_PASS, DEFAULT_PASS);
-
-    //        if (settings.getBoolean(PREF_DONATE, DEFAULT_DONATE)==true)
-    //        {
-    //            console.write("Main: Donate mode");
-    //            url=DONATE_URL;
-    //            user=DONATE_USER;
-    //            pass=DONATE_PASS;
-    //        }
-    //        else
-    //        {
-    //            url = settings.getString(PREF_URL, DEFAULT_URL);
-    //            user = settings.getString(PREF_USER, DEFAULT_USER);
-    //            pass = settings.getString(PREF_PASS, DEFAULT_PASS);
-    //        }
 
     try {
       mc = new StratumMiningConnection(url, user, pass);
@@ -126,45 +102,21 @@ public class MinerService extends Service {
       e.printStackTrace();
     }
 
-    //        miner = new Miner(url,
-    //                user+":"+
-    //                        pass,
-    //                settings.getLong(PREF_SCANTIME, DEFAULT_SCANTIME),
-    //                settings.getLong(PREF_RETRYPAUSE, DEFAULT_RETRYPAUSE),
-    //                settings.getInt(PREF_THREAD, DEFAULT_THREAD),
-    //                settings.getFloat(PREF_THROTTLE, DEFAULT_THROTTLE),
-    //                settings.getInt(PREF_PRIORITY, DEFAULT_PRIORITY),
-    //                serviceHandler, console);
-    //        miner.start();
   }
 
   public void stopMiner() {
-    Log.i("LC", "Service: onBind()");
     console.write("Service: Stopping mining");
-    Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG)
-        .show();
+    Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
     running = false;
     try {
       smc.stopMining();
     } catch (MinyaException e) {
       e.printStackTrace();
     }
-    //        int lastThreadCount = Thread.activeCount();
-    //        while (Thread.activeCount() != baseThreadCount) {
-    //            if (Thread.activeCount() == lastThreadCount) {
-    //                lastThreadCount = Thread.activeCount();
-    //                continue;
-    //            }
-    //            Log.i("Thread.ActiveCount()" , "" + Thread.activeCount());
-    //            lastThreadCount = Thread.activeCount();
-    //        }
-    //        miner.stop();
   }
 
   @Override
   public IBinder onBind(Intent intent) {
-    Log.i("LC", "Service: onBind()");
-
     return mBinder;
   }
 }
