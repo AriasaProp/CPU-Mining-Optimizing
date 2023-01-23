@@ -14,6 +14,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.net.URL;
+import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import com.ariasaproject.cpumininglearn.Miner;
 
@@ -133,21 +138,21 @@ public class MainActivity extends Activity {
 			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.wait(500);
+			  		Thread.getCurrentThread().wait(500);
 			  		PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
 			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.wait(500);
+			  		Thread.getCurrentThread().wait(500);
 			  		PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
 			  		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			  		output.write((message1 + "\\n"));
 			  		co.sendLog(1, input.readLine()); //Hangs here.
-			  		Thread.wait(500);
+			  		Thread.getCurrentThread().wait(500);
 			  		output.close();
 			  		input.close();
 			  		socket.close();
-			  		Thread.wait(500);
+			  		Thread.getCurrentThread().wait(500);
 			  	} catch (Exception e) {
 			  		runOnUiThread(new Runnable() {
 					    @Override
