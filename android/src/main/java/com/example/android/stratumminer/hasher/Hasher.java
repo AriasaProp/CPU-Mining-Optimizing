@@ -7,7 +7,6 @@ import java.security.GeneralSecurityException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-/** Created by Ben David on 01/08/2017. */
 public class Hasher {
 
   private Mac mac;
