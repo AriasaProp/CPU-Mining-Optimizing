@@ -1,4 +1,4 @@
-package com.ariasaproject.cpumininglearn;
+package com.example.android.stratumminer;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

@@ -11,7 +11,7 @@ android {
     }
     compileSdkVersion 32
     defaultConfig {
-        applicationId "com.ariasaproject.cpumininglearn"
+        applicationId "com.example.android.stratumminer"
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
