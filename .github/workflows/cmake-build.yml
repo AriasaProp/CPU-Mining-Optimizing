@@ -8,13 +8,14 @@ on:
 jobs:
   build:
     strategy:
-      matrix:
-        - name: ubuntu
-          os: ubuntu-latest
-        - name: windows
-          os: windows-latest
-        - name: macOS
-          os: macOS-latest
+      matrix
+        include:
+	        - name: ubuntu
+	          os: ubuntu-latest
+	        - name: windows
+	          os: windows-latest
+	        - name: macOS
+	          os: macOS-latest
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
