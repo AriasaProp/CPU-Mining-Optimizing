@@ -6,12 +6,12 @@ public final class HexArray {
   public HexArray(String i_s) {
     this._v = toByteArray(i_s);
   }
-  
+
   public HexArray(HexArray i_src) {
     this._v = new byte[i_src._v.length];
     System.arraycopy(i_src._v, 0, this._v, 0, i_src._v.length);
   }
-  
+
   public HexArray(byte[] i_attach_array) {
     this._v = i_attach_array;
   }
@@ -28,7 +28,7 @@ public final class HexArray {
   public String getStr() {
     return toHexString(this._v);
   }
-  
+
   public String getStr(int i_s, int i_l) {
     return toHexString(this._v, i_s, i_l);
   }
@@ -45,6 +45,7 @@ public final class HexArray {
     }
     return;
   }
+
   public void append(HexArray i_add, int i_s, int i_len) {
     this.append(i_add._v, i_s, i_len);
     return;
@@ -84,6 +85,7 @@ public final class HexArray {
     }
     return sb.toString();
   }
+
   private static String toHexString(byte[] b, int i_s, int i_len) {
     StringBuilder sb = new StringBuilder(i_len * 2);
     for (int i = 0; i < i_len; i++) {

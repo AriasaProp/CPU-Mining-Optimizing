@@ -8,6 +8,7 @@ public class StratumJsonMethodShowMessage extends StratumJsonMethod {
       "{\"params\": [\"TEST\"], \"jsonrpc\": \"2.0\", \"method\": \"client.show_message\", \"id\":"
           + " null}";
   public final String val;
+
   public StratumJsonMethodShowMessage(JsonNode i_json_node) throws RuntimeException {
     super(i_json_node);
     String s = i_json_node.get("method").asText();

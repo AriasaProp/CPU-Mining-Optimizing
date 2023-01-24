@@ -1,16 +1,17 @@
 package com.ariasaproject.cpuminingopt;
 
 public class Base64 {
-  private static final char[] BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+  private static final char[] BASE64_ALPHABET =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
   public static final String encode(String str) {
-  	
+
     byte[] buf = str.getBytes();
     int size = buf.length;
     char[] ar = new char[((size + 2) / 3) * 4];
     int a = 0;
     int i = 0;
-    byte b0,b1,b2;
+    byte b0, b1, b2;
     while (i < size) {
       b0 = buf[i++];
       b1 = (i < size) ? buf[i++] : 0;

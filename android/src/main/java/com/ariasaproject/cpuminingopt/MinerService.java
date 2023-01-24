@@ -43,7 +43,8 @@ public class MinerService extends Service {
   String status = STATUS_NOT_MINING;
   String cString = "";
 
-  Handler serviceHandler = new Handler() {
+  Handler serviceHandler =
+      new Handler() {
         @Override
         public void handleMessage(Message msg) {
           Bundle bundle = msg.getData();
@@ -74,22 +75,23 @@ public class MinerService extends Service {
   }
 
   public MinerService() {
-  	Console.setReceiver(new Console.Receiver(){
-  			@Override
-  			public void receive(int[] lvls, String[] msgs) {
-  					Message msg = new Message();
-				    Bundle bundle = new Bundle();
-				
-				    msg.arg1 = MSG_CONSOLE_UPDATE;
-				    StringBuilder sb = new StringBuilder();
-				    for (int i = 0; i < 20; i++) {
-				      sb.append(msgs[i] + '\n');
-				    }
-				    bundle.putString("console", sb.toString());
-				    msg.setData(bundle);
-				    serviceHandler.sendMessage(msg);
-  			}
-  	});
+    Console.setReceiver(
+        new Console.Receiver() {
+          @Override
+          public void receive(int[] lvls, String[] msgs) {
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+
+            msg.arg1 = MSG_CONSOLE_UPDATE;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 20; i++) {
+              sb.append(msgs[i] + '\n');
+            }
+            bundle.putString("console", sb.toString());
+            msg.setData(bundle);
+            serviceHandler.sendMessage(msg);
+          }
+        });
   }
 
   public void startMiner() {
@@ -112,15 +114,14 @@ public class MinerService extends Service {
       smc.startMining();
       running = true;
     } catch (Exception e) {
-    	for (StackTraceElement t : e.getStackTrace())
-    			Console.send(0, "Error: "+t.toString());
+      for (StackTraceElement t : e.getStackTrace()) Console.send(0, "Error: " + t.toString());
     }
-
   }
 
   public void stopMiner() {
     Console.send(0, "Service: Stopping mining");
-    Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
+    Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG)
+        .show();
     running = false;
     try {
       smc.stopMining();

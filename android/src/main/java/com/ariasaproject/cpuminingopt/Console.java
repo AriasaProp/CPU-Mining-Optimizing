@@ -12,31 +12,34 @@ public class Console {
   private static Receiver _receiver;
   private static String[] messages = new String[20];
   private static int[] levels = new int[20];
+
   static {
     for (int i = 0; i < 20; i++) {
       messages[i] = "";
       levels[i] = 0;
     }
   }
+
   public static void setReceiver(Receiver r) {
-  		_receiver = r;
+    _receiver = r;
   }
+
   public static void send(int lvl, String s) {
     if (s != null) {
-	    	int i = 20;
-	      while (--i > 0) {
-		        messages[i] = messages[i - 1];
-		      	levels[i] = levels[i - 1];
-	      }
-	      messages[0] = logDateFormat.format(new Date()) + s;
-	      levels[0] = lvl;
+      int i = 20;
+      while (--i > 0) {
+        messages[i] = messages[i - 1];
+        levels[i] = levels[i - 1];
+      }
+      messages[0] = logDateFormat.format(new Date()) + s;
+      levels[0] = lvl;
     }
-    if (_receiver != null)
-  			_receiver.receive(levels, messages);
+    if (_receiver != null) _receiver.receive(levels, messages);
   }
-  
+
   public static interface Receiver {
-  	public static final int MAX_LENGTH = 20;
-  	public void receive(int[] lvls, String[] msgs);
+    public static final int MAX_LENGTH = 20;
+
+    public void receive(int[] lvls, String[] msgs);
   }
 }

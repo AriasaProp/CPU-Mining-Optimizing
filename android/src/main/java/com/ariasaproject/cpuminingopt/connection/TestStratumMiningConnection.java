@@ -32,7 +32,7 @@ public class TestStratumMiningConnection implements IMiningConnection {
     new Dataset(
         /*NAME*/ "ACCEPTABLE_PAT1",
         /*SR   */ "{\"error\": null, \"id\": 1, \"result\": [[\"mining.notify\","
-                      + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"f8002fb8\", 4]}",
+            + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"f8002fb8\", 4]}",
         /*NT   */ "{\"params\": [\"e4c\","
                       + " \"713aff93fae198b15732ff94f1b989f7e6290cee8587ad5c3277f79e381872f9\","
                       + " \"01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff26026a0b062f503253482f04aca1b75208\","
@@ -55,7 +55,7 @@ public class TestStratumMiningConnection implements IMiningConnection {
     new Dataset(
         /*NAME*/ "ACCEPTABLE_NYN",
         /*SR   */ "{\"error\": null, \"id\": 1, \"result\": [[\"mining.notify\","
-                      + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"2800304b\", 4]}",
+            + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"2800304b\", 4]}",
         /*NT   */ "{\"params\": [\"5138\","
                       + " \"914ec264690182c3258a2850b4d5ff06eb82c896f1f9b7ae49354acbd3cbd856\","
                       + " \"01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff2f026c53062f503253482f04442fd55208\","
@@ -67,7 +67,7 @@ public class TestStratumMiningConnection implements IMiningConnection {
     new Dataset(
         /*NAME*/ "ACCEPTABLE_NYN",
         /*SR   */ "{\"error\": null, \"id\": 1, \"result\": [[\"mining.notify\","
-                      + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"28003af1\", 4]}",
+            + " \"ae6812eb4cd7735a302a8a9dd95cf71f\"], \"28003af1\", 4]}",
         /*NT   */ "{\"params\": [\"4dd9\","
                       + " \"40a5e84bd5dd28dacea5e20c244febebc0cf7798feef17d4e71f7a3f0cfc74e9\","
                       + " \"01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3003f48800062f503253482f04dfacdb5208\","
@@ -127,14 +127,17 @@ public class TestStratumMiningConnection implements IMiningConnection {
   public void addListener(IConnectionEvent i_listener) throws RuntimeException {
     // TODO Auto-generated method stub
   }
+
   private String _uid = "NyanNyan!";
+
   @Override
   public void submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
     //	[2014-01-14 21:35:40] > {"method": "mining.submit", "params": ["xxxx", "5138", "00000000",
     // "52d52f15", "6fe10000"], "id":4}
 
     StratumMiningWork w = (StratumMiningWork) i_work;
-    this.submit(i_nonce, this._uid, w.job_id, w.xnonce2, w.data.getStr(MiningWork.INDEX_OF_NTIME, 4));
+    this.submit(
+        i_nonce, this._uid, w.job_id, w.xnonce2, w.data.getStr(MiningWork.INDEX_OF_NTIME, 4));
     return;
   }
 

@@ -35,7 +35,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     public Worker(CpuMiningWorker i_parent) {
       this._parent = i_parent;
     }
-    
+
     public void setWork(MiningWork i_work, int i_start, int i_step) {
       this._work = i_work;
       this._start = i_start;
@@ -83,7 +83,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       }
     }
   }
-  
+
   public void calcSpeedPerThread(long numOfHashes) {
     long curr_time = System.currentTimeMillis();
     double delta_time = Math.max(1, curr_time - this._last_time) / 1000.0;

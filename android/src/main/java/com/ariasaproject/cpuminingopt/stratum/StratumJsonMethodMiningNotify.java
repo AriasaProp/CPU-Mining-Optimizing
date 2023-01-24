@@ -23,47 +23,47 @@ public class StratumJsonMethodMiningNotify extends StratumJsonMethod {
   public final HexArray coinb2;
 
   public StratumJsonMethodMiningNotify(JsonNode i_json_node) throws RuntimeException {
-    	super(i_json_node);
-      String s = i_json_node.get("method").asText();
-      if (s.compareTo("mining.notify") != 0) {
-        throw new RuntimeException();
-      }
-    	JsonNode params = i_json_node.get("params");
-    	// job_id
-      this.job_id = params.get(0).asText();
-      this.prev_hash = toHexArray(params.get(1).asText(), 64);
-      this.coinb1 = new HexArray(params.get(2).asText());
-      this.coinb2 = new HexArray(params.get(3).asText());
-    	// merkle_arr
-      JsonNode merkle_arr = params.get(4);
-      if (!merkle_arr.isArray()) {
-        throw new RuntimeException();
-      }
-      ArrayList<HexArray> l = new ArrayList<HexArray>();
-      for (Iterator<JsonNode> i = merkle_arr.iterator(); i.hasNext(); ) {
-        l.add(toHexArray(i.next().asText(), 64));
-      }
-      this.merkle_arr = l.toArray(new HexArray[l.size()]);
-    	// version
-      this.version = toHexArray(params.get(5).asText(), 8);
-    	// nbit
-      this.nbit = toHexArray(params.get(6).asText(), 8);
-    	// ntime
-      this.ntime = toHexArray(params.get(7).asText(), 8);
-    	// clean
-      this.clean = params.get(8).asBoolean();
+    super(i_json_node);
+    String s = i_json_node.get("method").asText();
+    if (s.compareTo("mining.notify") != 0) {
+      throw new RuntimeException();
+    }
+    JsonNode params = i_json_node.get("params");
+    // job_id
+    this.job_id = params.get(0).asText();
+    this.prev_hash = toHexArray(params.get(1).asText(), 64);
+    this.coinb1 = new HexArray(params.get(2).asText());
+    this.coinb2 = new HexArray(params.get(3).asText());
+    // merkle_arr
+    JsonNode merkle_arr = params.get(4);
+    if (!merkle_arr.isArray()) {
+      throw new RuntimeException();
+    }
+    ArrayList<HexArray> l = new ArrayList<HexArray>();
+    for (Iterator<JsonNode> i = merkle_arr.iterator(); i.hasNext(); ) {
+      l.add(toHexArray(i.next().asText(), 64));
+    }
+    this.merkle_arr = l.toArray(new HexArray[l.size()]);
+    // version
+    this.version = toHexArray(params.get(5).asText(), 8);
+    // nbit
+    this.nbit = toHexArray(params.get(6).asText(), 8);
+    // ntime
+    this.ntime = toHexArray(params.get(7).asText(), 8);
+    // clean
+    this.clean = params.get(8).asBoolean();
   }
 
   public HexArray getXnonce2(StratumJsonResultSubscribe i_subscribe) {
-	    HexArray xnonce2 = new HexArray(new byte[i_subscribe.xnonce2_size]);
-	    return xnonce2;
+    HexArray xnonce2 = new HexArray(new byte[i_subscribe.xnonce2_size]);
+    return xnonce2;
   }
 
   public HexArray getCoinbase(StratumJsonResultSubscribe i_subscribe) {
-	    HexArray coinbase = new HexArray(this.coinb1);
-	    coinbase.append(i_subscribe.xnonce1);
-	    coinbase.append(this.getXnonce2(i_subscribe));
-	    coinbase.append(this.coinb2);
-	    return coinbase;
+    HexArray coinbase = new HexArray(this.coinb1);
+    coinbase.append(i_subscribe.xnonce1);
+    coinbase.append(this.getXnonce2(i_subscribe));
+    coinbase.append(this.coinb2);
+    return coinbase;
   }
 }

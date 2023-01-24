@@ -11,4 +11,3 @@ public class StratumMiningWork extends MiningWork {
     return;
   }
 }
-

@@ -1,5 +1,6 @@
 package com.ariasaproject.cpuminingopt.stratum;
 
+import com.ariasaproject.cpuminingopt.Console;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +14,6 @@ import java.io.Writer;
 import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
-import com.ariasaproject.cpuminingopt.Console;
 
 /** Created by Ben David on 01/08/2017. */
 public class StratumSocket extends Socket {
