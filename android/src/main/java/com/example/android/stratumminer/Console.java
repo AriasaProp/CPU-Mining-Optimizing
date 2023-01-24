@@ -22,7 +22,7 @@ public class Console {
     }
   }
   public static void setReceiver(Receiver r) {
-  		this._receiver = r;
+  		_receiver = r;
   }
   public static void send(int lvl, String s) {
     if (s != null) {
@@ -34,7 +34,7 @@ public class Console {
 	      messages[0] = logDateFormat.format(new Date()) + s;
 	      levels[0] = lvl;
     }
-    if (this._receiver != null)
+    if (_receiver != null)
   			_receiver.receive(levels, messages);
   }
   

@@ -107,8 +107,8 @@ public class MinerService extends Service {
     try {
       mc = new StratumMiningConnection(url, user, pass);
       int nThread = settings.getInt(PREF_THREAD, DEFAULT_THREAD);
-      imw = new CpuMiningWorker(nThread, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY, console);
-      smc = new SingleMiningChief(mc, imw, console, serviceHandler);
+      imw = new CpuMiningWorker(nThread, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
+      smc = new SingleMiningChief(mc, imw, serviceHandler);
       smc.startMining();
       running = true;
     } catch (Exception e) {
