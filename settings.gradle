@@ -1,2 +1,2 @@
-include ':core', ':desktop', ':android'
+include ':android'
 rootProject.name = 'CPU Mining Optimizing'
