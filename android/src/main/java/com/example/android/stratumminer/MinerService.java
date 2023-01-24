@@ -81,7 +81,7 @@ public class MinerService extends Service {
 				    Bundle bundle = new Bundle();
 				
 				    msg.arg1 = MSG_CONSOLE_UPDATE;
-				    sb = new StringBuilder();
+				    StringBuilder sb = new StringBuilder();
 				    for (int i = 0; i < 20; i++) {
 				      sb.append(msgs[i] + '\n');
 				    }

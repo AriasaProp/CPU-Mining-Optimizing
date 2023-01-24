@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 public class CpuMiningWorker extends Observable implements IMiningWorker {
-  private Console _console;
   private int _number_of_thread;
   private int _thread_priorirty;
-  // private ExecutorService _exec;
   private Worker[] _workr_thread;
   private long _retrypause;
 
@@ -19,7 +17,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     private static final long serialVersionUID = -4176908211058342478L;
 
     void invokeNonceFound(MiningWork i_work, int i_nonce) {
-      _console.write("Nonce found! +" + ((0xffffffffffffffffL) & i_nonce));
+      Console.send(0, "Nonce found! +" + ((0xffffffffffffffffL) & i_nonce));
       for (IWorkerEvent i : this) {
         i.onNonceFound(i_work, i_nonce);
       }
@@ -79,7 +77,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         notifyObservers(Notification.SYSTEM_ERROR);
         stopWork();
       } catch (InterruptedException e) {
-        _console.write("Thread killed. #Hashes=" + this.number_of_hashed);
+        Console.send(0, "Thread killed. #Hashes=" + this.number_of_hashed);
         calcSpeedPerThread(number_of_hashed);
         _last_time = System.currentTimeMillis();
       }
@@ -95,8 +93,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     notifyObservers(Notification.SPEED);
   }
 
-  public CpuMiningWorker(int i_number_of_thread, long retry_pause, int priority, Console console) {
-    _console = console;
+  public CpuMiningWorker(int i_number_of_thread, long retry_pause, int priority) {
     _thread_priorirty = priority;
     this._retrypause = retry_pause;
     this._number_of_thread = i_number_of_thread;
@@ -151,11 +148,11 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   public void stopWork() {
     for (Worker t : _workr_thread) {
       if (t != null) {
-        _console.write("Worker: Killing thread ID: " + t.getId());
+        Console.send(0, "Worker: Killing thread ID: " + t.getId());
         t.interrupt();
       }
     }
-    _console.write("Worker: Threads killed");
+    Console.send(0, "Worker: Threads killed");
   }
 
   @Override
@@ -182,7 +179,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   }
 
   public void ConsoleWrite(String c) {
-    _console.write(c);
+    Console.send(0, c);
   }
 
   private EventList _as_listener = new EventList();

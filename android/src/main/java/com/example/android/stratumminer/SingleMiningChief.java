@@ -33,7 +33,6 @@ public class SingleMiningChief implements Observer {
   public long rejected = 0;
   public int priority = 1;
   private Handler mainHandler;
-  private Console console;
   public IMiningConnection _connection;
   public IMiningWorker _worker;
   private EventListener _eventlistener;
@@ -64,7 +63,7 @@ public class SingleMiningChief implements Observer {
     @Override
     public void onNewWork(MiningWork i_work) {
       try {
-        console.write("New work detected!");
+        Console.send(0, "New work detected!");
         setChanged();
         notifyObservers(IMiningWorker.Notification.NEW_BLOCK_DETECTED);
         setChanged();
@@ -99,11 +98,10 @@ public class SingleMiningChief implements Observer {
     }
   }
 
-  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Console cons, Handler h) throws Exception {
+  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Handler h) throws Exception {
     status = STATUS_CONNECTING;
     speed = 0.0f;
     mainHandler = h;
-    this.console = cons;
     this._connection = i_connection;
     this._worker = i_worker;
     this._eventlistener = new EventListener(this);
@@ -112,7 +110,7 @@ public class SingleMiningChief implements Observer {
   }
 
   public void startMining() {
-    console.write("Miner: Starting worker thread, priority: " + priority);
+    Console.send(0, "Miner: Starting worker thread, priority: " + priority);
     ((StratumMiningConnection) _connection).addObserver(this);
     ((CpuMiningWorker) _worker).addObserver(this);
     MiningWork first_work = this._connection.connect();
@@ -125,9 +123,9 @@ public class SingleMiningChief implements Observer {
   }
 
   public void stopMining() {
-    console.write("Miner: Worker stopping...");
-    console.write("Miner: Worker cooling down");
-    console.write("Miner: This can take a few minutes");
+    Console.send(0, "Miner: Worker stopping...");
+    Console.send(0, "Miner: Worker cooling down");
+    Console.send(0, "Miner: This can take a few minutes");
     this._connection.disconnect();
     this._worker.stopWork();
     speed = 0;
@@ -140,21 +138,21 @@ public class SingleMiningChief implements Observer {
 
     IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
     if (n == IMiningWorker.Notification.SYSTEM_ERROR) {
-      console.write("Miner: System error");
+      Console.send(0, "Miner: System error");
       status = STATUS_ERROR;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.PERMISSION_ERROR) {
-      console.write("Miner: Permission error");
+      Console.send(0, "Miner: Permission error");
       status = STATUS_ERROR;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.TERMINATED) {
-      console.write("Miner: Worker terminated");
+      Console.send(0, "Miner: Worker terminated");
       status = STATUS_TERMINATED;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
@@ -172,7 +170,7 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.CONNECTING) {
-      console.write("Miner: Worker connecting");
+      Console.send(0, "Miner: Worker connecting");
       status = STATUS_CONNECTING;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
@@ -181,50 +179,50 @@ public class SingleMiningChief implements Observer {
 
     } else if (n == IMiningWorker.Notification.AUTHENTICATION_ERROR) {
       status = STATUS_ERROR;
-      console.write("Miner: Authentication error");
+      Console.send(0, "Miner: Authentication error");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.CONNECTION_ERROR) {
       status = STATUS_ERROR;
-      console.write("Miner: Connection error");
+      Console.send(0, "Miner: Connection error");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.COMMUNICATION_ERROR) {
       status = STATUS_ERROR;
-      console.write("Miner: Communication error");
+      Console.send(0, "Miner: Communication error");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.LONG_POLLING_FAILED) {
       status = STATUS_NOT_MINING;
-      console.write("Miner: Long polling failed");
+      Console.send(0, "Miner: Long polling failed");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.LONG_POLLING_ENABLED) {
       status = STATUS_MINING;
-      console.write("Miner: Long polling enabled");
-      console.write("Miner: Speed updates as work is completed");
+      Console.send(0, "Miner: Long polling enabled");
+      Console.send(0, "Miner: Speed updates as work is completed");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.NEW_BLOCK_DETECTED) {
       status = STATUS_MINING;
-      console.write("Miner: Detected new block");
+      Console.send(0, "Miner: Detected new block");
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.POW_TRUE) {
       status = STATUS_MINING;
-      console.write("Miner: PROOF OF WORK RESULT: true");
+      Console.send(0, "Miner: PROOF OF WORK RESULT: true");
       accepted += 1;
       bundle.putString("status", status);
       msg.arg1 = MSG_STATUS_UPDATE;
@@ -265,7 +263,7 @@ public class SingleMiningChief implements Observer {
         long hashes = _worker.getNumberOfHash() - lastWorkHashes;
         speed = (float) ((CpuMiningWorker) _worker).get_speed();
         status = STATUS_MINING;
-        console.write("Miner: " + String.format("%d Hashes, %.6f Hash/s", hashes, speed));
+        Console.send(0, "Miner: " + String.format("%d Hashes, %.6f Hash/s", hashes, speed));
         bundle.putString("status", status);
         msg.arg1 = MSG_STATUS_UPDATE;
         msg.setData(bundle);

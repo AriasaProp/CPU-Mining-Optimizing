@@ -35,7 +35,7 @@ public class Console {
 	      levels[0] = lvl;
     }
     if (this._receiver != null)
-  			r.receive(levels, messages);
+  			_receiver.receive(levels, messages);
   }
   
   public static interface Receiver {
