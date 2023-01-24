@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CPU Mining Learn</string>
+    <string name="app_name">CPU Mining Optimized by</string>
     
     <string name="main_tv_server">Server Address</string>
     <string name="main_tv_username">Username:</string>
