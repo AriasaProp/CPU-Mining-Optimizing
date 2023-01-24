@@ -23,5 +23,5 @@ public interface IMiningWorker {
   public void stopWork() throws RuntimeException;
   public int getProgress();
   public long getNumberOfHash();
-  public void addListener(IWorkerEvent i_listener) throws MinyaException;
+  public void addListener(IWorkerEvent i_listener) throws RuntimeException;
 }

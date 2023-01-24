@@ -87,9 +87,9 @@ public class MinerService extends Service {
     rejected = 0;
 
     console.write("Service: Start mining");
-    url = settings.getString(PREF_URL, DEFAULT_URL);
-    user = settings.getString(PREF_USER, DEFAULT_USER);
-    pass = settings.getString(PREF_PASS, DEFAULT_PASS);
+    url = settings.getString(PREF_URL, "stratum+tcp://us2.litecoin.org:8080");
+    user = settings.getString(PREF_USER, "Ariasa.test");
+    pass = settings.getString(PREF_PASS, "1234");
 
     try {
       mc = new StratumMiningConnection(url, user, pass);

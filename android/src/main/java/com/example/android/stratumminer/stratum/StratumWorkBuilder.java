@@ -2,7 +2,6 @@ package com.example.android.stratumminer.stratum;
 
 import com.example.android.stratumminer.HexArray;
 import com.example.android.stratumminer.MiningWork;
-import com.example.android.stratumminer.MinyaException;
 import com.example.android.stratumminer.StratumMiningWork;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,11 +28,11 @@ public class StratumWorkBuilder {
     this._subscribe = i_attached_subscribe;
   }
 
-  public void setDiff(StratumJsonMethodSetDifficulty i_difficulty) throws MinyaException {
+  public void setDiff(StratumJsonMethodSetDifficulty i_difficulty) throws RuntimeException {
     this._difficulty = i_difficulty.difficulty;
   }
 
-  public void setNotify(StratumJsonMethodMiningNotify i_attached_notify) throws MinyaException {
+  public void setNotify(StratumJsonMethodMiningNotify i_attached_notify) throws RuntimeException {
     this._notify = i_attached_notify;
     try {
       // 複製
@@ -56,7 +55,7 @@ public class StratumWorkBuilder {
       this._merkle_loot = new HexArray(merkle_loot);
       this._merkle_loot.swapEndian();
     } catch (NoSuchAlgorithmException e) {
-      throw new MinyaException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -67,9 +66,9 @@ public class StratumWorkBuilder {
    * MiningWorkを生成します。
    *
    * @return 生成できない場合はNULLです。
-   * @throws MinyaException
+   * @throws RuntimeException
    */
-  public MiningWork buildMiningWork() throws MinyaException {
+  public MiningWork buildMiningWork() throws RuntimeException {
     if (this._notify == null || this._subscribe == null || this._difficulty < 0) {
       return null;
     }
@@ -151,7 +150,7 @@ public class StratumWorkBuilder {
     } catch (JsonProcessingException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {

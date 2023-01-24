@@ -1,7 +1,6 @@
 package com.example.android.stratumminer.connection;
 
 import com.example.android.stratumminer.MiningWork;
-import com.example.android.stratumminer.MinyaException;
 import com.example.android.stratumminer.StratumMiningWork;
 import com.example.android.stratumminer.stratum.StratumJsonMethodMiningNotify;
 import com.example.android.stratumminer.stratum.StratumJsonMethodSetDifficulty;
@@ -11,9 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
-/** Created by Ben David on 01/08/2017. */
 public class TestStratumMiningConnection implements IMiningConnection {
-  /** サンプルデータの格納クラス */
   static class Dataset {
     String name;
     String sr;
@@ -101,7 +98,7 @@ public class TestStratumMiningConnection implements IMiningConnection {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -110,13 +107,13 @@ public class TestStratumMiningConnection implements IMiningConnection {
   private boolean _is_connect = false;
 
   @Override
-  public MiningWork connect() throws MinyaException {
+  public MiningWork connect() throws RuntimeException {
     this._is_connect = true;
     return this._work;
   }
 
   @Override
-  public void disconnect() throws MinyaException {
+  public void disconnect() throws RuntimeException {
     this._is_connect = false;
     return;
   }
@@ -127,20 +124,17 @@ public class TestStratumMiningConnection implements IMiningConnection {
   }
 
   @Override
-  public void addListener(IConnectionEvent i_listener) throws MinyaException {
+  public void addListener(IConnectionEvent i_listener) throws RuntimeException {
     // TODO Auto-generated method stub
   }
-
   private String _uid = "NyanNyan!";
-
   @Override
-  public void submitWork(MiningWork i_work, int i_nonce) throws MinyaException {
+  public void submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
     //	[2014-01-14 21:35:40] > {"method": "mining.submit", "params": ["xxxx", "5138", "00000000",
     // "52d52f15", "6fe10000"], "id":4}
 
     StratumMiningWork w = (StratumMiningWork) i_work;
-    this.submit(
-        i_nonce, this._uid, w.job_id, w.xnonce2, w.data.getStr(MiningWork.INDEX_OF_NTIME, 4));
+    this.submit(i_nonce, this._uid, w.job_id, w.xnonce2, w.data.getStr(MiningWork.INDEX_OF_NTIME, 4));
     return;
   }
 
