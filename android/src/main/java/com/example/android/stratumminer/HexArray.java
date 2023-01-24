@@ -1,26 +1,17 @@
 package com.example.android.stratumminer;
 
-/** Created by Ben David on 01/08/2017. */
 public final class HexArray {
   private byte[] _v;
 
   public HexArray(String i_s) {
     this._v = toByteArray(i_s);
   }
-  /**
-   * copy constructor
-   *
-   * @param i_src
-   */
+  
   public HexArray(HexArray i_src) {
     this._v = new byte[i_src._v.length];
     System.arraycopy(i_src._v, 0, this._v, 0, i_src._v.length);
   }
-  /**
-   * 配列をインスタンスにアタッチして生成する。
-   *
-   * @param i_attach_array
-   */
+  
   public HexArray(byte[] i_attach_array) {
     this._v = i_attach_array;
   }
@@ -37,13 +28,7 @@ public final class HexArray {
   public String getStr() {
     return toHexString(this._v);
   }
-  /**
-   * データの一部を文字列化する。
-   *
-   * @param i_s 開始インデクス
-   * @param i_l 長さ
-   * @return
-   */
+  
   public String getStr(int i_s, int i_l) {
     return toHexString(this._v, i_s, i_l);
   }
@@ -60,12 +45,6 @@ public final class HexArray {
     }
     return;
   }
-
-  /**
-   * 配列を追記する。
-   *
-   * @param i_add
-   */
   public void append(HexArray i_add, int i_s, int i_len) {
     this.append(i_add._v, i_s, i_len);
     return;
@@ -105,14 +84,6 @@ public final class HexArray {
     }
     return sb.toString();
   }
-  /**
-   * i_s番目からi_len個のデータを文字列化
-   *
-   * @param b
-   * @param i_s
-   * @param i_len
-   * @return
-   */
   private static String toHexString(byte[] b, int i_s, int i_len) {
     StringBuilder sb = new StringBuilder(i_len * 2);
     for (int i = 0; i < i_len; i++) {
@@ -125,11 +96,11 @@ public final class HexArray {
     return this._v.length;
   }
 
-  public void swapEndian() throws MinyaException {
+  public void swapEndian() throws RuntimeException {
     int l = this._v.length;
     byte[] v = this._v;
     if (l % 4 != 0) {
-      throw new MinyaException();
+      throw new RuntimeException("HexArray.java swapEndian");
     }
     for (int i = 0; i < l; i += 4) {
       byte v0 = v[i + 0];

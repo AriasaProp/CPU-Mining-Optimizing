@@ -1,6 +1,5 @@
 package com.example.android.stratumminer;
 
-/** Created by Ben David on 01/08/2017. */
 public class StratumMiningWork extends MiningWork {
   public String job_id;
   public String xnonce2;

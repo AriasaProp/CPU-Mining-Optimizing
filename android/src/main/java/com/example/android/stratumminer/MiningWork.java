@@ -1,6 +1,5 @@
 package com.example.android.stratumminer;
 
-/** Created by Ben David on 01/08/2017. */
 public class MiningWork {
   public final HexArray data; // big endian
   public final HexArray target; // big endian
