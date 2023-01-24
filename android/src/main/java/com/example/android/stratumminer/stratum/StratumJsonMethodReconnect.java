@@ -1,6 +1,5 @@
 package com.example.android.stratumminer.stratum;
 
-import com.example.android.stratumminer.MinyaException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /** Created by Ben David on 01/08/2017. */
@@ -14,11 +13,11 @@ public class StratumJsonMethodReconnect extends StratumJsonMethod {
   public int port;
   public String host;
 
-  public StratumJsonMethodReconnect(JsonNode i_json_node) throws MinyaException {
+  public StratumJsonMethodReconnect(JsonNode i_json_node) throws RuntimeException {
     super(i_json_node);
     String s = i_json_node.get("method").asText();
     if (s.compareTo("client.reconnect") != 0) {
-      throw new MinyaException();
+      throw new RuntimeException();
     }
     JsonNode p = i_json_node.get("params");
     this.host = p.get(0).asText();

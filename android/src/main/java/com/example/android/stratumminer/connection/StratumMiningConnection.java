@@ -269,7 +269,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     }
   }
 
-  public void disconnect() throws MinyaException {
+  public void disconnect() throws RuntimeException {
     try {
       this._rx_thread.interrupt();
       this._rx_thread.join();
@@ -280,9 +280,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
         this._work_builder = null;
       }
     } catch (IOException e) {
-      throw new MinyaException(e);
+      throw new RuntimeException(e);
     } catch (InterruptedException e) {
-      throw new MinyaException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -297,7 +297,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       }
       try {
         work = this._work_builder.buildMiningWork();
-      } catch (MinyaException e) {
+      } catch (RuntimeException e) {
         return null;
       }
     }
@@ -361,9 +361,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     }
   }
 
-  public void submitWork(MiningWork i_work, int i_nonce) throws MinyaException {
+  public void submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
     if (!(i_work instanceof StratumMiningWork)) {
-      throw new MinyaException();
+      throw new RuntimeException();
     }
     StratumMiningWork w = (StratumMiningWork) i_work;
     String ntime = w.data.getStr(StratumMiningWork.INDEX_OF_NTIME, 4);
@@ -372,7 +372,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       SubmitOrder so = new SubmitOrder(id, w, i_nonce);
       this._rx_thread.addSubmitOrder(so);
     } catch (IOException e) {
-      throw new MinyaException(e);
+      throw new RuntimeException(e);
     }
   }
 }
