@@ -1,7 +1,5 @@
 package com.example.android.stratumminer.stratum;
 
-import com.example.android.stratumminer.MinyaException;
-import com.example.android.stratumminer.MinyaLog;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +24,7 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
-      MinyaLog.debug("TX>" + str);
+      Console.send(0, "TX>" + str);
     }
   }
 
@@ -37,7 +35,7 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
-      MinyaLog.debug("RX<" + s);
+      Console.send(0, "RX<" + s);
       return s;
     }
   }
@@ -127,32 +125,32 @@ public class StratumSocket extends Socket {
     // parse method
     try {
       return new StratumJsonMethodGetVersion(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     try {
       return new StratumJsonMethodMiningNotify(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     try {
       return new StratumJsonMethodReconnect(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     try {
       return new StratumJsonMethodSetDifficulty(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     try {
       return new StratumJsonMethodShowMessage(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     // parse result(複雑なものから順にね！)
     try {
       return new StratumJsonResultSubscribe(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     try {
       return new StratumJsonResultStandard(jn);
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
     }
     return null;
   }
@@ -181,7 +179,7 @@ public class StratumSocket extends Socket {
     } catch (JsonProcessingException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (MinyaException e) {
+    } catch (RuntimeException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {

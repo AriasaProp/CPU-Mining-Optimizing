@@ -1,11 +1,8 @@
 package com.example.android.stratumminer;
 
-import static com.example.android.stratumminer.Constants.DEFAULT_PASS;
 import static com.example.android.stratumminer.Constants.DEFAULT_PRIORITY;
 import static com.example.android.stratumminer.Constants.DEFAULT_RETRYPAUSE;
 import static com.example.android.stratumminer.Constants.DEFAULT_THREAD;
-import static com.example.android.stratumminer.Constants.DEFAULT_URL;
-import static com.example.android.stratumminer.Constants.DEFAULT_USER;
 import static com.example.android.stratumminer.Constants.MSG_ACCEPTED_UPDATE;
 import static com.example.android.stratumminer.Constants.MSG_CONSOLE_UPDATE;
 import static com.example.android.stratumminer.Constants.MSG_REJECTED_UPDATE;
@@ -76,17 +73,33 @@ public class MinerService extends Service {
     }
   }
 
-  public MinerService() {}
+  public MinerService() {
+  	Console.setReceiver(new Console.Receiver(){
+  			@Override
+  			public void receive(int[] lvls, String[] msgs) {
+  					Message msg = new Message();
+				    Bundle bundle = new Bundle();
+				
+				    msg.arg1 = MSG_CONSOLE_UPDATE;
+				    sb = new StringBuilder();
+				    for (int i = 0; i < 20; i++) {
+				      sb.append(msgs[i] + '\n');
+				    }
+				    bundle.putString("console", sb.toString());
+				    msg.setData(bundle);
+				    serviceHandler.sendMessage(msg);
+  			}
+  	})
+  }
 
   public void startMiner() {
-    console = new Console(serviceHandler);
     SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
     String url, user, pass;
     speed = 0;
     accepted = 0;
     rejected = 0;
 
-    console.write("Service: Start mining");
+    Console.send(0, "Service: Start mining");
     url = settings.getString(PREF_URL, "stratum+tcp://us2.litecoin.org:8080");
     user = settings.getString(PREF_USER, "Ariasa.test");
     pass = settings.getString(PREF_PASS, "1234");
@@ -100,13 +113,13 @@ public class MinerService extends Service {
       running = true;
     } catch (Exception e) {
     	for (StackTraceElement t : e.getStackTrace())
-    			console.write("Error: "+t.toString());
+    			Console.send(0, "Error: "+t.toString());
     }
 
   }
 
   public void stopMiner() {
-    console.write("Service: Stopping mining");
+    Console.send(0, "Service: Stopping mining");
     Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
     running = false;
     try {

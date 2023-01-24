@@ -8,40 +8,38 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Console {
-  final int MSG_UIUPDATE = 1;
-  final int MSG_STATUPDATE = 2;
-  final int MSG_CONSOLE_UPDATE = 7;
-  private static final DateFormat logDateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss] ");
-  StringBuilder sb = new StringBuilder();
-  boolean c_new = false;
-  String[] console_a = new String[20];
-  Handler sHandler = new Handler();
-
-  public Console(Handler h) {
-    console_a = new String[20];
+  static final int MSG_UIUPDATE = 1;
+  static final int MSG_STATUPDATE = 2;
+  static final int MSG_CONSOLE_UPDATE = 7;
+  private static final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss | ");
+  private static Receiver _receiver;
+  private static String[] messages = new String[20];
+  private static int[] levels = new int[20];
+  static {
     for (int i = 0; i < 20; i++) {
-      console_a[i] = "";
+      messages[i] = "";
+      levels[i] = 0;
     }
-    sHandler = h;
   }
-
-  public void write(String s) {
-    Message msg = new Message();
-    Bundle bundle = new Bundle();
-
+  public static setReceiver(Receiver r) {
+  		this._receiver = r;
+  }
+  public static send(int lvl, String s) {
     if (s != null) {
-      for (int i = 19; i > 0; i--) {
-        console_a[i] = console_a[i - 1];
-      }
-      console_a[0] = logDateFormat.format(new Date()) + s;
+	    	int i = 20
+	      while (--i > 0) {
+		        messages[i] = messages[i - 1];
+		      	levels[i] = levels[i - 1];
+	      }
+	      messages[0] = logDateFormat.format(new Date()) + s;
+	      levels[0] = lvl
     }
-    msg.arg1 = MSG_CONSOLE_UPDATE;
-    sb = new StringBuilder();
-    for (int i = 0; i < 20; i++) {
-      sb.append(console_a[i] + '\n');
-    }
-    bundle.putString("console", sb.toString());
-    msg.setData(bundle);
-    sHandler.sendMessage(msg);
+    if (this._receiver != null)
+  			r.receive(levels, messages);
+  }
+  
+  public static interface Receiver {
+  	public static final MAX_LENGTH = 20;
+  	public void receive(int[] lvls, String[] msgs);
   }
 }

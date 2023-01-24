@@ -27,12 +27,6 @@ public class MiningWork {
     System.out.println("data:" + this.data.getStr());
     System.out.println("target:" + this.target.getStr());
   }
-  /**
-   * This function makes submitdata from current work and nonce value.
-   *
-   * @param i_nonce
-   * @return
-   */
   public String makeSubmitData(int i_nonce) {
     byte[] d = this.data.refHex().clone();
     d[79] = (byte) (i_nonce >> 0);
