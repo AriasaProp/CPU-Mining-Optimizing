@@ -27,6 +27,7 @@ file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
 file(GLOB_RECURSE Src_Files "*.cpp")
 
 include_directories(${Include_Dir})
+include_directories(${Include_subDir})
 
 add_subdirectory(${CORE_SRC} bin/core)
 
