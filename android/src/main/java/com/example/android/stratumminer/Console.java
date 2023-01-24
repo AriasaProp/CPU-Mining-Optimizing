@@ -21,25 +21,25 @@ public class Console {
       levels[i] = 0;
     }
   }
-  public static setReceiver(Receiver r) {
+  public static void setReceiver(Receiver r) {
   		this._receiver = r;
   }
-  public static send(int lvl, String s) {
+  public static void send(int lvl, String s) {
     if (s != null) {
-	    	int i = 20
+	    	int i = 20;
 	      while (--i > 0) {
 		        messages[i] = messages[i - 1];
 		      	levels[i] = levels[i - 1];
 	      }
 	      messages[0] = logDateFormat.format(new Date()) + s;
-	      levels[0] = lvl
+	      levels[0] = lvl;
     }
     if (this._receiver != null)
   			r.receive(levels, messages);
   }
   
   public static interface Receiver {
-  	public static final MAX_LENGTH = 20;
+  	public static final int MAX_LENGTH = 20;
   	public void receive(int[] lvls, String[] msgs);
   }
 }

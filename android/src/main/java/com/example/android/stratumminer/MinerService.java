@@ -89,7 +89,7 @@ public class MinerService extends Service {
 				    msg.setData(bundle);
 				    serviceHandler.sendMessage(msg);
   			}
-  	})
+  	});
   }
 
   public void startMiner() {
