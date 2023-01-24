@@ -9,26 +9,19 @@ jobs:
   build:
     strategy:
       matrix:
-      	name: [ubuntu, windows, macOS]
-        include:
-	        - name: ubuntu
-	          os: ubuntu-latest
-	        - name: windows
-	          os: windows-latest
-	        - name: macOS
-	          os: macOS-latest
+      	os: [ubuntu-latest, windows-latest, macOS-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Configure CMake
       run: |
-        mkdir desktop/build-${{ matrix.name }}
-        cd desktop/build-${{ matrix.name }}
+        mkdir desktop/build-${{ matrix.os }}
+        cd desktop/build-${{ matrix.os }}
         cmake .. 
         cmake --build .
         cd ../../
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: All-Make-${{ matrix.name }}
-        path: ${{ github.workspace }}/desktop/build-${{ matrix.name }}
+        name: All-Make-${{ matrix.os }}
+        path: ${{ github.workspace }}/desktop/build-${{ matrix.os }}
