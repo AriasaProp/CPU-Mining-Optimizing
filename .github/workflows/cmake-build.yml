@@ -8,7 +8,8 @@ on:
 jobs:
   build:
     strategy:
-      matrix
+      matrix:
+      	name: [ubuntu, windows, macOS]
         include:
 	        - name: ubuntu
 	          os: ubuntu-latest
