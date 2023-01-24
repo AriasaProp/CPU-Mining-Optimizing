@@ -1,4 +1,4 @@
-package com.ariasaproject.cpumininglearn;
+package com.ariasaproject.cpuminingopt.hasher;
 
 import static java.lang.Integer.rotateLeft;
 import static java.lang.System.arraycopy;
@@ -19,18 +19,14 @@ public class Hasher {
     mac = Mac.getInstance("HmacSHA256");
   }
 
-  public byte[] hash(byte[] header) throws GeneralSecurityException {
-    return hash(header, header[76] | header[77] << 8 | header[78] << 16 | header[79] << 24);
-  }
-
   public byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
     int i, j, k;
 
     arraycopy(header, 0, B, 0, 76);
-    B[76] = (byte) (nonce >> 0);
-    B[77] = (byte) (nonce >> 8);
-    B[78] = (byte) (nonce >> 16);
-    B[79] = (byte) (nonce >> 24);
+    B[76] = (byte) (nonce >> 24);
+    B[77] = (byte) (nonce >> 16);
+    B[78] = (byte) (nonce >> 8);
+    B[79] = (byte) (nonce >> 0);
     mac.init(new SecretKeySpec(B, 0, 80, "HmacSHA256"));
     B[80] = 0;
     B[81] = 0;
