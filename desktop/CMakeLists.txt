@@ -14,7 +14,7 @@ file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
 include_directories(${Include_Dir})
 include_directories(${Include_subDir})
 
-add_subdirectory(CORE_SRC)
+add_subdirectory(${CORE_SRC})
 
 if(MSVC)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
