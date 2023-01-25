@@ -38,5 +38,4 @@ else()
 	add_executable(${PROJECT_NAME} ${Src_Files})
 endif()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC core)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
