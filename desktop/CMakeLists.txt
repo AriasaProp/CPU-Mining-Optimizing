@@ -11,12 +11,10 @@ set(CORE_SRC "../core")
 
 file(GLOB_RECURSE Include_subDir LIST_DIRECTORIES true ${CORE_SRC})
 file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
-file(GLOB_RECURSE Src_Files "*.cpp")
+file(GLOB_RECURSE Src_Files "*.cpp" "${CORE_SRC}/*.cpp")
 
 include_directories(${Include_Dir})
 include_directories(${Include_subDir})
-
-add_subdirectory(${CORE_SRC} bin/core)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
@@ -33,11 +31,11 @@ if(MSVC)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
   set(BUILD_SHARED_LIBS TRUE)
   
-	add_executable(${PROJECT_NAME} WIN32 desktop_main.cpp)
+	add_executable(${PROJECT_NAME} WIN32 ${Src_Files})
 else()
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
   
-	add_executable(${PROJECT_NAME} desktop_main.cpp)
+	add_executable(${PROJECT_NAME} ${Src_Files})
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC core)
