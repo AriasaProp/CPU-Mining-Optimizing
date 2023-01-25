@@ -37,5 +37,4 @@ endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC core)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 

@@ -14,7 +14,3 @@ file(GLOB_RECURSE Src_Files "*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${Src_Files})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-
-install(TARGETS ${PROJECT_NAME}
-		LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
