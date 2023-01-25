@@ -16,7 +16,7 @@ jobs:
       - name: Configure CMake
         run: |
           mkdir desktop/${{ matrix.os }}-build
-          cmake -S . -B desktop/${{ matrix.os }}-build
+          cmake -S desktop -B desktop/${{ matrix.os }}-build
           cd desktop/${{ matrix.os }}-build
           cmake --build
           cd ../../
