@@ -1,29 +1,20 @@
 cmake_minimum_required (VERSION 3.6.0)
 
+project(DesktopApp LANGUAGES CXX)
+
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSION OFF)
 
 set(CORE_SRC "../core")
+
 file(GLOB_RECURSE Include_subDir LIST_DIRECTORIES true ${CORE_SRC})
-file(GLOB_RECURSE Src_Files "${CORE_SRC}/*.cpp")
-
-include_directories(${Include_subDir})
-
-add_library(core STATIC ${Src_Files})
-set_target_properties(core PROPERTIES LINKER_LANGUAGE CXX)
-
-project(DesktopApp LANGUAGES CXX)
-
 file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
-
 include_directories(${Include_Dir})
 include_directories(${Include_subDir})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
+add_subdirectory(CORE_SRC)
 
 if(MSVC)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -45,3 +36,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC core)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+

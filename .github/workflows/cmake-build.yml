@@ -18,7 +18,8 @@ jobs:
           mkdir desktop/${{ matrix.os }}-build
           cd desktop/${{ matrix.os }}-build
           cmake .. 
-          cmake --build .
+          make
+          make install
           cd ../../
       - name: Upload an Build Cmake Artifact
         uses: actions/upload-artifact@v3

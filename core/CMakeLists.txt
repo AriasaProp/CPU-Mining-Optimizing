@@ -8,9 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSION OFF)
 
 file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
+
 include_directories(${Include_Dir})
 file(GLOB_RECURSE Src_Files "*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${Src_Files})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
+install(TARGETS ${PROJECT_NAME}
+		LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
