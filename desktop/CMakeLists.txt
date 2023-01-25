@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.4.1)
+cmake_minimum_required (VERSION 3.6.0)
 
 project(DesktopApp LANGUAGES CXX)
 
@@ -29,10 +29,16 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX /O2 /Oi /MT /EHsc /nologo /Zc:wchar_t /Zc:forScope /Zc:inline /GS /D \"_UNICODE\" /D \"UNICODE\"")
+  
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  set(BUILD_SHARED_LIBS TRUE)
+  
 	add_executable(${PROJECT_NAME} WIN32 desktop_main.cpp)
 else()
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
+  
 	add_executable(${PROJECT_NAME} desktop_main.cpp)
 endif()
+
 target_link_libraries(${PROJECT_NAME} PUBLIC core)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
