@@ -14,7 +14,7 @@ file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
 include_directories(${Include_Dir})
 include_directories(${Include_subDir})
 
-add_subdirectory(${CORE_SRC} bin/core EXCLUDE_FROM_ALL)
+add_subdirectory(${CORE_SRC} ${CMAKE_CURRENT_BINARY_DIR} EXCLUDE_FROM_ALL)
 
 if(MSVC)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -37,4 +37,7 @@ endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC core)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-
+install(TARGETS ${PROJECT_NAME}
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
