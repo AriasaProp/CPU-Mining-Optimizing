@@ -5,7 +5,7 @@
 #include <ctime>
 
             
-#define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_M##
+#define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
 const std::string *logs;
 const size_t *logs_state;
