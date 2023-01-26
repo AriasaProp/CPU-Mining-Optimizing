@@ -43,7 +43,7 @@ import java.util.Observer;
 
 import static android.R.id.edit;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import com.ariasaproject.cpuminingopt.Constant.*;
+import com.ariasaproject.cpuminingopt.Constants.*;
 
 public class MainActivity extends Activity {
 		static {
@@ -285,7 +285,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-				if(!settings.getBoolean(PREF_BACKGROUND,DEFAULT_BACKGROUND )) {
+				if(!settings.getBoolean(PREF_BACKGROUND,false)) {
             Console.send(0, "Try to stop mining");
 						Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
 						try {
