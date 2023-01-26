@@ -18,10 +18,19 @@ public class Console {
       levels[i] = 0;
     }
   }
+	static {
+		System.loadLibrary("ext");
+	}
+
   public static void setReceiver(Receiver r) {
   		_receiver = r;
   }
+  private static native void initialize();
+  private static native String outLogs();
+  private static native void write(int lvl, String s);
+  private static native void destroy();
   public static void send(int lvl, String s) {
+  	/*
     if (s != null) {
 	    	int i = 20;
 	      while (--i > 0) {
@@ -31,12 +40,15 @@ public class Console {
 	      messages[0] = logDateFormat.format(new Date()) + s;
 	      levels[0] = lvl;
     }
+    */
+    write(lvl, s);
     if (_receiver != null)
-  			_receiver.receive(levels, messages);
+  			_receiver.receive(outLogs);
   }
   
   public static interface Receiver {
   	public static final int MAX_LENGTH = 20;
-  	public void receive(int[] lvls, String[] msgs);
+  	public void receive(String msgs);
   }
+  
 }

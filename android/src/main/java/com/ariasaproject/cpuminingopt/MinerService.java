@@ -76,16 +76,11 @@ public class MinerService extends Service {
   public MinerService() {
   	Console.setReceiver(new Console.Receiver(){
   			@Override
-  			public void receive(int[] lvls, String[] msgs) {
+  			public void receive(String msgs) {
   					Message msg = new Message();
 				    Bundle bundle = new Bundle();
-				
 				    msg.arg1 = MSG_CONSOLE_UPDATE;
-				    StringBuilder sb = new StringBuilder();
-				    for (int i = 0; i < 20; i++) {
-				      sb.append(msgs[i] + '\n');
-				    }
-				    bundle.putString("console", sb.toString());
+				    bundle.putString("console", msgs);
 				    msg.setData(bundle);
 				    serviceHandler.sendMessage(msg);
   			}

@@ -56,7 +56,6 @@ import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
 
 public class MainActivity extends Activity {
-
     EditText et_serv;
     EditText et_user;
     EditText et_pass;
