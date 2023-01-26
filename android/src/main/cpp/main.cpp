@@ -11,10 +11,10 @@
 std::string *logs;
 size_t *logs_state;
 
-JNI_Call(void, initialize) (JNIEnv* env, jclass) {
+JNI_Call(void, initialize) (JNIEnv*, jclass) {
 	logs = new std::string[30]; //each logs only 1000 chars 
 	for (size_t i = 0; i < 30; i++) {
-		logs[i] = "None\n"
+		logs[i] = "None\n";
 	}
 	logs_state = new size_t[30];
 }
