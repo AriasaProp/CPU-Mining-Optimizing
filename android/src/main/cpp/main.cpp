@@ -28,7 +28,7 @@ JNI_Call(void, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 	//const jsize *cstr_length = env->GetStringLength(l);
   char buf[10];
   std::time_t t = std::time(0);
-  if(strftime(buf, "hh:mm:ss| ", std::localtime(&t))){
+  if(strftime(buf, 10, "hh:mm:ss| ", std::localtime(&t))){
   	logs[0] = std::string() + buf + cstr;
   } else {
   	logs[0] = "problem in write native i guest";
