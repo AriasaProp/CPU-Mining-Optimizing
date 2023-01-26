@@ -8,8 +8,8 @@
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
-const std::string *logs;
-const size_t *logs_state;
+std::string *logs;
+size_t *logs_state;
 
 JNI_Call(void, initialize) (JNIEnv* env, jclass) {
 	logs = new std::string[30]; //each logs only 1000 chars 
