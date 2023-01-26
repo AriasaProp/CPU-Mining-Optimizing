@@ -43,7 +43,7 @@ public class Console {
     */
     write(lvl, s);
     if (_receiver != null)
-  			_receiver.receive(outLogs);
+  			_receiver.receive(outLogs());
   }
   
   public static interface Receiver {
