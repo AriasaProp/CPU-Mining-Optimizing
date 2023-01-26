@@ -141,8 +141,7 @@ public class MainActivity extends Activity {
                 b.setClickable(false);
                 if (!ShutdownStarted) {
                     ShutdownStarted = true;
-                    ThreadStatusAsyncTask threadWaiter = new ThreadStatusAsyncTask();
-                    threadWaiter.execute(imw);
+                    new ThreadStatusAsyncTask().execute((CpuMiningWorker)imw);
                 }
             }
         }
@@ -302,7 +301,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
     		SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
 								
-        if (settings.getBoolean(PREF_BACKGROUND, DEFAULT_BACKGROUND)) {
+        if (settings.getBoolean(PREF_BACKGROUND, false)) {
             TextView tv_background = (TextView) findViewById(R.id.status_textView_background);
             tv_background.setText("RUN IN BACKGROUND");
         }
