@@ -43,16 +43,7 @@ import java.util.Observer;
 
 import static android.R.id.edit;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_BACKGROUND;
-import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_SCREEN;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_BACKGROUND;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_NEWS_RUN_ONCE;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_PASS;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_SCREEN;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_THREAD;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_TITLE;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
+import com.ariasaproject.cpuminingopt.Constant.*;
 
 public class MainActivity extends Activity {
 		static {
@@ -157,7 +148,7 @@ public class MainActivity extends Activity {
 		  					msg.arg1 = MSG_CONSOLE_UPDATE;
 		  					Bundle b = new Bundle();
 		  					b.putString("console", msgs);
-		  					msg.setData(msgs);
+		  					msg.setData(b);
       					statusHandler.sendMessage(msg);
 		  			}
 		  	});
@@ -166,13 +157,13 @@ public class MainActivity extends Activity {
         et_user = (EditText) findViewById((R.id.user_et));
         et_pass = (EditText) findViewById(R.id.password_et);
         cb_service = (CheckBox) findViewById(R.id.settings_checkBox_background) ;
-        cb_service.setChecked(DEFAULT_BACKGROUND);
         cb_screen_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake) ;
-        cb_screen_awake.setChecked(DEFAULT_SCREEN);
 				SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         et_serv.setText(settings.getString(PREF_URL,"stratum+tcp://us2.litecoinpool.org:8080"));
         et_user.setText(settings.getString(PREF_USER,"Ariasa.test"));
         et_pass.setText(settings.getString(PREF_PASS,"1234"));
+        cb_screen_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
+        cb_service.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
         
         //set number of Threads posibility use
         try {
@@ -195,15 +186,14 @@ public class MainActivity extends Activity {
 						String pass = et_pass.getText().toString();
 						Spinner threadList = (Spinner)findViewById(R.id.spinner1);
 						int threads = Integer.parseInt(threadList.getSelectedItem().toString());
-						if(settings.getBoolean(PREF_SCREEN,DEFAULT_SCREEN )) {
+						if(cb_screen_awake.isChecked()) {
 								getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 						}
 						Console.send(0, "Try to start mining");
 						//start mining0
 						try {
 								mc = new StratumMiningConnection(url, user, pass);
-								int nThread = settings.getInt(PREF_THREAD, DEFAULT_THREAD);
-								imw = new CpuMiningWorker(nThread, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
+								imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
 								smc = new SingleMiningChief(mc, imw, statusHandler);
 								smc.startMining();
 								SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
@@ -236,7 +226,7 @@ public class MainActivity extends Activity {
 		}
 		
 		@Override
-		protected void onSaveInstanceState(Bundle savedInstanceState0) {
+		protected void onSaveInstanceState(Bundle savedInstanceState) {
 				savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
 		}
 		

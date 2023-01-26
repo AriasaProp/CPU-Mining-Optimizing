@@ -25,18 +25,11 @@ public class Constants {
   public static final String PREF_SCREEN = "SCREEN_AWAKE";
   public static final String PREF_NEWS_RUN_ONCE = "NEWS_RUN_ONCE";
 
-  public static final String DONATE_URL = "http://litecoinpool.org:9332";
-  public static final String DONATE_USER = "raad287.3";
-  public static final String DONATE_PASS = "3";
-
   public static final int DEFAULT_PRIORITY = 1;
   public static final int DEFAULT_THREAD = 1;
   public static final long DEFAULT_SCANTIME = 500;
   public static final long DEFAULT_RETRYPAUSE = 500;
   public static final float DEFAULT_THROTTLE = 1;
-  public static final boolean DEFAULT_DONATE = false;
-  public static final boolean DEFAULT_BACKGROUND = false;
-  public static final boolean DEFAULT_SCREEN = true;
 
   public static final String CLIENT_NAME_STRING = "LTCteMiner";
 
