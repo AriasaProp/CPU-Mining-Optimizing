@@ -43,7 +43,34 @@ import java.util.Observer;
 
 import static android.R.id.edit;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import com.ariasaproject.cpuminingopt.Constants.*;
+import static com.ariasaproject.cpuminingopt.Constants.*;
+
+import static com.ariasaproject.cpuminingopt.Constants.MSG_UIUPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_TERMINATED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_CONSOLE_UPDATE;
+
+import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_PASS;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_THREAD;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_THROTTLE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SCANTIME;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_RETRYPAUSE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SERVICE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_PRIORITY;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_BACKGROUND;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SCREEN;
+
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_PRIORITY;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_THREAD;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_SCANTIME;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_RETRYPAUSE;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_THROTTLE;
 
 public class MainActivity extends Activity {
 		static {

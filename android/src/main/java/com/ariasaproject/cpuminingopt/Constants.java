@@ -18,12 +18,10 @@ public class Constants {
   public static final String PREF_THROTTLE = "THROTTLE";
   public static final String PREF_SCANTIME = "SCANTIME";
   public static final String PREF_RETRYPAUSE = "RETRYPAUSE";
-  public static final String PREF_DONATE = "DONATE";
   public static final String PREF_SERVICE = "SERVICE";
   public static final String PREF_PRIORITY = "PRIORITY";
   public static final String PREF_BACKGROUND = "BACKGROUND";
   public static final String PREF_SCREEN = "SCREEN_AWAKE";
-  public static final String PREF_NEWS_RUN_ONCE = "NEWS_RUN_ONCE";
 
   public static final int DEFAULT_PRIORITY = 1;
   public static final int DEFAULT_THREAD = 1;
