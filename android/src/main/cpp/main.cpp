@@ -4,9 +4,6 @@
 #include <cstring>
 #include <string>
 #include <ctime>
-
-
-
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
@@ -42,9 +39,9 @@ JNI_Call(jstring, outLogs) (JNIEnv*env, jclass) {
 
 //native management
 
-JNIEXPORT jint JNI_OnLoad(JavaVM*, void*) {
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8) != JNI_OK) {
+    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
     logs = new std::string[30]; //each logs only 1000 chars 
@@ -52,11 +49,10 @@ JNIEXPORT jint JNI_OnLoad(JavaVM*, void*) {
 			logs[i] = "None\n";
 		}
 		logs_state = new size_t[30];
-    return JNI_VERSION_1_8;
+    return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved) {
-		
+JNIEXPORT void JNI_OnUnload(JavaVM*, void*) {
 		delete logs;
 		delete logs_state;
 }
