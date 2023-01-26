@@ -22,10 +22,11 @@ JNI_Call(void, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 	if (!l) return;
   for(size_t i = 29; i > 0; i--) {
   	logs[i] = logs[i - 1];
+  	logs_state[i] = logs_state[i - 1];
   }
 	const char *cstr = env->GetStringUTFChars(l, NULL);
 	//const jsize *cstr_length = env->GetStringLength(l);
-  const char buf[10];
+  char buf[10];
   std::time t = std::time(0);
   if(strftime(buf, "hh:mm:ss| ", std::localtime(&t))){
   	logs[0] = std::string() + buf + cstr;
@@ -33,6 +34,7 @@ JNI_Call(void, write) (JNIEnv* env, jclass, jint lv, jstring l) {
   	logs[0] = "problem in write native i guest";
   }
   logs[0] += '\n';
+  logs_state[0] = lv;
   env->ReleaseStringUTFChars(l, cstr);
 }
 JNI_Call(jstring, outLogs) (JNIEnv*env, jclass) {
@@ -40,7 +42,7 @@ JNI_Call(jstring, outLogs) (JNIEnv*env, jclass) {
 	for (size_t i = 0; i < 30; i++) {
 		out += logs[i];
 	}
-	return env->NewStringUTF(out.c_str(), out.length());
+	return env->NewStringUTF(out.c_str());
 }
 JNI_Call(void, destroy) (JNIEnv*, jclass) {
 	delete logs;
