@@ -73,7 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="40dp"
-                android:textColor="@android:color/holo_green_dark" />
+                android:textColor="@android:color/holo_green_dark"
+                android:text="Not Mining"/>
 
             <TextView
                 android:id="@+id/textView1"
@@ -104,6 +105,7 @@
                 android:id="@+id/status_textView_accepted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="0"
                 android:textColor="@android:color/holo_green_dark" />
 
             <TextView
@@ -116,6 +118,7 @@
                 android:id="@+id/status_textView_rejected"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="0"
                 android:textColor="@android:color/holo_green_dark" />
         </TableRow>
     </TableLayout>

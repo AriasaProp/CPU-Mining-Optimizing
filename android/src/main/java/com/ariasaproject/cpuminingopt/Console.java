@@ -10,17 +10,12 @@ public class Console {
   static final int MSG_CONSOLE_UPDATE = 7;
   private static final DateFormat logDateFormat = new SimpleDateFormat("HH:mm:ss | ");
   private static Receiver _receiver;
-  private static String[] messages = new String[20];
-  private static int[] levels = new int[20];
   static {
     for (int i = 0; i < 20; i++) {
       messages[i] = "";
       levels[i] = 0;
     }
   }
-	static {
-		System.loadLibrary("ext");
-	}
 
   public static void setReceiver(Receiver r) {
   		_receiver = r;
