@@ -5,19 +5,14 @@
 #include <string>
 #include <ctime>
 
+
+
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
 std::string *logs;
 size_t *logs_state;
 
-JNI_Call(void, initialize) (JNIEnv*, jclass) {
-	logs = new std::string[30]; //each logs only 1000 chars 
-	for (size_t i = 0; i < 30; i++) {
-		logs[i] = "None\n";
-	}
-	logs_state = new size_t[30];
-}
 JNI_Call(void, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 	if (!l) return;
   for(size_t i = 29; i > 0; i--) {
@@ -44,7 +39,24 @@ JNI_Call(jstring, outLogs) (JNIEnv*env, jclass) {
 	}
 	return env->NewStringUTF(out.c_str());
 }
-JNI_Call(void, destroy) (JNIEnv*, jclass) {
-	delete logs;
-	delete logs_state;
+
+//native management
+
+JNIEXPORT jint JNI_OnLoad(JavaVM*, void*) {
+    JNIEnv* env;
+    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8) != JNI_OK) {
+        return JNI_ERR;
+    }
+    logs = new std::string[30]; //each logs only 1000 chars 
+		for (size_t i = 0; i < 30; i++) {
+			logs[i] = "None\n";
+		}
+		logs_state = new size_t[30];
+    return JNI_VERSION_1_8;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved) {
+		
+		delete logs;
+		delete logs_state;
 }
