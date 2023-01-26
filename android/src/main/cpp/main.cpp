@@ -13,8 +13,8 @@ const size_t *logs_state;
 
 JNI_Call(void, initialize) (JNIEnv* env, jclass) {
 	logs = new std::string[30]; //each logs only 1000 chars 
-	for(std::string &l : logs) {
-		l = "None\n"
+	for (size_t i = 0; i < 30; i++) {
+		logs[i] = "None\n"
 	}
 	logs_state = new size_t[30];
 }
@@ -37,10 +37,10 @@ JNI_Call(void, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 }
 JNI_Call(jstring, outLogs) (JNIEnv*env, jclass) {
 	std::string out;
-	for (std::string &o : logs) {
-		out += o;
+	for (size_t i = 0; i < 30; i++) {
+		out += logs[i];
 	}
-	return env->NewString(out.c_str, out.length());
+	return env->NewString(out.c_str(), out.length());
 }
 JNI_Call(void, destroy) (JNIEnv* env, jclass) {
 	delete logs;
