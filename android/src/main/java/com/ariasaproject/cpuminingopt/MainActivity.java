@@ -96,10 +96,12 @@ public class MainActivity extends Activity {
           final Bundle bundle = msg.getData();
           switch (msg.arg1) {
           		case MSG_STARTED:
-          				Button b = (Button) findViewById(R.id.status_button_startstop);
-          				b.setText(getString(R.string.main_button_stop));
-					        b.setEnabled(true);
-					        b.setClickable(true);
+	          			{
+		          				Button b = (Button) findViewById(R.id.status_button_startstop);
+		          				b.setText(getString(R.string.main_button_stop));
+							        b.setEnabled(true);
+							        b.setClickable(true);
+	          			}
           				break;
           		case MSG_TERMINATED:
           				if (imw != null) {
@@ -116,10 +118,13 @@ public class MainActivity extends Activity {
 					            }
 					            imw = null;
           				}
-          				Button b = (Button) findViewById(R.id.status_button_startstop);
-          				b.setText(getString(R.string.main_button_start));
-					        b.setEnabled(true);
-					        b.setClickable(true);
+          				
+          				{
+		          				Button b = (Button) findViewById(R.id.status_button_startstop);
+		          				b.setText(getString(R.string.main_button_start));
+							        b.setEnabled(true);
+							        b.setClickable(true);
+          				}
           				break;
           		case MSG_SPEED_UPDATE:
 			            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
@@ -238,7 +243,7 @@ public class MainActivity extends Activity {
 												for (StackTraceElement t : e.getStackTrace())
 														Console.send(0, "Error: "+t.toString());
 												final Message msg = statusHandler.obtainMessage();
-												msg.arg1 = MSG_TEMINATED;
+												msg.arg1 = MSG_TERMINATED;
 												statusHandler.sendMessage(msg);
 										}
 								}
@@ -257,7 +262,7 @@ public class MainActivity extends Activity {
 														Console.send(0, "Error: "+t.toString());
 										}
 										final Message msg = statusHandler.obtainMessage();
-										msg.arg1 = MSG_TEMINATED;
+										msg.arg1 = MSG_TERMINATED;
 										statusHandler.sendMessage(msg);
 								}
 						}).start();
