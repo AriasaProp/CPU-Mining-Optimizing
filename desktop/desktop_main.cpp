@@ -21,6 +21,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+	sayHello();
     return 0;
 }
 
