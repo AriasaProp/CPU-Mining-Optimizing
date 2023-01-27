@@ -96,23 +96,27 @@ public class MainActivity extends Activity {
           final Bundle bundle = msg.getData();
           switch (msg.arg1) {
           		case MSG_STARTED:
+          				Button b = (Button) findViewById(R.id.status_button_startstop);
           				b.setText(getString(R.string.main_button_stop));
 					        b.setEnabled(true);
 					        b.setClickable(true);
           				break;
           		case MSG_TERMINATED:
-	                CpuMiningWorker w = (CpuMiningWorker)imw;
-	                long lastTime = System.currentTimeMillis();
-			            long currTime;
-			            while (w.getThreadsStatus()) {
-			                currTime = System.currentTimeMillis();
-			                long deltaTime = currTime-lastTime;
-			                if (deltaTime>15000.0) {
-			                    w.ConsoleWrite("Still cooling down...");
-			                    lastTime = currTime;
-			                }
-			            }
-			            imw = null;
+          				if (imw != null) {
+			                CpuMiningWorker w = (CpuMiningWorker)imw;
+			                long lastTime = System.currentTimeMillis();
+					            long currTime;
+					            while (w.getThreadsStatus()) {
+					                currTime = System.currentTimeMillis();
+					                long deltaTime = currTime-lastTime;
+					                if (deltaTime>15000.0) {
+					                    w.ConsoleWrite("Still cooling down...");
+					                    lastTime = currTime;
+					                }
+					            }
+					            imw = null;
+          				}
+          				Button b = (Button) findViewById(R.id.status_button_startstop);
           				b.setText(getString(R.string.main_button_start));
 					        b.setEnabled(true);
 					        b.setClickable(true);
