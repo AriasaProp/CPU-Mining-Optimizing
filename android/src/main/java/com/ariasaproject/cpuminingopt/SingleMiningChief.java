@@ -6,13 +6,13 @@ import static com.ariasaproject.cpuminingopt.Constants.STATUS_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_NOT_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_TERMINATED;
 
-import static com.ariasaproject.cpuminingopt.Constans.MSG_UIUPDATE;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_STARTED;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_TERMINATED;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_SPEED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_STATUS_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_ACCEPTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constans.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_UIUPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_TERMINATED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
 
 
 import android.os.Bundle;
