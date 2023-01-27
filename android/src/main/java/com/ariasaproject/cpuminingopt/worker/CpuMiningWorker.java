@@ -79,7 +79,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       } catch (InterruptedException e) {
         Console.send(0, "Thread killed. #Hashes=" + this.number_of_hashed);
         for (StackTraceElement es : e.getStackTrace()) {
-      			Console.send(0, "Interupted by " + es.getMessage());
+      			Console.send(0, "Interupted by " + es.toString());
         }
         calcSpeedPerThread(number_of_hashed);
         _last_time = System.currentTimeMillis();
