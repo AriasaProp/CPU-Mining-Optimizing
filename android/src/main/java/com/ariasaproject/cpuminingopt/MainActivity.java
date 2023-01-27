@@ -95,6 +95,28 @@ public class MainActivity extends Activity {
       public void handleMessage(Message msg) {
           final Bundle bundle = msg.getData();
           switch (msg.arg1) {
+          		case MSG_STARTED:
+          				b.setText(getString(R.string.main_button_stop));
+					        b.setEnabled(true);
+					        b.setClickable(true);
+          				break;
+          		case MSG_TERMINATED:
+	                CpuMiningWorker w = (CpuMiningWorker)imw;
+	                long lastTime = System.currentTimeMillis();
+			            long currTime;
+			            while (w.getThreadsStatus()) {
+			                currTime = System.currentTimeMillis();
+			                long deltaTime = currTime-lastTime;
+			                if (deltaTime>15000.0) {
+			                    w.ConsoleWrite("Still cooling down...");
+			                    lastTime = currTime;
+			                }
+			            }
+			            imw = null;
+          				b.setText(getString(R.string.main_button_start));
+					        b.setEnabled(true);
+					        b.setClickable(true);
+          				break;
           		case MSG_SPEED_UPDATE:
 			            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
 			            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
@@ -111,12 +133,6 @@ public class MainActivity extends Activity {
 			            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
 			            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
           				break;
-          		case MSG_TERMINATED:
-            			runOnUiThread(rBtnStart);
-          				break;
-          		case MSG_STARTED:
-          				runOnUiThread(rBtnStop);
-          				break;
           		case MSG_CONSOLE_UPDATE:
   								TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
 			            txt_console.setText(bundle.getString("console"));
@@ -129,34 +145,8 @@ public class MainActivity extends Activity {
       }
     };
     
-    final Runnable rBtnStart= new Runnable() {
-        public void run() {
-            final Button b = (Button) findViewById(R.id.status_button_startstop);
-            b.setText(getString(R.string.main_button_start));
-            if (firstRunFlag) {
-                b.setEnabled(true);
-                b.setClickable(true);
-            } else if (StartShutdown) {
-                b.setEnabled(false);
-                b.setClickable(false);
-                if (!ShutdownStarted) {
-                    ShutdownStarted = true;
-                    new ThreadStatusAsyncTask().execute((CpuMiningWorker)imw);
-                }
-            }
-        }
-    };
-    final Runnable rBtnStop= new Runnable() {
-        public void run() {
-            Button b = (Button) findViewById(R.id.status_button_startstop);
-            b.setText(getString(R.string.main_button_stop));
-            b.setEnabled(true);
-        }
-    };
 
     public volatile  boolean firstRunFlag = true;
-    public volatile  boolean ShutdownStarted = false;
-    public volatile  boolean StartShutdown = false;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,48 +196,67 @@ public class MainActivity extends Activity {
     }
 		public void startstopMining(View v) {
 				final Button b = (Button) v;
-				if (b.getText().equals(getString(R.string.status_button_start))) {
-						String url = et_serv.getText().toString();
-						String user = et_user.getText().toString();
-						String pass = et_pass.getText().toString();
-						Spinner threadList = (Spinner)findViewById(R.id.spinner1);
-						int threads = Integer.parseInt(threadList.getSelectedItem().toString());
-						if(cb_screen_awake.isChecked()) {
-								getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-						}
-						Console.send(0, "Try to start mining");
-						//start mining0
-						try {
-								mc = new StratumMiningConnection(url, user, pass);
-								imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
-								smc = new SingleMiningChief(mc, imw, statusHandler);
-								smc.startMining();
-								SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-								SharedPreferences.Editor editor = settings.edit();
-								editor.putString(PREF_URL, url);
-								editor.putString(PREF_USER, user);
-								editor.putString(PREF_PASS, pass);
-								editor.putInt(PREF_THREAD, threads);
-								editor.putBoolean(PREF_BACKGROUND, cb_service.isChecked());
-								editor.putBoolean(PREF_SCREEN, cb_screen_awake.isChecked());
-								editor.commit();
-						} catch (Exception e) {
-								for (StackTraceElement t : e.getStackTrace())
-										Console.send(0, "Error: "+t.toString());
-						}
-						firstRunFlag = false;
-						b.setText(getString(R.string.main_button_stop));
-				} else{
-						Console.send(0, "Service: Stopping mining");
+        b.setEnabled(false);
+        b.setClickable(false);
+				if (b.getText().equals(getString(R.string.main_button_start))) {
+						b.setText(R.string.main_button_onstart);
+						new Thread(new Runnable(){
+								@Override
+								public void run() {
+										String url = et_serv.getText().toString();
+										String user = et_user.getText().toString();
+										String pass = et_pass.getText().toString();
+										Spinner threadList = (Spinner)findViewById(R.id.spinner1);
+										int threads = Integer.parseInt(threadList.getSelectedItem().toString());
+										if(cb_screen_awake.isChecked()) {
+												getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+										}
+										Console.send(0, "Try to start mining");
+										try {
+												mc = new StratumMiningConnection(url, user, pass);
+												imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
+												smc = new SingleMiningChief(mc, imw, statusHandler);
+												smc.startMining();
+												SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+												SharedPreferences.Editor editor = settings.edit();
+												editor.putString(PREF_URL, url);
+												editor.putString(PREF_USER, user);
+												editor.putString(PREF_PASS, pass);
+												editor.putInt(PREF_THREAD, threads);
+												editor.putBoolean(PREF_BACKGROUND, cb_service.isChecked());
+												editor.putBoolean(PREF_SCREEN, cb_screen_awake.isChecked());
+												editor.commit();
+												firstRunFlag = false;
+												final Message msg = statusHandler.obtainMessage();
+												msg.arg1 = MSG_STARTED;
+												statusHandler.sendMessage(msg);
+										} catch (Exception e) {
+												for (StackTraceElement t : e.getStackTrace())
+														Console.send(0, "Error: "+t.toString());
+												final Message msg = statusHandler.obtainMessage();
+												msg.arg1 = MSG_TEMINATED;
+												statusHandler.sendMessage(msg);
+										}
+								}
+						}).start();
+				} else {
+						b.setText(R.string.main_button_onstop);
 						Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
-						try {
-								smc.stopMining();
-						} catch (Exception e) {
-								for (StackTraceElement t : e.getStackTrace())
-										Console.send(0, "Error: "+t.toString());
-						}
-						StartShutdown = true;
-						b.setText(getString(R.string.status_button_start));
+						new Thread(new Runnable() {
+								@Override
+								public void run(){
+										Console.send(0, "Service: Stopping mining");
+										try {
+												smc.stopMining();
+										} catch (Exception e) {
+												for (StackTraceElement t : e.getStackTrace())
+														Console.send(0, "Error: "+t.toString());
+										}
+										final Message msg = statusHandler.obtainMessage();
+										msg.arg1 = MSG_TEMINATED;
+										statusHandler.sendMessage(msg);
+								}
+						}).start();
 				}
 		}
 		
@@ -255,42 +264,6 @@ public class MainActivity extends Activity {
 		protected void onSaveInstanceState(Bundle savedInstanceState) {
 				savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
 		}
-		
-		public void setButton(boolean flag) {
-				final Button btn = (Button) findViewById(R.id.status_button_startstop);
-        btn.setEnabled(flag);
-        btn.setClickable(flag);
-		}
-		
-    public class ThreadStatusAsyncTask extends AsyncTask<CpuMiningWorker,Integer,Boolean> {
-        @Override
-        protected Boolean doInBackground(CpuMiningWorker... params) {
-            long lastTime = System.currentTimeMillis();
-            long currTime;
-            while (params[0].getThreadsStatus()) {
-                currTime = System.currentTimeMillis();
-                double deltaTime = (double)(currTime-lastTime)/1000.0;
-                if (deltaTime>15.0) {
-                    params[0].ConsoleWrite("Still cooling down...");
-                    lastTime = currTime;
-                }
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) {
-                final Button btn = (Button) findViewById(R.id.status_button_startstop);
-				        btn.setEnabled(true);
-				        btn.setClickable(true);
-                ShutdownStarted = false;
-                StartShutdown = false;
-                firstRunFlag = true;
-                Toast.makeText(MainActivity.this,"Cooldown finished",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     @Override
     protected void onPause() {
@@ -299,13 +272,12 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
+        super.onResume();
     		SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-								
         if (settings.getBoolean(PREF_BACKGROUND, false)) {
             TextView tv_background = (TextView) findViewById(R.id.status_textView_background);
             tv_background.setText("RUN IN BACKGROUND");
         }
-        super.onResume();
     }
 
     @Override

@@ -6,6 +6,15 @@ import static com.ariasaproject.cpuminingopt.Constants.STATUS_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_NOT_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_TERMINATED;
 
+import static com.ariasaproject.cpuminingopt.Constans.MSG_UIUPDATE;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_STARTED;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_TERMINATED;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_SPEED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_STATUS_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_ACCEPTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constans.MSG_REJECTED_UPDATE;
+
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,20 +41,13 @@ public class SingleMiningChief implements Observer {
   public long accepted = 0;
   public long rejected = 0;
   public int priority = 1;
-  private Handler mainHandler;
+  private final Handler mainHandler;
   public IMiningConnection _connection;
   public IMiningWorker _worker;
   private EventListener _eventlistener;
 
   public String status = STATUS_NOT_MINING;
-  final int MSG_UIUPDATE = 1;
-  final int MSG_TERMINATED = 2;
-  final int MSG_SPEED_UPDATE = 3;
-  final int MSG_STATUS_UPDATE = 4;
-  final int MSG_ACCEPTED_UPDATE = 5;
-  final int MSG_REJECTED_UPDATE = 6;
-  final int MSG_CONSOLE_UPDATE = 7;
-
+  
   public class EventListener extends Observable implements IConnectionEvent, IWorkerEvent {
     private SingleMiningChief _parent;
     private int _number_of_accept;
@@ -132,7 +134,7 @@ public class SingleMiningChief implements Observer {
   }
 
   public void update(Observable o, Object arg) {
-    Message msg = new Message();
+    Message msg = mainHandler.obtainMessage();
     Bundle bundle = new Bundle();
     msg.setData(bundle); // ensure msg has something
 
@@ -159,11 +161,11 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
 
-      msg = new Message();
+      msg = mainHandler.obtainMessage();
       msg.arg1 = MSG_TERMINATED;
       mainHandler.sendMessage(msg);
 
-      msg = new Message();
+      msg = mainHandler.obtainMessage();
       bundle = new Bundle();
       bundle.putFloat("speed", 0);
       msg.arg1 = MSG_SPEED_UPDATE;
@@ -229,7 +231,7 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
 
-      msg = new Message();
+      msg = mainHandler.obtainMessage();
       bundle = new Bundle();
       msg.arg1 = MSG_ACCEPTED_UPDATE;
       bundle.putLong("accepted", accepted);
@@ -243,7 +245,7 @@ public class SingleMiningChief implements Observer {
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
 
-      msg = new Message();
+      msg = mainHandler.obtainMessage();
       bundle = new Bundle();
       msg.arg1 = MSG_REJECTED_UPDATE;
       bundle.putLong("rejected", rejected);
@@ -268,7 +270,7 @@ public class SingleMiningChief implements Observer {
         msg.arg1 = MSG_STATUS_UPDATE;
         msg.setData(bundle);
         mainHandler.sendMessage(msg);
-        msg = new Message();
+        msg = mainHandler.obtainMessage();
         bundle = new Bundle();
         bundle.putFloat("speed", speed);
         msg.arg1 = MSG_SPEED_UPDATE;
