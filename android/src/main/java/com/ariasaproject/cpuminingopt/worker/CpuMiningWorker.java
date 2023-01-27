@@ -54,7 +54,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         MiningWork work = this._work;
         Hasher hasher = new Hasher();
         byte[] target = work.target.refHex();
-        while (true) {
+        for (;;) {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
             byte[] hash = hasher.hash(work.header.refHex(), nonce);
             for (int i2 = hash.length - 1; i2 >= 0; i2--) {
@@ -78,6 +78,9 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         stopWork();
       } catch (InterruptedException e) {
         Console.send(0, "Thread killed. #Hashes=" + this.number_of_hashed);
+        for (StackTraceElement es : e.getStackTrace()) {
+      			Console.send(0, "Interupted by " + es.getMessage());
+        }
         calcSpeedPerThread(number_of_hashed);
         _last_time = System.currentTimeMillis();
       }
@@ -132,7 +135,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     for (int i = this._number_of_thread - 1; i >= 0; i--) {
       this._workr_thread[i].setWork(i_work, (int) i, this._number_of_thread);
       _workr_thread[i].setPriority(_thread_priorirty);
-      if (_workr_thread[i].isAlive() == false) {
+      if (!_workr_thread[i].isAlive()) {
         try {
           _workr_thread[i].start();
         } catch (IllegalThreadStateException e) {

@@ -84,8 +84,8 @@ public class MainActivity extends Activity {
     EditText et_serv;
     EditText et_user;
     EditText et_pass;
-    CheckBox cb_service;
-    CheckBox cb_screen_awake;
+    CheckBox cb_background_run;
+    CheckBox cb_keep_awake;
 
     int  baseThreadCount;
     String unit = " h/s";
@@ -97,6 +97,10 @@ public class MainActivity extends Activity {
           switch (msg.arg1) {
           		case MSG_STARTED:
 	          			{
+							        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+											if(settings.getBoolean(PREF_SCREEN, false)) {
+													getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+											}
 		          				Button b = (Button) findViewById(R.id.status_button_startstop);
 		          				b.setText(getString(R.string.main_button_stop));
 							        b.setEnabled(true);
@@ -120,6 +124,10 @@ public class MainActivity extends Activity {
           				}
           				
           				{
+							        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+											if(settings.getBoolean(PREF_SCREEN, false)) {
+													getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+											}
 		          				Button b = (Button) findViewById(R.id.status_button_startstop);
 		          				b.setText(getString(R.string.main_button_start));
 							        b.setEnabled(true);
@@ -181,14 +189,14 @@ public class MainActivity extends Activity {
         et_serv = (EditText) findViewById(R.id.server_et);
         et_user = (EditText) findViewById((R.id.user_et));
         et_pass = (EditText) findViewById(R.id.password_et);
-        cb_service = (CheckBox) findViewById(R.id.settings_checkBox_background) ;
-        cb_screen_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake) ;
+        cb_background_run = (CheckBox) findViewById(R.id.settings_checkBox_background) ;
+        cb_keep_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake) ;
 				SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         et_serv.setText(settings.getString(PREF_URL,"stratum+tcp://us2.litecoinpool.org:8080"));
         et_user.setText(settings.getString(PREF_USER,"Ariasa.test"));
         et_pass.setText(settings.getString(PREF_PASS,"1234"));
-        cb_screen_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
-        cb_service.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
+        cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
+        cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
         
         //set number of Threads posibility use
         try {
@@ -217,9 +225,6 @@ public class MainActivity extends Activity {
 										String pass = et_pass.getText().toString();
 										Spinner threadList = (Spinner)findViewById(R.id.spinner1);
 										int threads = Integer.parseInt(threadList.getSelectedItem().toString());
-										if(cb_screen_awake.isChecked()) {
-												getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-										}
 										Console.send(0, "Try to start mining");
 										try {
 												mc = new StratumMiningConnection(url, user, pass);
@@ -232,8 +237,8 @@ public class MainActivity extends Activity {
 												editor.putString(PREF_USER, user);
 												editor.putString(PREF_PASS, pass);
 												editor.putInt(PREF_THREAD, threads);
-												editor.putBoolean(PREF_BACKGROUND, cb_service.isChecked());
-												editor.putBoolean(PREF_SCREEN, cb_screen_awake.isChecked());
+												editor.putBoolean(PREF_BACKGROUND, cb_background_run.isChecked());
+												editor.putBoolean(PREF_SCREEN, cb_keep_awake.isChecked());
 												editor.commit();
 												firstRunFlag = false;
 												final Message msg = statusHandler.obtainMessage();
