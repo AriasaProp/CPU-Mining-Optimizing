@@ -297,7 +297,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-				if(!settings.getBoolean(PREF_BACKGROUND,false)) {
+				if(!settings.getBoolean(PREF_BACKGROUND,false) && (imw != null)) {
             Console.send(0, "Try to stop mining");
 						Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
 						try {

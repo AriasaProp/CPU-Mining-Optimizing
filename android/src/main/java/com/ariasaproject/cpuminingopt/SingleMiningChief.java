@@ -74,7 +74,7 @@ public class SingleMiningChief implements Observer {
           this._parent._worker.doWork(i_work);
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        Console.send(0, "Exception : " + e);
       }
     }
 
