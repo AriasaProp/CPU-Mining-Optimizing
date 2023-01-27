@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v3
-    - name: Build CMake for ${{ matrix.os }} ${{mattix.arch}}
+    - name: Build CMake for ${{ matrix.os }} ${{matrix.arch}}
       run: |
         mkdir desktop/build
         cmake -S desktop -B desktop/${{ matrix.os }}-${{ matrix.arch }}-build
