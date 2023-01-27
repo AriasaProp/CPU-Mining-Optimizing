@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Cmake-${{ matrix.os }}_${{ matrix.arch }}-build
-        path: ${{ github.workspace }}/desktop/${{ matrix.os }}_${{ matrix.arch }}_build
+        path: ${{ github.workspace }}/desktop/${{ matrix.os }}-${{ matrix.arch }}-build
