@@ -135,7 +135,6 @@ public class SingleMiningChief implements Observer {
 
   public void update(Observable o, Object arg) {
     Message msg = mainHandler.obtainMessage();
-    Bundle bundle = new Bundle();
     msg.arg1 = 0;
 
     IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
@@ -192,8 +191,6 @@ public class SingleMiningChief implements Observer {
       Console.send(1, "Miner: Detected new block");
       bundle.putString("status", status);
       msg.arg1 |= MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.POW_TRUE) {
       status = STATUS_MINING;
       Console.send(2, "Miner: PROOF OF WORK RESULT: true");
