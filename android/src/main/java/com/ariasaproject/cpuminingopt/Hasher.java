@@ -15,7 +15,7 @@ public class Hasher {
   private static int[] X = new int[32];
   private static int[] V = new int[32 * 1024];
 
-  public byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
+  public static byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
   	if (mac == null)
     		mac = Mac.getInstance("HmacSHA256");
     int i, j, k;

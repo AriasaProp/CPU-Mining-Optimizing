@@ -166,11 +166,10 @@ public class MainActivity extends Activity {
       							@Override
       							public void run() {
         								TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-      									if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      											txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), BufferType.SPANNABLE);
-      									} else {
-														txt_console.setText(Html.fromHtml(msgs), BufferType.SPANNABLE);
-      									}
+      									if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+      											txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+      									else
+														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
       							}
       					});
 		  			}
