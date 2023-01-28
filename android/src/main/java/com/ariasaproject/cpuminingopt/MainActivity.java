@@ -56,6 +56,7 @@ import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_CONSOLE;
 
 import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
@@ -175,9 +176,9 @@ public class MainActivity extends Activity {
 		  			public void receive(String msgs) {
 		  					Message msg = statusHandler.obtainMessage();
 		  					Bundle bundle = new Bundle();
+		  					msg.arg1 = MSG_CONSOLE;
 		  					bundle.putString("console", msgs);
 		  					msg.setData(bundle);
-		  					msg.arg1 = MSG_CONSOLE;
       					statusHandler.sendMessage(msg);
 		  			}
 		  	});
