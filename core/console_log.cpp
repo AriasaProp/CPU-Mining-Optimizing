@@ -14,7 +14,7 @@ void console_log::initialize() {
 	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 
-char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
+const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
 	char tmsg[8];
   std::time_t t = std::time(0);
   if(!strftime(tmsg, 8, "%T", std::localtime(&t))){
