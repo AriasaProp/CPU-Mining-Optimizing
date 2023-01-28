@@ -39,14 +39,14 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 			memcpy(modif,"ff0000",6);//Error
 			break;
   }
-  *(modif+=6) = '>';
+  memcpy((modif+=6), "'>", 2);
   std::time_t t = std::time(0);
-  if(!strftime((++modif), 9, "%T", std::localtime(&t))){
-  	memcpy(modif, "Error!!   ", 9);
+  if(!strftime((modif+=2), 12, "%T | ", std::localtime(&t))){
+  	memcpy(modif, "Error!!!!   ", 12);
   }
-  memcpy((modif+=9), msg, length);
-  memcpy((modif+=length), "</font> <br>", 12);
-  memcpy((modif+=12), "   ", 3);
+  memcpy((modif+=11), msg, length);
+  memcpy((modif+=length), "</font><br>", 12);
+  memcpy((modif+=12), "  ", 2);
 	return htmlMsg;
 }
 
