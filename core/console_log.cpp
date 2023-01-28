@@ -8,6 +8,7 @@
 //2^20 
 
 std::string *htmlMsg;
+std::string out;
 
 void console_log::initialize() {
 	htmlMsg = new std::string[console_log::MAX_MSG_SIZE];
@@ -46,7 +47,7 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   	htmlMsg[i] = htmlMsg[i-1];
   }
   htmlMsg[0] = std::string(buff);
-  std::string out;
+  out = "";
   for (size_t i = 0; i < console_log::MAX_MSG_SIZE; i++) {
   	out += htmlMsg[i];
   }
