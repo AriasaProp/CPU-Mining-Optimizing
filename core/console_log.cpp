@@ -2,8 +2,6 @@
 
 #include <cstdint>
 #include <cstdio>
-#include <cstring>
-#include <string>
 #include <ctime>
 //2^20 
 
@@ -14,7 +12,7 @@ void console_log::initialize() {
 	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 
-char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
+std::string console_log::write(unsigned int lv, const char *msg, unsigned long length) {
 	char tmsg[8];
   std::time_t t = std::time(0);
   if(!strftime(tmsg, 8, "%T", std::localtime(&t))){
@@ -55,5 +53,4 @@ char *console_log::write(unsigned int lv, const char *msg, unsigned long length)
 
 void console_log::destroy() {
 	delete htmlMsg;
-	endHtmlMsg = nullptr;
 }
