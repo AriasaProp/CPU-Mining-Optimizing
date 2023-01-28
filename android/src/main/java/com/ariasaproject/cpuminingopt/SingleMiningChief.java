@@ -125,9 +125,7 @@ public class SingleMiningChief implements Observer {
   }
 
   public void stopMining() {
-    Console.send(0, "Miner: Worker stopping...");
-    Console.send(0, "Miner: Worker cooling down");
-    Console.send(0, "Miner: This can take a few minutes");
+    Console.send(0, "Miner: Worker on stopping... This can take a few minutes");
     this._connection.disconnect();
     this._worker.stopWork();
     speed = 0;

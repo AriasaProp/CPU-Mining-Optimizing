@@ -7,11 +7,13 @@
 #include <string>
 //2^20 
 
-std::string *htmlMsg;
-std::string out;
+char *htmlMsg;
+char *endHtmlMsg;
 
 void console_log::initialize() {
-	htmlMsg = new std::string[console_log::MAX_MSG_SIZE];
+	htmlMsg = new char[console_log::MAX_MSG_SIZE+1
+	memset(htmlMsg,' ', console_log::MAX_MSG_SIZE);
+	endHtmlMsg = htmlMsg+console_log::MAX_MSG_SIZE;
 	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 
@@ -43,17 +45,13 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   size_t l_move = 50+length;
   char buff[l_move];
   sprintf(buff, "<font color='#%s'>%s| %s</font><br>", tx_clr, tmsg, msg);
-  for (size_t i = console_log::MAX_MSG_SIZE - 1; i > 0; i--) {
-  	htmlMsg[i] = htmlMsg[i-1];
-  }
-  htmlMsg[0] = std::string(buff);
-  out = "";
-  for (size_t i = 0; i < console_log::MAX_MSG_SIZE; i++) {
-  	out += htmlMsg[i];
-  }
-	return out.c_str();
+  memmove(htmlMsg+l_move, htmlMsg, console_log::MAX_MSG_SIZE-l_move);
+  memcpy(htmlMsg, buff, l_move);
+  
+	return htmlMsg;
 }
 
 void console_log::destroy() {
 	delete htmlMsg;
+	endHtmlMsg = nullptr;
 }

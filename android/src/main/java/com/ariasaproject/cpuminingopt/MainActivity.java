@@ -104,7 +104,7 @@ public class MainActivity extends Activity {
 									getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 							}
 		  				Button b = (Button) findViewById(R.id.status_button_startstop);
-		  				b.setText(getString(R.string.main_button_stop));
+		  				b.setText(R.string.main_button_stop);
 			        b.setEnabled(true);
 			        b.setClickable(true);
           }
@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
 			                currTime = System.currentTimeMillis();
 			                long deltaTime = currTime-lastTime;
 			                if (deltaTime>15000.0) {
-			                    w.ConsoleWrite("Still cooling down...");
+			                    Console.send(0, "Still cooling down...");
 			                    lastTime = currTime;
 			                }
 			            }
@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 									getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 							}
       				Button b = (Button) findViewById(R.id.status_button_startstop);
-      				b.setText(getString(R.string.main_button_start));
+      				b.setText(R.string.main_button_start);
 			        b.setEnabled(true);
 			        b.setClickable(true);
           }
@@ -148,7 +148,7 @@ public class MainActivity extends Activity {
 	            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
 	            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
           }
-          
+          /*
           if ((msg.arg1 & MSG_CONSOLE) == MSG_CONSOLE) {
 							TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
 							//txt_console.setText(bundle.getString("console"));
@@ -157,28 +157,30 @@ public class MainActivity extends Activity {
 							else
 									txt_console.setText(Html.fromHtml(bundle.getString("console")), TextView.BufferType.SPANNABLE);
           }
-          
+          */
           super.handleMessage(msg);
       }
     };
-    
-
-    public volatile  boolean firstRunFlag = true;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
         
+				final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
         Console.setReceiver(new Console.Receiver() {
+        		final Runnable postConsole = 
 		  			@Override
 		  			public void receive(String msgs) {
-		  					Message msg = statusHandler.obtainMessage();
-		  					Bundle bundle = new Bundle();
-		  					msg.arg1 = MSG_CONSOLE;
-		  					bundle.putString("console", msgs);
-		  					msg.setData(bundle);
-      					statusHandler.sendMessage(msg);
+		  					statusHandler.post(new Runnable(){
+		        				@Override
+		        				public void run(){
+												if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+														txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+												else
+														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
+		        				}
+		        		});
 		  			}
 		  	});
         
@@ -236,7 +238,6 @@ public class MainActivity extends Activity {
 												editor.putBoolean(PREF_BACKGROUND, cb_background_run.isChecked());
 												editor.putBoolean(PREF_SCREEN, cb_keep_awake.isChecked());
 												editor.commit();
-												firstRunFlag = false;
 												final Message msg = statusHandler.obtainMessage();
 												msg.arg1 = MSG_STARTED;
 												statusHandler.sendMessage(msg);

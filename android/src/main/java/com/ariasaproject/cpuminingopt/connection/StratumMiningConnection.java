@@ -89,7 +89,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
           synchronized (this._submit_q) {
             for (SubmitOrder i : this._submit_q) {
               if (i.id == sjson.id) {
-                // submit_qから取り外し
                 this._submit_q.remove(i);
                 so = i;
                 break;

@@ -170,10 +170,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     return false;
   }
 
-  public void ConsoleWrite(String c) {
-    Console.send(0, c);
-  }
-
   private EventList _as_listener = new EventList();
 
   public void addListener(IWorkerEvent i_listener) {
