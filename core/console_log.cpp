@@ -53,8 +53,7 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   	if (memcmp(tF, frontKey, 14) == 0) {
   		char *bF = strstr(tF, endKey);
   		if (bF && ((bF+endKey+1)<endHtmlMsg)) {
-  				tF = bF+endKey
-  			}
+				tF = bF+endKey
   		}
 			memset(tF, ' ', endHtmlMsg-tF)
   		break;
