@@ -18,7 +18,7 @@ JNI_Call(jstring, write) (JNIEnv* env, jclass, jint, jstring) {
   env->ReleaseStringUTFChars(l, cstr);
 	return env->NewStringUTF(r);
 	*/
-	return env->NewStringUTF("lorem ipsum dolor");
+	return env->NewStringUTF("lorem ipsum dolor ......................");
 }
 
 //native management

@@ -192,6 +192,8 @@
                     android:id="@+id/status_textView_console"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="00:00:00| Lorem ipsum dolor sojfkdkngk"
+                    android:textColor="#ffffffff"
                     android:shadowColor="@android:color/holo_blue_dark"
                     android:shadowDx="1"
                     android:shadowDy="1"

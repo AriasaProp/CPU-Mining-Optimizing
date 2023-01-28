@@ -147,16 +147,16 @@ public class MainActivity extends Activity {
 	            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
 	            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
           }
+          /*
           if ((msg.arg1 & MSG_CONSOLE) == MSG_CONSOLE) {
 							TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
 							txt_console.setText(bundle.getString("console","None"));
-							/*
 							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 									txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 							else
 									txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
-									*/
           }
+          */
           super.handleMessage(msg);
       }
     };
