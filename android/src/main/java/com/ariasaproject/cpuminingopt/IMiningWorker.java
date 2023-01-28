@@ -1,4 +1,4 @@
-package com.ariasaproject.cpuminingopt.worker;
+package com.ariasaproject.cpuminingopt;
 
 import com.ariasaproject.cpuminingopt.MiningWork;
 

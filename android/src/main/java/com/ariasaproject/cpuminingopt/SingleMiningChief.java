@@ -136,120 +136,79 @@ public class SingleMiningChief implements Observer {
   public void update(Observable o, Object arg) {
     Message msg = mainHandler.obtainMessage();
     Bundle bundle = new Bundle();
-    msg.setData(bundle); // ensure msg has something
+    msg.arg1 = 0;
 
     IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
     if (n == IMiningWorker.Notification.SYSTEM_ERROR) {
-      Console.send(0, "Miner: System error");
+      Console.send(4, "Miner: System error");
       status = STATUS_ERROR;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.PERMISSION_ERROR) {
-      Console.send(0, "Miner: Permission error");
+      Console.send(4, "Miner: Permission error");
       status = STATUS_ERROR;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.TERMINATED) {
-      Console.send(0, "Miner: Worker terminated");
+      Console.send(4, "Miner: Worker terminated");
       status = STATUS_TERMINATED;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
-
-      msg = mainHandler.obtainMessage();
-      msg.arg1 = MSG_TERMINATED;
-      mainHandler.sendMessage(msg);
-
-      msg = mainHandler.obtainMessage();
-      bundle = new Bundle();
+      msg.arg1 |= MSG_STATUS_UPDATE;
       bundle.putFloat("speed", 0);
-      msg.arg1 = MSG_SPEED_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_SPEED_UPDATE;
     } else if (n == IMiningWorker.Notification.CONNECTING) {
-      Console.send(0, "Miner: Worker connecting");
+      Console.send(1, "Miner: Worker connecting");
       status = STATUS_CONNECTING;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
-
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.AUTHENTICATION_ERROR) {
       status = STATUS_ERROR;
-      Console.send(0, "Miner: Authentication error");
+      Console.send(4, "Miner: Authentication error");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.CONNECTION_ERROR) {
       status = STATUS_ERROR;
-      Console.send(0, "Miner: Connection error");
+      Console.send(4, "Miner: Connection error");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.COMMUNICATION_ERROR) {
       status = STATUS_ERROR;
-      Console.send(0, "Miner: Communication error");
+      Console.send(4, "Miner: Communication error");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.LONG_POLLING_FAILED) {
       status = STATUS_NOT_MINING;
-      Console.send(0, "Miner: Long polling failed");
+      Console.send(4, "Miner: Long polling failed");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.LONG_POLLING_ENABLED) {
       status = STATUS_MINING;
-      Console.send(0, "Miner: Long polling enabled");
-      Console.send(0, "Miner: Speed updates as work is completed");
+      Console.send(1, "Miner: Long polling enabled");
+      Console.send(1, "Miner: Speed updates as work is completed");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_STATUS_UPDATE;
     } else if (n == IMiningWorker.Notification.NEW_BLOCK_DETECTED) {
       status = STATUS_MINING;
-      Console.send(0, "Miner: Detected new block");
+      Console.send(1, "Miner: Detected new block");
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
+      msg.arg1 |= MSG_STATUS_UPDATE;
       msg.setData(bundle);
       mainHandler.sendMessage(msg);
     } else if (n == IMiningWorker.Notification.POW_TRUE) {
       status = STATUS_MINING;
-      Console.send(0, "Miner: PROOF OF WORK RESULT: true");
+      Console.send(2, "Miner: PROOF OF WORK RESULT: true");
       accepted += 1;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
-
-      msg = mainHandler.obtainMessage();
-      bundle = new Bundle();
-      msg.arg1 = MSG_ACCEPTED_UPDATE;
+      msg.arg1 |= MSG_STATUS_UPDATE;
+      msg.arg1 |= MSG_ACCEPTED_UPDATE;
       bundle.putLong("accepted", accepted);
-      mainHandler.sendMessage(msg);
-
     } else if (n == IMiningWorker.Notification.POW_FALSE) {
       status = STATUS_MINING;
       rejected += 1;
       bundle.putString("status", status);
-      msg.arg1 = MSG_STATUS_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
-
-      msg = mainHandler.obtainMessage();
-      bundle = new Bundle();
-      msg.arg1 = MSG_REJECTED_UPDATE;
+      msg.arg1 |= MSG_STATUS_UPDATE;
       bundle.putLong("rejected", rejected);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_REJECTED_UPDATE;
     } else if (n == IMiningWorker.Notification.SPEED) {
       if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
         speed = 0;
@@ -257,28 +216,21 @@ public class SingleMiningChief implements Observer {
         speed = (float) ((CpuMiningWorker) _worker).get_speed();
       }
       bundle.putFloat("speed", speed);
-      msg.arg1 = MSG_SPEED_UPDATE;
-      msg.setData(bundle);
-      mainHandler.sendMessage(msg);
+      msg.arg1 |= MSG_SPEED_UPDATE;
     } else if (n == IMiningWorker.Notification.NEW_WORK) {
       if (lastWorkTime > 0L) {
         long hashes = _worker.getNumberOfHash() - lastWorkHashes;
         speed = (float) ((CpuMiningWorker) _worker).get_speed();
         status = STATUS_MINING;
-        Console.send(0, "Miner: " + String.format("%d Hashes, %.6f Hash/s", hashes, speed));
         bundle.putString("status", status);
-        msg.arg1 = MSG_STATUS_UPDATE;
-        msg.setData(bundle);
-        mainHandler.sendMessage(msg);
-        msg = mainHandler.obtainMessage();
-        bundle = new Bundle();
+        msg.arg1 |= MSG_STATUS_UPDATE;
         bundle.putFloat("speed", speed);
-        msg.arg1 = MSG_SPEED_UPDATE;
-        msg.setData(bundle);
-        mainHandler.sendMessage(msg);
+        msg.arg1 |= MSG_SPEED_UPDATE;
       }
       lastWorkTime = System.currentTimeMillis();
       lastWorkHashes = _worker.getNumberOfHash();
     }
+    msg.setData(bundle);
+    mainHandler.sendMessage(msg);
   }
 }

@@ -1,5 +1,8 @@
 package com.ariasaproject.cpuminingopt;
 
+import androidx.core.text.HtmlCompat;
+import android.text.Html;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,6 +18,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -52,7 +56,6 @@ import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_CONSOLE_UPDATE;
 
 import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
@@ -94,69 +97,55 @@ public class MainActivity extends Activity {
       @Override
       public void handleMessage(Message msg) {
           final Bundle bundle = msg.getData();
-          switch (msg.arg1) {
-          		case MSG_STARTED:
-	          			{
-							        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-											if(settings.getBoolean(PREF_SCREEN, false)) {
-													getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-											}
-		          				Button b = (Button) findViewById(R.id.status_button_startstop);
-		          				b.setText(getString(R.string.main_button_stop));
-							        b.setEnabled(true);
-							        b.setClickable(true);
-	          			}
-          				break;
-          		case MSG_TERMINATED:
-          				if (imw != null) {
-			                CpuMiningWorker w = (CpuMiningWorker)imw;
-			                long lastTime = System.currentTimeMillis();
-					            long currTime;
-					            while (w.getThreadsStatus()) {
-					                currTime = System.currentTimeMillis();
-					                long deltaTime = currTime-lastTime;
-					                if (deltaTime>15000.0) {
-					                    w.ConsoleWrite("Still cooling down...");
-					                    lastTime = currTime;
-					                }
-					            }
-					            imw = null;
-          				}
-          				
-          				{
-							        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-											if(settings.getBoolean(PREF_SCREEN, false)) {
-													getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-											}
-		          				Button b = (Button) findViewById(R.id.status_button_startstop);
-		          				b.setText(getString(R.string.main_button_start));
-							        b.setEnabled(true);
-							        b.setClickable(true);
-          				}
-          				break;
-          		case MSG_SPEED_UPDATE:
-			            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
-			            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
-          				break;
-          		case MSG_STATUS_UPDATE:
-			            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
-			            txt_status.setText(bundle.getString("status"));
-          				break;
-          		case MSG_ACCEPTED_UPDATE:
-			            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
-			            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
-          				break;
-          		case MSG_REJECTED_UPDATE:
-			            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
-			            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
-          				break;
-          		case MSG_CONSOLE_UPDATE:
-  								TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-			            txt_console.setText(bundle.getString("console"));
-			            txt_console.invalidate();
-          				break;
-	          	default:
-	          			break;
+          if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
+			        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+							if(settings.getBoolean(PREF_SCREEN, false)) {
+									getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+							}
+		  				Button b = (Button) findViewById(R.id.status_button_startstop);
+		  				b.setText(getString(R.string.main_button_stop));
+			        b.setEnabled(true);
+			        b.setClickable(true);
+          }
+          if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
+      				if (imw != null) {
+	                CpuMiningWorker w = (CpuMiningWorker)imw;
+	                long lastTime = System.currentTimeMillis();
+			            long currTime;
+			            while (w.getThreadsStatus()) {
+			                currTime = System.currentTimeMillis();
+			                long deltaTime = currTime-lastTime;
+			                if (deltaTime>15000.0) {
+			                    w.ConsoleWrite("Still cooling down...");
+			                    lastTime = currTime;
+			                }
+			            }
+			            imw = null;
+      				}
+			        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+							if(settings.getBoolean(PREF_SCREEN, false)) {
+									getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+							}
+      				Button b = (Button) findViewById(R.id.status_button_startstop);
+      				b.setText(getString(R.string.main_button_start));
+			        b.setEnabled(true);
+			        b.setClickable(true);
+          }
+          if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
+	            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
+	            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
+          }
+          if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
+	            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
+	            txt_status.setText(bundle.getString("status"));
+          }
+          if ((msg.arg1 & MSG_ACCEPTED_UPDATE) == MSG_ACCEPTED_UPDATE) {
+	            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
+	            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
+          }
+          if ((msg.arg1 & MSG_REJECTED_UPDATE) == MSG_REJECTED_UPDATE) {
+	            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
+	            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
           }
           super.handleMessage(msg);
       }
@@ -170,19 +159,22 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
         
-        TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
+        final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
         if (savedInstanceState != null)
         		txt_console.setText(savedInstanceState.getString("console", "Welcome to CPU Mining Opt"));
-        
         Console.setReceiver(new Console.Receiver() {
 		  			@Override
-		  			public void receive(String msgs) {
-		  					final Message msg = statusHandler.obtainMessage();
-		  					msg.arg1 = MSG_CONSOLE_UPDATE;
-		  					Bundle b = new Bundle();
-		  					b.putString("console", msgs);
-		  					msg.setData(b);
-      					statusHandler.sendMessage(msg);
+		  			public void receive(final String msgs) {
+      					statusHandler.post(new Runnable(){
+      							@Override
+      							public void run() {
+      									if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      											txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), BufferType.SPANNABLE);
+      									} else {
+														txt_console.setText(Html.fromHtml(msgs), BufferType.SPANNABLE);
+      									}
+      							}
+      					});
 		  			}
 		  	});
         
@@ -225,7 +217,7 @@ public class MainActivity extends Activity {
 										String pass = et_pass.getText().toString();
 										Spinner threadList = (Spinner)findViewById(R.id.spinner1);
 										int threads = Integer.parseInt(threadList.getSelectedItem().toString());
-										Console.send(0, "Try to start mining");
+										Console.send(1, "Try to start mining");
 										try {
 												mc = new StratumMiningConnection(url, user, pass);
 												imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
@@ -245,8 +237,9 @@ public class MainActivity extends Activity {
 												msg.arg1 = MSG_STARTED;
 												statusHandler.sendMessage(msg);
 										} catch (Exception e) {
+												Console.send(4, "Error start mining : "+ e.toString());
 												for (StackTraceElement t : e.getStackTrace())
-														Console.send(0, "Error: "+t.toString());
+														Console.send(4, "Trace : "+t.toString());
 												final Message msg = statusHandler.obtainMessage();
 												msg.arg1 = MSG_TERMINATED;
 												statusHandler.sendMessage(msg);
@@ -259,12 +252,12 @@ public class MainActivity extends Activity {
 						new Thread(new Runnable() {
 								@Override
 								public void run(){
-										Console.send(0, "Service: Stopping mining");
+										Console.send(1, "Service: Stopping mining");
 										try {
 												smc.stopMining();
 										} catch (Exception e) {
 												for (StackTraceElement t : e.getStackTrace())
-														Console.send(0, "Error: "+t.toString());
+														Console.send(1, "Error: "+t.toString());
 										}
 										final Message msg = statusHandler.obtainMessage();
 										msg.arg1 = MSG_TERMINATED;
@@ -304,7 +297,7 @@ public class MainActivity extends Activity {
 								smc.stopMining();
 						} catch (Exception e) {
 								for (StackTraceElement t : e.getStackTrace())
-										Console.send(0, "Error: "+t.toString());
+										Console.send(4, "Error: "+t.toString());
 						}
         }
         super.onStop();

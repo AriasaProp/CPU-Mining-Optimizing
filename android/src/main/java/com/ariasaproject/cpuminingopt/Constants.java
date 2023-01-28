@@ -4,12 +4,11 @@ public class Constants {
 
   public static final int MSG_UIUPDATE = 1;
   public static final int MSG_STARTED = 2;
-  public static final int MSG_TERMINATED = 3;
-  public static final int MSG_SPEED_UPDATE = 4;
-  public static final int MSG_STATUS_UPDATE = 5;
-  public static final int MSG_ACCEPTED_UPDATE = 6;
-  public static final int MSG_REJECTED_UPDATE = 7;
-  public static final int MSG_CONSOLE_UPDATE = 8;
+  public static final int MSG_TERMINATED = 4;
+  public static final int MSG_SPEED_UPDATE = 8;
+  public static final int MSG_STATUS_UPDATE = 16;
+  public static final int MSG_ACCEPTED_UPDATE = 32;
+  public static final int MSG_REJECTED_UPDATE = 64;
 
   public static final String PREF_URL = "URL";
   public static final String PREF_USER = "USER";
