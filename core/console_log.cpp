@@ -18,29 +18,29 @@ void console_log::initialize() {
 	write(0,"Wellcome to CPU Mining Opt", 27)
 }
 
-char *console_log::write(unsigned int lv, const char *msg, unsigned long length) const {
+char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
 	char tmsg[8];
   std::time_t t = std::time(0);
   if(!strftime(tmsg, 8, "%T", std::localtime(&t))){
-  	tmsg = "Error!!";
+  	memcpy(tmsg, "Error!! ", 8);
   }
 	char tx_clr[6];
 	switch(lv) {
 		default:
 		case 0:
-			tx_clr = "808080";//debug
+			memcpy(tx_clr,"808080",6);//debug
 			break;
 		case 1:
-			tx_clr = "0000ff";//info
+			memcpy(tx_clr,"0000ff",6);//info
 			break;
 		case 2:
-			tx_clr = "00ff00";//success
+			memcpy(tx_clr,"00ff00",6);//success
 			break;
 		case 3:
-			tx_clr = "ffff00";//warning
+			memcpy(tx_clr,"ffff00",6);//warning
 			break;
 		case 4:
-			tx_clr = "ff0000";//Error
+			memcpy(tx_clr,"ff0000",6);//Error
 			break;
   }
   size_t l_move = 41+length;
