@@ -50,7 +50,7 @@ char *console_log::write(unsigned int lv, const char *msg, unsigned long length)
   for (size_t i = 0; i < console_log::MAX_MSG_SIZE; i++) {
   	out += htmlMsg[i];
   }
-	return htmlMsg;
+	return out;
 }
 
 void console_log::destroy() {
