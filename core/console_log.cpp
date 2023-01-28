@@ -11,7 +11,7 @@ char *htmlMsg;
 char *endHtmlMsg;
 
 void console_log::initialize() {
-	htmlMsg = new char[console_log::MAX_MSG_SIZE+1
+	htmlMsg = new char[console_log::MAX_MSG_SIZE+1];
 	memset(htmlMsg,' ', console_log::MAX_MSG_SIZE);
 	endHtmlMsg = htmlMsg+console_log::MAX_MSG_SIZE;
 	write(0,"Wellcome to CPU Mining Opt", 27);
