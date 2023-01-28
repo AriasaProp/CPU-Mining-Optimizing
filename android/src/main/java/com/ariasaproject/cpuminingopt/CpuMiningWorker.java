@@ -53,8 +53,8 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
             byte[] hash = Hasher.hash(work.header.refHex(), nonce);
             for (int i2 = hash.length - 1; i2 >= 0; i2--) {
-            	byte c = (hash[i2] & (byte)0xff);
-            	byte t = (target[i2] & (byte)0xff);
+            	byte c = hash[i2];
+            	byte t = target[i2];
             	if (c!=t) {
 	              if (c > t) break;
 	              if (c < t) {

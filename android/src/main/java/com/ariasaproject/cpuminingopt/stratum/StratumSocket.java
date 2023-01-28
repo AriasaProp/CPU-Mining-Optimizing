@@ -144,7 +144,6 @@ public class StratumSocket extends Socket {
       return new StratumJsonMethodShowMessage(jn);
     } catch (RuntimeException e) {
     }
-    // parse result(複雑なものから順にね！)
     try {
       return new StratumJsonResultSubscribe(jn);
     } catch (RuntimeException e) {
@@ -157,35 +156,22 @@ public class StratumSocket extends Socket {
   }
 
   public static void main(String[] args) {
-    // JsonParseTest
     ObjectMapper mapper = new ObjectMapper();
     try {
-      StratumJson s1 =
-          new StratumJsonMethodGetVersion(mapper.readTree(StratumJsonMethodGetVersion.TEST_PATT));
-      StratumJson s2 =
-          new StratumJsonMethodMiningNotify(
-              mapper.readTree(StratumJsonMethodMiningNotify.TEST_PATT));
-      StratumJson s3 =
-          new StratumJsonMethodReconnect(mapper.readTree(StratumJsonMethodReconnect.TEST_PATT));
-      StratumJson s4 =
-          new StratumJsonMethodSetDifficulty(
-              mapper.readTree(StratumJsonMethodSetDifficulty.TEST_PATT));
-      StratumJson s5 =
-          new StratumJsonMethodShowMessage(mapper.readTree(StratumJsonMethodShowMessage.TEST_PATT));
-      StratumJson s6 =
-          new StratumJsonResultStandard(mapper.readTree(StratumJsonResultStandard.TEST_PATT));
-      StratumJson s7 =
-          new StratumJsonResultSubscribe(mapper.readTree(StratumJsonResultSubscribe.TEST_PATT));
+      StratumJson s1 = new StratumJsonMethodGetVersion(mapper.readTree(StratumJsonMethodGetVersion.TEST_PATT));
+      StratumJson s2 = new StratumJsonMethodMiningNotify(mapper.readTree(StratumJsonMethodMiningNotify.TEST_PATT));
+      StratumJson s3 = new StratumJsonMethodReconnect(mapper.readTree(StratumJsonMethodReconnect.TEST_PATT));
+      StratumJson s4 = new StratumJsonMethodSetDifficulty(mapper.readTree(StratumJsonMethodSetDifficulty.TEST_PATT));
+      StratumJson s5 = new StratumJsonMethodShowMessage(mapper.readTree(StratumJsonMethodShowMessage.TEST_PATT));
+      StratumJson s6 = new StratumJsonResultStandard(mapper.readTree(StratumJsonResultStandard.TEST_PATT));
+      StratumJson s7 = new StratumJsonResultSubscribe(mapper.readTree(StratumJsonResultSubscribe.TEST_PATT));
       return;
     } catch (JsonProcessingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (RuntimeException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
+    } /*catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 }

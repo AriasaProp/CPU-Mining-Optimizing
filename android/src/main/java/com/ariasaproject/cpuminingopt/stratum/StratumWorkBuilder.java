@@ -10,7 +10,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-/** Created by Ben David on 01/08/2017. */
 public class StratumWorkBuilder {
   private StratumJsonResultSubscribe _subscribe = null;
   private StratumJsonMethodMiningNotify _notify = null;
@@ -148,15 +147,12 @@ public class StratumWorkBuilder {
       System.out.println(WORK_TARGET);
 
     } catch (JsonProcessingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (RuntimeException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
+    } /*catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 }
 /// *

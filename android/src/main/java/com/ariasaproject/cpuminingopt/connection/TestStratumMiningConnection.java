@@ -82,24 +82,18 @@ public class TestStratumMiningConnection implements IMiningConnection {
   public TestStratumMiningConnection(int i_idx) {
     ObjectMapper mapper = new ObjectMapper();
     try {
-      StratumJsonResultSubscribe s =
-          new StratumJsonResultSubscribe(mapper.readTree(data[i_idx].sr));
-      StratumJsonMethodMiningNotify n =
-          new StratumJsonMethodMiningNotify(mapper.readTree(data[i_idx].nt));
-      StratumJsonMethodSetDifficulty d =
-          new StratumJsonMethodSetDifficulty(mapper.readTree(data[i_idx].st));
+      StratumJsonResultSubscribe s = new StratumJsonResultSubscribe(mapper.readTree(data[i_idx].sr));
+      StratumJsonMethodMiningNotify n = new StratumJsonMethodMiningNotify(mapper.readTree(data[i_idx].nt));
+      StratumJsonMethodSetDifficulty d = new StratumJsonMethodSetDifficulty(mapper.readTree(data[i_idx].st));
       StratumWorkBuilder sb = new StratumWorkBuilder(s);
       sb.setDiff(d);
       sb.setNotify(n);
       this._work = sb.buildMiningWork();
     } catch (JsonProcessingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
+    } /*catch (IOException e) {
       e.printStackTrace();
-    } catch (RuntimeException e) {
-      // TODO Auto-generated catch block
+    } */catch (RuntimeException e) {
       e.printStackTrace();
     }
   }
