@@ -9,6 +9,7 @@ public class Constants {
   public static final int MSG_STATUS_UPDATE = 16;
   public static final int MSG_ACCEPTED_UPDATE = 32;
   public static final int MSG_REJECTED_UPDATE = 64;
+  public static final int MSG_CONSOLE = 128;
 
   public static final String PREF_URL = "URL";
   public static final String PREF_USER = "USER";

@@ -15,8 +15,6 @@ public class Console {
   public static void send(int lvl, String s) {
     if (_receiver != null)
   			_receiver.receive(write(lvl, s));
-  	else
-    		write(lvl, s);
   	
   }
   

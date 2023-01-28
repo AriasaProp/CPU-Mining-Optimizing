@@ -132,7 +132,7 @@ public class SingleMiningChief implements Observer {
     this._worker.stopWork();
     speed = 0;
   }
-
+  @Override
   public void update(Observable o, Object arg) {
     Message msg = mainHandler.obtainMessage();
     msg.arg1 = 0;
