@@ -42,7 +42,7 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   }
   size_t l_move = 50+length;
   char buff[l_move];
-  sprintf(buff, "<font color='#%s'>%s| %s</font>\n", tx_clr, tmsg, msg);
+  sprintf(buff, "<font color='#%s'>%s| %s</font><br>", tx_clr, tmsg, msg);
   for (size_t i = console_log::MAX_MSG_SIZE - 1; i > 0; i--) {
   	htmlMsg[i] = htmlMsg[i-1];
   }
