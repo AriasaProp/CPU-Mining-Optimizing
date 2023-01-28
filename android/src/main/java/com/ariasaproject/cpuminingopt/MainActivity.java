@@ -169,7 +169,6 @@ public class MainActivity extends Activity {
         
 				final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
         Console.setReceiver(new Console.Receiver() {
-        		final Runnable postConsole = 
 		  			@Override
 		  			public void receive(String msgs) {
 		  					statusHandler.post(new Runnable(){
