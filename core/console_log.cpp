@@ -15,7 +15,7 @@ void console_log::initialize() {
 	memset(htmlMsg, ' ', console_log::MAX_MSG_SIZE);
 	endHtmlMsg = htmlMsg+console_log::MAX_MSG_SIZE;
 	*endHtmlMsg = '\0';
-	write(0,"Wellcome to CPU Mining Opt", 27)
+	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 
 char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
