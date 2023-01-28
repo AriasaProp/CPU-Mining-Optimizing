@@ -16,10 +16,10 @@ void console_log::initialize() {
 }
 
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-	char tmsg[8];
+	char tmsg[10];
   std::time_t t = std::time(0);
-  if(!strftime(tmsg, 8, "%T", std::localtime(&t))){
-  	memcpy(tmsg, "Error!! ", 8);
+  if(!strftime(tmsg, 10, "%T", std::localtime(&t))){
+  	memcpy(tmsg, "Error!!   ", 10);
   }
 	char tx_clr[6];
 	switch(lv) {
@@ -40,7 +40,7 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 			memcpy(tx_clr,"ff0000",6);//Error
 			break;
   }
-  size_t l_move = 45+length;
+  size_t l_move = 50+length;
   char buff[l_move];
   sprintf(buff, "<font color='#%s'>%s| %s</font>\n", tx_clr, tmsg, msg);
   for (size_t i = console_log::MAX_MSG_SIZE - 1; i > 0; i--) {
