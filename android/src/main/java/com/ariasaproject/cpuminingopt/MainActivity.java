@@ -33,8 +33,8 @@ import com.ariasaproject.cpuminingopt.*;
 import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
 import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
 import com.ariasaproject.cpuminingopt.stratum.StratumSocket;
-import com.ariasaproject.cpuminingopt.worker.CpuMiningWorker;
-import com.ariasaproject.cpuminingopt.worker.IMiningWorker;
+import com.ariasaproject.cpuminingopt.CpuMiningWorker;
+import com.ariasaproject.cpuminingopt.IMiningWorker;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -159,15 +159,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
         
-        final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-        if (savedInstanceState != null)
-        		txt_console.setText(savedInstanceState.getString("console", "Welcome to CPU Mining Opt"));
         Console.setReceiver(new Console.Receiver() {
 		  			@Override
 		  			public void receive(final String msgs) {
       					statusHandler.post(new Runnable(){
       							@Override
       							public void run() {
+        								TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
       									if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       											txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), BufferType.SPANNABLE);
       									} else {
@@ -269,7 +267,7 @@ public class MainActivity extends Activity {
 		
 		@Override
 		protected void onSaveInstanceState(Bundle savedInstanceState) {
-				savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
+				//savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
 		}
 
     @Override

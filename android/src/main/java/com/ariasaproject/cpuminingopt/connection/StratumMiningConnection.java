@@ -16,7 +16,7 @@ import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultStandard;
 import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultSubscribe;
 import com.ariasaproject.cpuminingopt.stratum.StratumSocket;
 import com.ariasaproject.cpuminingopt.stratum.StratumWorkBuilder;
-import com.ariasaproject.cpuminingopt.worker.IMiningWorker;
+import com.ariasaproject.cpuminingopt.IMiningWorker;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;

@@ -1,4 +1,4 @@
-package com.ariasaproject.cpuminingopt.hasher;
+package com.ariasaproject.cpuminingopt;
 
 import static java.lang.Integer.rotateLeft;
 import static java.lang.System.arraycopy;
