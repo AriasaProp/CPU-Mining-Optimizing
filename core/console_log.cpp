@@ -5,7 +5,6 @@
 #include <ctime>
 #include <cstring>
 #include <string>
-//2^20 
 
 char *htmlMsg;
 char *endHtmlMsg;
@@ -14,10 +13,10 @@ void console_log::initialize() {
 	htmlMsg = new char[console_log::MAX_MSG_SIZE+1];
 	memset(htmlMsg,' ', console_log::MAX_MSG_SIZE);
 	endHtmlMsg = htmlMsg+console_log::MAX_MSG_SIZE;
-	write(0,"Wellcome to CPU Mining Opt", 27);
+	*endHtmlMsg = '\0';
 }
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+45, htmlMsg, console_log::MAX_MSG_SIZE-length-41);
+  memmove(htmlMsg+length+43, htmlMsg, console_log::MAX_MSG_SIZE-length-45);
   char *modif = htmlMsg;
 	memcpy(modif, "<font color='#", 14);
 	modif += 14;
@@ -41,12 +40,11 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   }
   memcpy((modif+=6), "'>", 2);
   std::time_t t = std::time(0);
-  if(!strftime((modif+=2), 12, "%T | ", std::localtime(&t))){
-  	memcpy(modif, "Error!!!!   ", 12);
+  if(!strftime((modif+=2), 11, "%T| ", std::localtime(&t))){
+  	memcpy(modif, "Error!!!!  ", 11);
   }
-  memcpy((modif+=11), msg, length);
-  memcpy((modif+=length), "</font><br>", 12);
-  memcpy((modif+=12), "  ", 2);
+  memcpy((modif+=10), msg, length);
+  memcpy((modif+=length), "</font><br>", 11);
 	return htmlMsg;
 }
 
