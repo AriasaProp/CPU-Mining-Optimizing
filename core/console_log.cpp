@@ -7,14 +7,10 @@
 #include <ctime>
 //2^20 
 
-char *htmlMsg;
-char *endHtmlMsg;
+std::string *htmlMsg;
 
 void console_log::initialize() {
-	htmlMsg = new char[console_log::MAX_MSG_SIZE+1];
-	memset(htmlMsg, ' ', console_log::MAX_MSG_SIZE);
-	endHtmlMsg = htmlMsg+console_log::MAX_MSG_SIZE;
-	*endHtmlMsg = '\0';
+	htmlMsg = new std::string[console_log::MAX_MSG_SIZE];
 	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 
@@ -43,21 +39,17 @@ char *console_log::write(unsigned int lv, const char *msg, unsigned long length)
 			memcpy(tx_clr,"ff0000",6);//Error
 			break;
   }
-  size_t l_move = 41+length;
+  size_t l_move = 45+length;
   char buff[l_move];
   sprintf(buff, "<font color='#%s'>%s| %s</font>\n", tx_clr, tmsg, msg);
-  size_t l_cur = console_log::MAX_MSG_SIZE - l_move;
-  memmove(htmlMsg+l_move, htmlMsg, l_cur);
-  memcpy(htmlMsg, buff, l_move);
-  char *findLastMsg = strstr(htmlMsg, "<f");
-  char *footMsg = strstr(findLastMsg, "</font>\n");
-  if (footMsg) {
-  	size_t pivot = endHtmlMsg-footMsg-8;
-  	if (pivot) {
-  		findLastMsg = footMsg+8;
-  	}
+  for (size_t i = console_log::MAX_MSG_SIZE - 1; i > 0; i--) {
+  	htmlMsg[i] = htmlMsg[i-1];
   }
-	memset(findLastMsg, ' ', (endHtmlMsg-findLastMsg)-1);
+  htmlMsg[0] = std::string(buff);
+  std::string out;
+  for (size_t i = 0; i < console_log::MAX_MSG_SIZE; i++) {
+  	out += htmlMsg[i];
+  }
 	return htmlMsg;
 }
 
