@@ -52,10 +52,9 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   while (--tF > modif) {
   	if (memcmp(tF, frontKey, 14) == 0) {
   		char *bF = strstr(tF, endKey);
-  		if (bF && ((bF+endKey+1)<endHtmlMsg)) {
-				tF = bF+endKey
-  		}
-			memset(tF, ' ', endHtmlMsg-tF)
+  		if (bF && ((bF+12)<endHtmlMsg))
+				tF = bF+11;
+			memset(tF, ' ', endHtmlMsg-tF);
   		break;
   	}
   }
