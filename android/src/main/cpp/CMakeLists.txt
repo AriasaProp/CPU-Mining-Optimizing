@@ -11,7 +11,7 @@ set(CORE_SRC "../../../../core")
 file(GLOB_RECURSE Include_subDir LIST_DIRECTORIES true ${CORE_SRC})
 file(GLOB_RECURSE Include_Dir LIST_DIRECTORIES true ".")
 file(GLOB_RECURSE Src_Files "*.cpp")
-add_subdirectory(${CORE_SRC} bin EXCLUDE_FROM_ALL)
+add_subdirectory(${CORE_SRC} bin)
 
 include_directories(${Include_Dir})
 include_directories(${Include_subDir})
