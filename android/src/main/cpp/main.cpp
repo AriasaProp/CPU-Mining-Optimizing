@@ -9,7 +9,7 @@
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
-JNI_Call(jstring, write) (JNIEnv* env, jclass, jint, jstring) {
+JNI_Call(jstring, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 	if (!l) return env->NewStringUTF("Null");
 	const char *cstr = env->GetStringUTFChars(l, NULL);
 	const jsize cstr_length = env->GetStringLength(l);
