@@ -136,6 +136,7 @@ public class SingleMiningChief implements Observer {
   public void update(Observable o, Object arg) {
     Message msg = mainHandler.obtainMessage();
     msg.arg1 = 0;
+    Bundle bundle = new Bundle();
 
     IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
     if (n == IMiningWorker.Notification.SYSTEM_ERROR) {
