@@ -66,6 +66,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
             nonce += this._step;
           }
           this.number_of_hashed += NUMBER_OF_ROUND;
+          Thread.sleep(10L);
         }
       } catch (GeneralSecurityException e) {
         e.printStackTrace();
