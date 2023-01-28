@@ -17,7 +17,7 @@ void console_log::initialize() {
 	write(0,"Wellcome to CPU Mining Opt", 27);
 }
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+41, htmlMsg, console_log::MAX_MSG_SIZE-length-41);
+  memmove(htmlMsg+length+45, htmlMsg, console_log::MAX_MSG_SIZE-length-41);
   char *modif = htmlMsg;
 	memcpy(modif, "<font color='#", 14);
 	modif += 14;
@@ -45,8 +45,8 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   	memcpy(modif, "Error!!   ", 9);
   }
   memcpy((modif+=9), msg, length);
-  memcpy((modif+=length), "</font><br>", 11);
-  
+  memcpy((modif+=length), "</font> <br>", 12);
+  memcpy((modif+=12), "   ", 3);
 	return htmlMsg;
 }
 
