@@ -150,7 +150,7 @@ public class MainActivity extends Activity {
           
           if ((msg.arg1 & MSG_CONSOLE) == MSG_CONSOLE) {
 							TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-							txt_console.setText(bundle.getString("console","None"));
+							txt_console.setText(bundle.getString("console"));
 							/*
 							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 									txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
@@ -172,11 +172,12 @@ public class MainActivity extends Activity {
         
         Console.setReceiver(new Console.Receiver() {
 		  			@Override
-		  			public void receive(final String msgs) {
+		  			public void receive(String msgs) {
 		  					Message msg = statusHandler.obtainMessage();
 		  					Bundle bundle = new Bundle();
 		  					bundle.putString("console", msgs);
 		  					msg.setData(bundle);
+		  					msg.arg1 = MSG_CONSOLE;
       					statusHandler.sendMessage(msg);
 		  			}
 		  	});
