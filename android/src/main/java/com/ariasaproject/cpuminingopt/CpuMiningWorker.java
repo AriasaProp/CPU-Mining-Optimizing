@@ -53,7 +53,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
             	if (c!=t) {
 	              if (c > t) break;
 	              if (c < t) {
-	                CpuMiningWorker._as_listener.invokeNonceFound(work, nonce);
+	                CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
 	                break;
 	              }
             	}
