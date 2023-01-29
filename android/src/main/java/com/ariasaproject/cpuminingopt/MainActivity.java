@@ -47,7 +47,6 @@ import java.util.Observer;
 
 import static android.R.id.edit;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static com.ariasaproject.cpuminingopt.Constants.*;
 
 import static com.ariasaproject.cpuminingopt.Constants.MSG_UIUPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
@@ -56,7 +55,6 @@ import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_CONSOLE;
 
 import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
@@ -91,75 +89,64 @@ public class MainActivity extends Activity {
     CheckBox cb_background_run;
     CheckBox cb_keep_awake;
 
-    int  baseThreadCount;
     String unit = " h/s";
     final Handler statusHandler = new Handler() {
-      final DecimalFormat df = new DecimalFormat("#.##");
-      @Override
-      public void handleMessage(Message msg) {
-          final Bundle bundle = msg.getData();
-          if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
-			        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-							if(settings.getBoolean(PREF_SCREEN, false)) {
-									getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-							}
-		  				Button b = (Button) findViewById(R.id.status_button_startstop);
-		  				b.setText(R.string.main_button_stop);
-			        b.setEnabled(true);
-			        b.setClickable(true);
-          }
-          if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
-      				if (imw != null) {
-	                CpuMiningWorker w = (CpuMiningWorker)imw;
-	                long lastTime = System.currentTimeMillis();
-			            long currTime;
-			            while (w.getThreadsStatus()) {
-			                currTime = System.currentTimeMillis();
-			                long deltaTime = currTime-lastTime;
-			                if (deltaTime>15000.0) {
-			                    Console.send(0, "Still cooling down...");
-			                    lastTime = currTime;
-			                }
-			            }
-			            imw = null;
-      				}
-			        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-							if(settings.getBoolean(PREF_SCREEN, false)) {
-									getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-							}
-      				Button b = (Button) findViewById(R.id.status_button_startstop);
-      				b.setText(R.string.main_button_start);
-			        b.setEnabled(true);
-			        b.setClickable(true);
-          }
-          if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
-	            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
-	            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
-          }
-          if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
-	            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
-	            txt_status.setText(bundle.getString("status"));
-          }
-          if ((msg.arg1 & MSG_ACCEPTED_UPDATE) == MSG_ACCEPTED_UPDATE) {
-	            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
-	            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
-          }
-          if ((msg.arg1 & MSG_REJECTED_UPDATE) == MSG_REJECTED_UPDATE) {
-	            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
-	            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
-          }
-          /*
-          if ((msg.arg1 & MSG_CONSOLE) == MSG_CONSOLE) {
-							TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-							//txt_console.setText(bundle.getString("console"));
-							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-									txt_console.setText(HtmlCompat.fromHtml(bundle.getString("console"), HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-							else
-									txt_console.setText(Html.fromHtml(bundle.getString("console")), TextView.BufferType.SPANNABLE);
-          }
-          */
-          super.handleMessage(msg);
-      }
+	      final DecimalFormat df = new DecimalFormat("#.##");
+	      @Override
+	      public void handleMessage(Message msg) {
+	          final Bundle bundle = msg.getData();
+	          if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
+				        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+								if(settings.getBoolean(PREF_SCREEN, false)) {
+										getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+								}
+			  				Button b = (Button) findViewById(R.id.status_button_startstop);
+			  				b.setText(R.string.main_button_stop);
+				        b.setEnabled(true);
+				        b.setClickable(true);
+	          }
+	          if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
+	      				if (imw != null) {
+		                CpuMiningWorker w = (CpuMiningWorker)imw;
+		                long lastTime = System.currentTimeMillis();
+				            long currTime;
+				            while (w.getThreadsStatus()) {
+				                currTime = System.currentTimeMillis();
+				                long deltaTime = currTime-lastTime;
+				                if (deltaTime>15000.0) {
+				                    Console.send(0, "Still cooling down...");
+				                    lastTime = currTime;
+				                }
+				            }
+				            imw = null;
+	      				}
+				        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+								if(settings.getBoolean(PREF_SCREEN, false)) {
+										getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+								}
+	      				Button b = (Button) findViewById(R.id.status_button_startstop);
+	      				b.setText(R.string.main_button_start);
+				        b.setEnabled(true);
+				        b.setClickable(true);
+	          }
+	          if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
+		            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
+		            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
+	          }
+	          if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
+		            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
+		            txt_status.setText(bundle.getString("status"));
+	          }
+	          if ((msg.arg1 & MSG_ACCEPTED_UPDATE) == MSG_ACCEPTED_UPDATE) {
+		            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
+		            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
+	          }
+	          if ((msg.arg1 & MSG_REJECTED_UPDATE) == MSG_REJECTED_UPDATE) {
+		            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
+		            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
+	          }
+	          super.handleMessage(msg);
+	      }
     };
     
     @Override
@@ -174,10 +161,11 @@ public class MainActivity extends Activity {
 		  					statusHandler.post(new Runnable(){
 		        				@Override
 		        				public void run(){
+		        						txt_console.setText(msgs);/*
 												if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 														txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 												else
-														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
+														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);*/
 		        				}
 		        		});
 		  			}
@@ -252,7 +240,6 @@ public class MainActivity extends Activity {
 						}).start();
 				} else {
 						b.setText(R.string.main_button_onstop);
-						Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
 						new Thread(new Runnable() {
 								@Override
 								public void run(){
@@ -273,6 +260,7 @@ public class MainActivity extends Activity {
 		
 		@Override
 		protected void onSaveInstanceState(Bundle savedInstanceState) {
+				super.onSaveInstanceState(savedInstanceState);
 				//savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
 		}
 
@@ -294,9 +282,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-				if(!settings.getBoolean(PREF_BACKGROUND,false) && (imw != null)) {
+				if(!settings.getBoolean(PREF_BACKGROUND, false) && (imw != null)) {
             Console.send(0, "Try to stop mining");
-						Toast.makeText(this, "Worker cooling down, this can take a few minutes", Toast.LENGTH_LONG).show();
 						try {
 								smc.stopMining();
 						} catch (Exception e) {
