@@ -17,13 +17,13 @@ void console_log::initialize() {
 	endHtmlMsg = htmlMsg+MAX_MSG_SIZE;
 	*endHtmlMsg = '\0';
 }
-const char *frontKey = "<p style='fontColor: #";
+const char *frontKey = "<p style='margin:0;padding:0;color:#";
 const char *endKey = "</p>";
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+44, htmlMsg, MAX_MSG_SIZE-length-45);
+  memmove(htmlMsg+length+59, htmlMsg, MAX_MSG_SIZE-length-45);
   char *modif = htmlMsg;
-	memcpy(modif, frontKey, 22);
-	modif += 22;
+	memcpy(modif, frontKey, 36);
+	modif += 36;
 	switch(lv) {
 		default:
 		case 0:
@@ -42,9 +42,9 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 			memcpy(modif,"ff0000",6);//Error
 			break;
   }
-  memcpy((modif+=6), "'>", 2);
+  memcpy((modif+=6), ";'>", 3);
   std::time_t t = std::time(0);
-  if(!strftime((modif+=2), 11, "%T| ", std::localtime(&t))){
+  if(!strftime((modif+=3), 11, "%T| ", std::localtime(&t))){
   	memcpy(modif, "Error!!!! ", 10);
   }
   //strftime include \0 at last,so overlap it
