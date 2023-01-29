@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
 import android.app.Activity;
@@ -241,7 +240,7 @@ public class MainActivity extends Activity {
 						new Thread(new Runnable() {
 								@Override
 								public void run(){
-										Console.send(1, "Service: Stopping mining");
+										Console.send(1, "try stopping mining");
 										try {
 												smc.stopMining();
 										} catch (Exception e) {

@@ -17,13 +17,13 @@ void console_log::initialize() {
 	endHtmlMsg = htmlMsg+MAX_MSG_SIZE;
 	*endHtmlMsg = '\0';
 }
-const char *frontKey = "<p style='margin:0;padding:0;color:#";
-const char *endKey = "</p>";
+const char *frontKey = "<font color='#";
+const char *endKey = "</font><br>";
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+59, htmlMsg, MAX_MSG_SIZE-length-45);
+  memmove(htmlMsg+length+44, htmlMsg, MAX_MSG_SIZE-length-44);
   char *modif = htmlMsg;
-	memcpy(modif, frontKey, 36);
-	modif += 36;
+	memcpy(modif, frontKey, 14);
+	modif += 14;
 	switch(lv) {
 		default:
 		case 0:
@@ -42,15 +42,15 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 			memcpy(modif,"ff0000",6);//Error
 			break;
   }
-  memcpy((modif+=6), ";'>", 3);
+  memcpy((modif+=6), "'>", 2);
   std::time_t t = std::time(0);
-  if(!strftime((modif+=3), 11, "%T| ", std::localtime(&t))){
+  if(!strftime((modif+=2), 11, "%T| ", std::localtime(&t))){
   	memcpy(modif, "Error!!!! ", 10);
   }
   //strftime include \0 at last,so overlap it
   memcpy((modif+=10), msg, length);
-  memcpy((modif+=length), endKey, 4);
-  modif += 4;
+  memcpy((modif+=length), endKey, 11);
+  modif += 11;
   //check if some cutted html line
   char *tF = endHtmlMsg-14;
   while (--tF > modif) {
