@@ -17,13 +17,13 @@ void console_log::initialize() {
 	endHtmlMsg = htmlMsg+MAX_MSG_SIZE;
 	*endHtmlMsg = '\0';
 }
-const char *frontKey = "<font color='#";
-const char *endKey = "</font>   \n";
+const char *frontKey = "<p style='fontColor: #";
+const char *endKey = "</p>";
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+43, htmlMsg, MAX_MSG_SIZE-length-45);
+  memmove(htmlMsg+length+44, htmlMsg, MAX_MSG_SIZE-length-45);
   char *modif = htmlMsg;
-	memcpy(modif, frontKey, 14);
-	modif += 14;
+	memcpy(modif, frontKey, 22);
+	modif += 22;
 	switch(lv) {
 		default:
 		case 0:
@@ -49,7 +49,8 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   }
   //strftime include \0 at last,so overlap it
   memcpy((modif+=10), msg, length);
-  memcpy((modif+=length), endKey, 11);
+  memcpy((modif+=length), endKey, 4);
+  modif += 4;
   //check if some cutted html line
   char *tF = endHtmlMsg-14;
   while (--tF > modif) {
