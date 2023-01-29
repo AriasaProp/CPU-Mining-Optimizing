@@ -17,7 +17,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     private static final long serialVersionUID = -4176908211058342478L;
 
     void invokeNonceFound(MiningWork i_work, int i_nonce) {
-      Console.send(2, "Nonce found! +" + ((0xffffffffffffffffL) & i_nonce));
       for (IWorkerEvent i : this) {
         i.onNonceFound(i_work, i_nonce);
       }
