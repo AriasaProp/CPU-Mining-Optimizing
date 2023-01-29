@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import com.ariasaproject.cpuminingopt.Console;
 
-/** Created by Ben David on 01/08/2017. */
 public class StratumSocket extends Socket {
   private class LoggingWriter extends BufferedWriter {
     public LoggingWriter(Writer arg0) {
@@ -25,7 +24,6 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
-      Console.send(0, "TX>" + str);
     }
   }
 
@@ -36,7 +34,6 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
-      Console.send(0, "RX<" + s);
       return s;
     }
   }
@@ -123,35 +120,27 @@ public class StratumSocket extends Socket {
   public StratumJson recvStratumJson() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jn = mapper.readTree(this._rx.readLine());
-    // parse method
     try {
       return new StratumJsonMethodGetVersion(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodMiningNotify(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodReconnect(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodSetDifficulty(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodShowMessage(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonResultSubscribe(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonResultStandard(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     return null;
   }
 

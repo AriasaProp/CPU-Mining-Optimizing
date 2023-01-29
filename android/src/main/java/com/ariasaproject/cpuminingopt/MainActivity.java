@@ -161,11 +161,11 @@ public class MainActivity extends Activity {
 		  					statusHandler.post(new Runnable(){
 		        				@Override
 		        				public void run(){
-		        						txt_console.setText(msgs);/*
+		        						//txt_console.setText(msgs);
 												if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 														txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 												else
-														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);*/
+														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
 		        				}
 		        		});
 		  			}
@@ -230,8 +230,6 @@ public class MainActivity extends Activity {
 												statusHandler.sendMessage(msg);
 										} catch (Exception e) {
 												Console.send(4, "Error start mining : "+ e.toString());
-												for (StackTraceElement t : e.getStackTrace())
-														Console.send(4, "Trace : "+t.toString());
 												final Message msg = statusHandler.obtainMessage();
 												msg.arg1 = MSG_TERMINATED;
 												statusHandler.sendMessage(msg);
@@ -247,8 +245,7 @@ public class MainActivity extends Activity {
 										try {
 												smc.stopMining();
 										} catch (Exception e) {
-												for (StackTraceElement t : e.getStackTrace())
-														Console.send(1, "Error: "+t.toString());
+												Console.send(4, "Exception: "+ e.getMessage());
 										}
 										final Message msg = statusHandler.obtainMessage();
 										msg.arg1 = MSG_TERMINATED;
@@ -287,8 +284,7 @@ public class MainActivity extends Activity {
 						try {
 								smc.stopMining();
 						} catch (Exception e) {
-								for (StackTraceElement t : e.getStackTrace())
-										Console.send(4, "Error: "+t.toString());
+								Console.send(4, "Error: "+ e.getMessage());
 						}
         }
         super.onStop();

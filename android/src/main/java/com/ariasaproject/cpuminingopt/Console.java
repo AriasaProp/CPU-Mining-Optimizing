@@ -21,5 +21,4 @@ public class Console {
   public static interface Receiver {
   	public void receive(String msgs);
   }
-  
 }
