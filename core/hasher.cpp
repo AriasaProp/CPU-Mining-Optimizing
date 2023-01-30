@@ -96,14 +96,14 @@ void xorSalsa(unsigned int *X){
 }
 
 void hasher::hash(void *B, unsigned int *X) {
-	size_t i, j;
+	size_t i, j, k;
 	for (i = 0; i < 1024; i++) {
       memcpy(tV+(i*32), X, sizeof(unsigned int)*32);
 	  xorSalsa(X);
     }
 	for (i = 0; i < 1024; i++) {
       k = (X[16] & 1023) * 32;
-      for (j = 0; j < 32; j++) X[j] ^= V[k + j];
+      for (j = 0; j < 32; j++) X[j] ^= tV[k + j];
 	  xorSalsa(X);
     }
 	memcpy(B, X, sizeof(unsigned int)*32);
