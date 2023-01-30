@@ -240,7 +240,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       notifyObservers(IMiningWorker.Notification.AUTHENTICATION_ERROR);
       throw new RuntimeException("Stratum authorize process failed.");
     } catch (IOException e) {
-    	Console.send(4, "Connection error by IOException: " + e.getMessage())
+    	Console.send(4, "Connection error by IOException: " + e.getMessage());
       setChanged();
       notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
       throw new RuntimeException(e);
