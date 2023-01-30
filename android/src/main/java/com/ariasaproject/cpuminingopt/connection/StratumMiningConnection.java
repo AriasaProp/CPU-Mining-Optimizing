@@ -52,8 +52,13 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     public void run() {
       for (;;) {
         try {
-          StratumJson i_json = this._parent._sock.recvStratumJson();
-          if (i_json != null) {
+          StratumJson json = this._parent._sock.recvStratumJson();
+          if (json == null) {
+            Thread.sleep(1);
+            continue;
+          }
+          //Json read
+          {
 			      Class<?> iid = i_json.getClass();
 			      if (iid == StratumJsonMethodGetVersion.class) {
 			      } else if (iid == StratumJsonMethodMiningNotify.class) {
@@ -88,13 +93,17 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
 			        this.semaphore.release();
 			      }
           }
-          Thread.sleep(1);
-        } catch (SocketTimeoutException|InterruptedException e) {
+        } catch (SocketTimeoutException e) {
+          if (this.isInterrupted()) {
+            break;
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch (InterruptedException e) {
           break;
-        } catch (IOException e) {}
+        }
       }
     }
-
 
     private Semaphore semaphore = new Semaphore(0);
     public StratumJson waitForJsonResult(long i_id, Class<?> i_class, int i_wait_for_msec) {
