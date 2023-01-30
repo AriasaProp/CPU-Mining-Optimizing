@@ -154,7 +154,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       } catch (IOException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
-        e.printStackTrace();
         return null;
       }
     }
@@ -188,19 +187,22 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       } catch (InterruptedException|ExecutionException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
+        throw new RuntimeException(e);
       }
+      
       this._rx_thread = new AsyncRxSocketThread(this);
       this._rx_thread.start();
       int i;
       StratumJsonResultSubscribe subscribe = null;
-      for (i = 0; i < 3; i++) {
-        subscribe = (StratumJsonResultSubscribe) this._rx_thread.waitForJsonResult(this._sock.subscribe(CLIENT_NAME), StratumJsonResultSubscribe.class, 3000);
+      for (i = 1; i < 5; i++) {
+      	Console.send(1,"Try to get Subscribe in " + i + " times for 4 sec.");
+        subscribe = (StratumJsonResultSubscribe) this._rx_thread.waitForJsonResult(this._sock.subscribe(CLIENT_NAME), StratumJsonResultSubscribe.class, 4000);
         if (subscribe == null || subscribe.error != null) {
           continue;
         }
         break;
       }
-      if (i == 3) {
+      if (i == 5) {
         throw new RuntimeException("Stratum subscribe error.");
       }
 

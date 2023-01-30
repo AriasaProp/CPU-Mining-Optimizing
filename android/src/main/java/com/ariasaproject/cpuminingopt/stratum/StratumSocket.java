@@ -57,8 +57,6 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    //        this._tx.write("{\"id\": "+id+", \"method\": \"mining.subscribe\", \"params\":
-    // [\""+i_agent_name+"\"]}\n");
     this._tx.write("{\"id\": " + id + ", \"method\": \"mining.subscribe\", \"params\": []}\n");
     this._tx.flush();
     return id;
@@ -70,14 +68,7 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    this._tx.write(
-        "{\"id\": "
-            + id
-            + ", \"method\": \"mining.authorize\", \"params\": [\""
-            + i_user
-            + "\",\""
-            + i_password
-            + "\"]}\n");
+    this._tx.write("{\"id\": " + id + ", \"method\": \"mining.authorize\", \"params\": [\"" + i_user + "\",\"" + i_password + "\"]}\n");
     this._tx.flush();
     return id;
   }

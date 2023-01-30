@@ -177,5 +177,5 @@
         android:id="@+id/status_textView_console"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="8pt" />
+        android:textSize="6.5pt" />
 </LinearLayout>
