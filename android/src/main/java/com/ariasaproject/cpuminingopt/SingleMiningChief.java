@@ -94,10 +94,9 @@ public class SingleMiningChief implements Observer {
     @Override
     public void onNonceFound(MiningWork i_work, int i_nonce) {
       try {
-		Console.send(2, "Submiting Founded nonce.");
         this._parent._connection.submitWork(i_work, i_nonce);
       } catch (Exception e) {
-		Console.send(4, "Error on Submiting Founded nonce!");
+      	Console.send(4, "Error on Submiting Founded nonce!");
       }
     }
   }
@@ -114,7 +113,7 @@ public class SingleMiningChief implements Observer {
   }
 
   public void startMining() {
-    Console.send(0, "Miner: Starting worker thread, priority: " + priority);
+    Console.send(0, "Miner starting worker thread, priority: " + priority);
     ((StratumMiningConnection) _connection).addObserver(this);
     ((CpuMiningWorker) _worker).addObserver(this);
     MiningWork first_work = this._connection.connect();
@@ -127,7 +126,7 @@ public class SingleMiningChief implements Observer {
   }
 
   public void stopMining() {
-    Console.send(0, "Miner: Worker on stopping... This can take a few minutes");
+    Console.send(0, "Miner worker on stopping, This can take a few minutes");
     this._connection.disconnect();
     this._worker.stopWork();
     speed = 0;

@@ -43,26 +43,24 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         byte[] target = work.target.refHex();
         for (;;) {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
-            if (Hasher.hashCheck(header, target, nonce)) {
+            if (Hasher.hashCheck(header, target, nonce))
 	            CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
-			}
             nonce += _step;
           }
           this.number_of_hashed += NUMBER_OF_ROUND;
           Thread.sleep(1);
         }
       } catch (GeneralSecurityException e) {
-        e.printStackTrace();
+        Console.send(4, "Exception on work: " + e.getMessage());
         setChanged();
         notifyObservers(Notification.SYSTEM_ERROR);
         stopWork();
       } catch (InterruptedException ignored) {}
-	  long curr_time = System.currentTimeMillis();
-	  double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
-	  double speed_calc = ((double) number_of_hashed / delta_time);
-	  _speed = (double) speed_calc;
-	  setChanged();
-	  notifyObservers(Notification.SPEED);
+		  long curr_time = System.currentTimeMillis();
+		  double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
+		  _speed = ((double) number_of_hashed / delta_time);
+		  setChanged();
+		  notifyObservers(Notification.SPEED);
       _last_time = curr_time;
     }
   }
@@ -83,7 +81,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
 
   @Override
   public boolean doWork(MiningWork i_work) {
-    Console.send(1, "Worker Starter");
 	int i;
     if (i_work != null) {
       stopWork();
@@ -120,7 +117,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         t.interrupt();
       }
     }
-    Console.send(1, "Worker Stopped");
   }
 
   @Override
