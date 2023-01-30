@@ -23,8 +23,8 @@ JNI_Call(jstring, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Hasher_##M
 
 JNI_Call(void, xorSalsa) (JNIEnv* env, jclass, jintArray X) {
-	unsigned int *c_X = (unsigned int *)env->GetIntArrayElements(X, NULL);
-	hasher::xorSalsa(c_X);
+	int *c_X = env->GetIntArrayElements(X, NULL);
+	hasher::xorSalsa((unsigned int *)c_X);
 	env->ReleaseIntArrayElements(X, c_X, 0);
 }
 #undef JNI_Call
