@@ -195,8 +195,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       int i;
       StratumJsonResultSubscribe subscribe = null;
       for (i = 1; i < 5; i++) {
-      	Console.send(1,"Try to get Subscribe in " + i + " times for 4 sec.");
-        subscribe = (StratumJsonResultSubscribe) this._rx_thread.waitForJsonResult(this._sock.subscribe(CLIENT_NAME), StratumJsonResultSubscribe.class, 4000);
+      	Console.send(1,"Try to get Subscribe in " + i + " times for 3 sec.");
+        subscribe = (StratumJsonResultSubscribe) this._rx_thread.waitForJsonResult(this._sock.subscribe(CLIENT_NAME), StratumJsonResultSubscribe.class, 3000);
         if (subscribe == null || subscribe.error != null) {
           continue;
         }

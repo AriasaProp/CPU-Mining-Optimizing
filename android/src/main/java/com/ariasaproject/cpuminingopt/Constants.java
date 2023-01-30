@@ -28,7 +28,7 @@ public class Constants {
   public static final long DEFAULT_RETRYPAUSE = 500;
   public static final float DEFAULT_THROTTLE = 1;
 
-  public static final String CLIENT_NAME_STRING = "LTCteMiner";
+  public static final String CLIENT_NAME_STRING = "LTCMiner";
 
   public static final String STATUS_NOT_MINING = "Not Mining";
   public static final String STATUS_MINING = "Mining";
