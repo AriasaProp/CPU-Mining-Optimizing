@@ -20,7 +20,7 @@ void console_log::initialize() {
 const char *frontKey = "<font color='#";
 const char *endKey = "</font><br>";
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
-  memmove(htmlMsg+length+44, htmlMsg, MAX_MSG_SIZE-length-44);
+  memmove(htmlMsg+length+43, htmlMsg, MAX_MSG_SIZE-length-43);
   char *modif = htmlMsg;
 	memcpy(modif, frontKey, 14);
 	modif += 14;
@@ -51,11 +51,11 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   memcpy((modif+=10), msg, length);
   memcpy((modif+=length), endKey, 11);
   modif += 11;
-  //check if some cutted html line
+  //check if html format was incomplete
   char *tF = endHtmlMsg-14;
   while (--tF > modif) {
   	
-  	if ((tF[0]==frontKey[0])&&(memcmp(tF, frontKey, 14) == 0)) {
+  	if (memcmp(tF, frontKey, 14) == 0) {
   		char *bF = strstr(tF, endKey);
   		if (bF && ((bF+12)<endHtmlMsg))
 				tF = bF+11;
