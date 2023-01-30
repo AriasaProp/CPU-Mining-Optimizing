@@ -3,7 +3,6 @@ package com.ariasaproject.cpuminingopt.connection;
 import static com.ariasaproject.cpuminingopt.Constants.CLIENT_NAME_STRING;
 
 import android.os.AsyncTask;
-import com.ariasaproject.cpuminingopt.Console;
 import com.ariasaproject.cpuminingopt.MiningWork;
 import com.ariasaproject.cpuminingopt.StratumMiningWork;
 import com.ariasaproject.cpuminingopt.stratum.StratumJson;
@@ -17,7 +16,7 @@ import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultStandard;
 import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultSubscribe;
 import com.ariasaproject.cpuminingopt.stratum.StratumSocket;
 import com.ariasaproject.cpuminingopt.stratum.StratumWorkBuilder;
-import com.ariasaproject.cpuminingopt.IMiningWorker;
+import com.ariasaproject.cpuminingopt.worker.IMiningWorker;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -36,7 +35,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       this.id = i_id;
       this.work = i_work;
       this.nonce = i_nonce;
+      return;
     }
+
     public final long id;
     public final MiningWork work;
     public final int nonce;
@@ -45,54 +46,21 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     private ArrayList<SubmitOrder> _submit_q = new ArrayList<SubmitOrder>();
     private ArrayList<StratumJson> _json_q = new ArrayList<StratumJson>();
     private StratumMiningConnection _parent;
+
     public AsyncRxSocketThread(StratumMiningConnection i_parent) throws SocketException {
       this._parent = i_parent;
       this._parent._sock.setSoTimeout(100);
     }
+
     public void run() {
-      for (;;) {
+      for (; ; ) {
         try {
           StratumJson json = this._parent._sock.recvStratumJson();
           if (json == null) {
             Thread.sleep(1);
             continue;
           }
-          //Json read
-          {
-			      Class<?> iid = i_json.getClass();
-			      if (iid == StratumJsonMethodGetVersion.class) {
-			      } else if (iid == StratumJsonMethodMiningNotify.class) {
-			        this._parent.cbNewMiningNotify((StratumJsonMethodMiningNotify) i_json);
-			      } else if (iid == StratumJsonMethodReconnect.class) {
-			      } else if (iid == StratumJsonMethodSetDifficulty.class) {
-			        this._parent.cbNewMiningDifficulty((StratumJsonMethodSetDifficulty) i_json);
-			      } else if (iid == StratumJsonMethodShowMessage.class) {
-			      } else if (iid == StratumJsonResultStandard.class) {
-			          StratumJsonResultStandard sjson = (StratumJsonResultStandard) i_json;
-			          SubmitOrder so = null;
-			          synchronized (this._submit_q) {
-			            for (SubmitOrder i : this._submit_q) {
-			              if (i.id == sjson.id) {
-			                this._submit_q.remove(i);
-			                so = i;
-			                break;
-			              }
-			            }
-			          }
-			          if (so != null) {
-			            this._parent.cbSubmitRecv(so, sjson);
-			          }
-				        synchronized (this._json_q) {
-				          this._json_q.add(i_json);
-				        }
-				        this.semaphore.release();
-			      } else if (iid == StratumJsonResultSubscribe.class) {
-			        synchronized (this._json_q) {
-			          this._json_q.add(i_json);
-			        }
-			        this.semaphore.release();
-			      }
-          }
+          this.onJsonRx(json);
         } catch (SocketTimeoutException e) {
           if (this.isInterrupted()) {
             break;
@@ -103,6 +71,45 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
           break;
         }
       }
+    }
+
+    private void onJsonRx(StratumJson i_json) {
+      Class<?> iid = i_json.getClass();
+
+      if (iid == StratumJsonMethodGetVersion.class) {
+      } else if (iid == StratumJsonMethodMiningNotify.class) {
+        this._parent.cbNewMiningNotify((StratumJsonMethodMiningNotify) i_json);
+      } else if (iid == StratumJsonMethodReconnect.class) {
+      } else if (iid == StratumJsonMethodSetDifficulty.class) {
+        this._parent.cbNewMiningDifficulty((StratumJsonMethodSetDifficulty) i_json);
+      } else if (iid == StratumJsonMethodShowMessage.class) {
+      } else if (iid == StratumJsonResultStandard.class) {
+          StratumJsonResultStandard sjson = (StratumJsonResultStandard) i_json;
+          SubmitOrder so = null;
+          synchronized (this._submit_q) {
+            for (SubmitOrder i : this._submit_q) {
+              if (i.id == sjson.id) {
+                // submit_qから取り外し
+                this._submit_q.remove(i);
+                so = i;
+                break;
+              }
+            }
+          }
+          if (so != null) {
+            this._parent.cbSubmitRecv(so, sjson);
+          }
+	        synchronized (this._json_q) {
+	          this._json_q.add(i_json);
+	        }
+	        this.semaphore.release();
+      } else if (iid == StratumJsonResultSubscribe.class) {
+        synchronized (this._json_q) {
+          this._json_q.add(i_json);
+        }
+        this.semaphore.release();
+      }
+      return;
     }
 
     private Semaphore semaphore = new Semaphore(0);
@@ -137,6 +144,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       } while (time_out > 0);
       return null;
     }
+    /** Submit ID */
     public void addSubmitOrder(SubmitOrder i_submit_id) {
       synchronized (this._submit_q) {
         this._submit_q.add(i_submit_id);
@@ -163,6 +171,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       } catch (IOException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
+        e.printStackTrace();
         return null;
       }
     }
@@ -193,31 +202,41 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       SocketConnectAsyncTask sock_task = new SocketConnectAsyncTask();
       try {
         this._sock = sock_task.execute(sock_par).get();
-      } catch (InterruptedException|ExecutionException e) {
+      } catch (InterruptedException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
-        throw new RuntimeException(e);
+        e.printStackTrace();
+      } catch (ExecutionException e) {
+        setChanged();
+        notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
+        e.printStackTrace();
       }
-      
+
       this._rx_thread = new AsyncRxSocketThread(this);
       this._rx_thread.start();
       int i;
+
+      // subscribe
       StratumJsonResultSubscribe subscribe = null;
-      for (i = 1; i < 5; i++) {
-      	Console.send(1,"Try to get Subscribe in " + i + " times for 3 sec.");
+      for (i = 0; i < 3; i++) {
         subscribe = (StratumJsonResultSubscribe) this._rx_thread.waitForJsonResult(this._sock.subscribe(CLIENT_NAME), StratumJsonResultSubscribe.class, 3000);
         if (subscribe == null || subscribe.error != null) {
           continue;
         }
         break;
       }
-      if (i == 5) {
+      if (i == 3) {
         throw new RuntimeException("Stratum subscribe error.");
       }
 
-      // Authorize and make 1st work.
+      // Authorize and make  a 1st work.
       for (i = 0; i < 3; i++) {
-        StratumJsonResultStandard auth = (StratumJsonResultStandard) this._rx_thread.waitForJsonResult( this._sock.authorize(this._uid, this._pass), StratumJsonResultStandard.class, 3000);
+        StratumJsonResultStandard auth =
+            (StratumJsonResultStandard)
+                this._rx_thread.waitForJsonResult(
+                    this._sock.authorize(this._uid, this._pass),
+                    StratumJsonResultStandard.class,
+                    3000);
         if (auth == null || auth.error != null) {
           continue;
         }
@@ -239,10 +258,11 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       setChanged();
       notifyObservers(IMiningWorker.Notification.AUTHENTICATION_ERROR);
       throw new RuntimeException("Stratum authorize process failed.");
-    } catch (IOException e) {
-    	Console.send(4, "Connection error by IOException: " + e.getMessage());
+    } catch (UnknownHostException e) {
       setChanged();
       notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
+      throw new RuntimeException(e);
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -257,7 +277,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       synchronized (this._data_lock) {
         this._work_builder = null;
       }
-    } catch (InterruptedException|IOException e) {
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -299,7 +321,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       notifyObservers(IMiningWorker.Notification.NEW_WORK);
       this._work_builder.setNotify(i_notify);
     } catch (Exception e) {
-      Console.send(4, "Catch Exception: " + e.getMessage());
+      //("Catch Exception:\n" + e.getMessage());
     }
     MiningWork w = this.getWork();
     if (w == null) {
@@ -320,7 +342,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     try {
       this._work_builder.setDiff(i_difficulty);
     } catch (Exception e) {
-      Console.send(4, "StratumMiningConnection : Catch Exception: " + e.getMessage());
+      //("StratumMiningConnection", "Catch Exception:\n" + e.getMessage());
     }
     MiningWork w = this.getWork();
     if (w == null) {
