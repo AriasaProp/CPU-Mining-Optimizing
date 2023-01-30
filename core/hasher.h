@@ -3,7 +3,7 @@
 
 namespace hasher {
 	void initialize();
-	xorSalsa(unsigned int*);
+	void xorSalsa(unsigned int*);
 	void destroy();
 }
 
