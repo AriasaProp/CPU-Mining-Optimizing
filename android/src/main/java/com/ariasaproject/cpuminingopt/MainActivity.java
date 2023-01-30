@@ -73,13 +73,13 @@ import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_RETRYPAUSE;
 import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_THROTTLE;
 
 public class MainActivity extends Activity {
-		static {
-			System.loadLibrary("ext");
-		}
-		
-	  IMiningConnection mc;
-	  IMiningWorker imw;
-	  SingleMiningChief smc;
+	static {
+		System.loadLibrary("ext");
+	}
+
+	IMiningConnection mc;
+	IMiningWorker imw;
+	SingleMiningChief smc;
 		
     EditText et_serv;
     EditText et_user;
@@ -151,8 +151,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
-        
-				final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
+		final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
         Console.setReceiver(new Console.Receiver() {
 		  			@Override
 		  			public void receive(String msgs) {
@@ -263,33 +262,10 @@ public class MainActivity extends Activity {
     super.onPause();
   }
 
-  @Override
-  protected void onResume() {
-    SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
-    if (settings.getBoolean(PREF_BACKGROUND, DEFAULT_BACKGROUND)) {
-      TextView tv_background = (TextView) findViewById(R.id.status_textView_background);
-      tv_background.setText("RUN IN BACKGROUND");
-    }
-    super.onResume();
-  }
-
-  @Override
-  protected void onStop() {
-    if (updateThread.isAlive()) updateThread.interrupt();
-
-    SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
-    if (!settings.getBoolean(PREF_BACKGROUND, DEFAULT_BACKGROUND)) {
-      if (mService != null && mService.running) {
-        mService.stopMiner();
-      }
-      Intent intent = new Intent(getApplicationContext(), MinerService.class);
-      stopService(intent);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-    		SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+    	SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         if (settings.getBoolean(PREF_BACKGROUND, false)) {
             TextView tv_background = (TextView) findViewById(R.id.status_textView_background);
             tv_background.setText("RUN IN BACKGROUND");
@@ -299,13 +275,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-				if(!settings.getBoolean(PREF_BACKGROUND, false) && (imw != null)) {
+		if(!settings.getBoolean(PREF_BACKGROUND, false) && (imw != null)) {
             Console.send(0, "Try to stop mining");
-						try {
-								smc.stopMining();
-						} catch (Exception e) {
-								Console.send(4, "Error: "+ e.getMessage());
-						}
+			try {
+					smc.stopMining();
+			} catch (Exception e) {
+					Console.send(4, "Error: "+ e.getMessage());
+			}
         }
         super.onStop();
     }
