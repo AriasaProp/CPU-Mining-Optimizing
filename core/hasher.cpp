@@ -3,16 +3,9 @@
 #include <cstdint>
 #include <cstring>
 
-unsigned int *tSl;
 unsigned int *tV;
 
-void hasher::initialize() {
-	//nothing todo for now 
-	tSl = new unsigned int[15];
-	tV = new unsigned int[32 * 1024];
-}
-
-void xorSalsa(unsigned int *X){
+void xorSalsa(unsigned int *X, unsigned int *tSl){
 	size_t i;
 	for (i = 0; i < 16;i++) {
 		tSl[i] = (X[i] ^= X[16 + i]);
@@ -97,19 +90,17 @@ void xorSalsa(unsigned int *X){
 
 void hasher::hash(void *B, unsigned int *X) {
 	size_t i, j, k;
+	unsigned int tV[32768];
+	unsigned int tSl[15];
 	for (i = 0; i < 1024; i++) {
-      memcpy(tV+(i*32), X, sizeof(unsigned int)*32);
-	  xorSalsa(X);
-    }
+    memcpy(tV+(i*32), X, sizeof(unsigned int)*32);
+  	xorSalsa(X,tSl);
+  }
 	for (i = 0; i < 1024; i++) {
-      k = (X[16] & 1023) * 32;
-      for (j = 0; j < 32; j++) X[j] ^= tV[k + j];
-	  xorSalsa(X);
-    }
+    k = (X[16] & 1023) * 32;
+    for (j = 0; j < 32; j++) X[j] ^= tV[k + j];
+	  xorSalsa(X,tSl);
+  }
 	memcpy(B, X, sizeof(unsigned int)*32);
 }
 
-void hasher::destroy() {
-	//nothing todo for now 
-	delete tSl;
-}
