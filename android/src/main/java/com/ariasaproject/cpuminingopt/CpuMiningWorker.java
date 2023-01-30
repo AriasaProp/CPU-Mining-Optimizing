@@ -14,7 +14,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   private long _retrypause;
 
   private class EventList extends ArrayList<IWorkerEvent> {
-
     void invokeNonceFound(MiningWork i_work, int i_nonce) {
       for (IWorkerEvent i : this) {
         i.onNonceFound(i_work, i_nonce);
@@ -40,21 +39,13 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       try {
         int nonce = _start;
         MiningWork work = _work;
+        byte[] header = work.header.refHex();
         byte[] target = work.target.refHex();
         for (;;) {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
-            byte[] hash = Hasher.hash(work.header.refHex(), nonce);
-            for (int i2 = hash.length - 1; i2 >= 0; i2--) {
-            	byte c = hash[i2];
-            	byte t = target[i2];
-            	if (c!=t) {
-	              if (c > t) break;
-	              if (c < t) {
-	                CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
-	                break;
-	              }
-            	}
-            }
+            if (Hasher.hashCheck(header, target, nonce)) {
+	            CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
+			}
             nonce += _step;
           }
           this.number_of_hashed += NUMBER_OF_ROUND;
@@ -66,7 +57,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         notifyObservers(Notification.SYSTEM_ERROR);
         stopWork();
       } catch (InterruptedException ignored) {}
-      Console.send(3, "Thread Ended. #Hashes=" + this.number_of_hashed);
 	  long curr_time = System.currentTimeMillis();
 	  double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
 	  double speed_calc = ((double) number_of_hashed / delta_time);
@@ -93,6 +83,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
 
   @Override
   public boolean doWork(MiningWork i_work) {
+    Console.send(1, "Worker Starter");
 	int i;
     if (i_work != null) {
       stopWork();
@@ -126,11 +117,10 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   public void stopWork() {
     for (Worker t : _workr_thread) {
       if (t != null) {
-        Console.send(3, "Worker: Killing thread ID: " + t.getId());
         t.interrupt();
       }
     }
-    Console.send(3, "Worker: Threads killed");
+    Console.send(1, "Worker Stopped");
   }
 
   @Override
@@ -158,6 +148,5 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
   private EventList _as_listener = new EventList();
   public void addListener(IWorkerEvent i_listener) {
     _as_listener.add(i_listener);
-    return;
   }
 }

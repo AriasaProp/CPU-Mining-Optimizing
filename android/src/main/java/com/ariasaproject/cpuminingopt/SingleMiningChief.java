@@ -24,6 +24,7 @@ import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
 import com.ariasaproject.cpuminingopt.CpuMiningWorker;
 import com.ariasaproject.cpuminingopt.IMiningWorker;
 import com.ariasaproject.cpuminingopt.IWorkerEvent;
+import com.ariasaproject.cpuminingopt.Console;
 import java.util.EventListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -93,9 +94,10 @@ public class SingleMiningChief implements Observer {
     @Override
     public void onNonceFound(MiningWork i_work, int i_nonce) {
       try {
+		Console.send(2, "Submiting Founded nonce.");
         this._parent._connection.submitWork(i_work, i_nonce);
       } catch (Exception e) {
-        e.printStackTrace();
+		Console.send(4, "Error on Submiting Founded nonce!");
       }
     }
   }
