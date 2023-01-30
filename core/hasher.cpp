@@ -2,14 +2,14 @@
 
 #include <cstdint>
 
-using namespace hasher;
 unsigned int *tSl;
-void initialize() {
+
+void hasher::initialize() {
 	//nothing todo for now 
 	tSl = new unsigned int[15];
 }
 
-void xorSalsa(unsigned int *X){
+void hasher::xorSalsa(unsigned int *X){
 	size_t i;
 	for (i = 0; i < 16;i++) {
 		tSl[i] = (X[i] ^= X[16 + i]);
@@ -92,7 +92,7 @@ void xorSalsa(unsigned int *X){
 	}
 }
 
-void destroy() {
+void hasher::destroy() {
 	//nothing todo for now 
 	delete tSl;
 }
