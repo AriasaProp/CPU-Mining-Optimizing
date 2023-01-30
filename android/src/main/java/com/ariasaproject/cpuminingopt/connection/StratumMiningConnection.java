@@ -239,7 +239,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       setChanged();
       notifyObservers(IMiningWorker.Notification.AUTHENTICATION_ERROR);
       throw new RuntimeException("Stratum authorize process failed.");
-    } catch (UnknownHostException|IOException e) {
+    } catch (IOException e) {
+    	Console.send(4, "Connection error by IOException: " + e.getMessage())
       setChanged();
       notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
       throw new RuntimeException(e);
@@ -298,7 +299,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       notifyObservers(IMiningWorker.Notification.NEW_WORK);
       this._work_builder.setNotify(i_notify);
     } catch (Exception e) {
-      Console.send("Catch Exception: " + e.getMessage());
+      Console.send(4, "Catch Exception: " + e.getMessage());
     }
     MiningWork w = this.getWork();
     if (w == null) {
@@ -319,7 +320,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     try {
       this._work_builder.setDiff(i_difficulty);
     } catch (Exception e) {
-      Console.send("StratumMiningConnection : Catch Exception: " + e.getMessage());
+      Console.send(4, "StratumMiningConnection : Catch Exception: " + e.getMessage());
     }
     MiningWork w = this.getWork();
     if (w == null) {
