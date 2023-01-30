@@ -4,6 +4,7 @@ import static com.ariasaproject.cpuminingopt.Constants.CLIENT_NAME_STRING;
 
 import android.os.AsyncTask;
 import com.ariasaproject.cpuminingopt.MiningWork;
+import com.ariasaproject.cpuminingopt.Console;
 import com.ariasaproject.cpuminingopt.StratumMiningWork;
 import com.ariasaproject.cpuminingopt.stratum.StratumJson;
 import com.ariasaproject.cpuminingopt.stratum.StratumJsonMethodGetVersion;
@@ -90,7 +91,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
         synchronized (this._submit_q) {
           for (SubmitOrder i : this._submit_q) {
             if (i.id == sjson.id) {
-              // submit_qから取り外し
               this._submit_q.remove(i);
               so = i;
               break;
@@ -145,35 +145,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       } while (time_out > 0);
       return null;
     }
-    /** Submit ID */
     public void addSubmitOrder(SubmitOrder i_submit_id) {
       synchronized (this._submit_q) {
         this._submit_q.add(i_submit_id);
-      }
-    }
-  }
-
-  private static class SocketParams {
-    StratumSocket _sock;
-    URI _server;
-
-    SocketParams(StratumSocket sock, URI server) {
-      this._sock = sock;
-      this._server = server;
-    }
-  }
-
-  public class SocketConnectAsyncTask extends AsyncTask<SocketParams, Void, StratumSocket> {
-    @Override
-    protected StratumSocket doInBackground(SocketParams... params) {
-      try {
-        params[0]._sock = new StratumSocket(params[0]._server);
-        return params[0]._sock;
-      } catch (IOException e) {
-        setChanged();
-        notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
-        e.printStackTrace();
-        return null;
       }
     }
   }
@@ -200,18 +174,13 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     notifyObservers(IMiningWorker.Notification.CONNECTING);
     try {
       MiningWork ret = null;
-      SocketParams sock_par = new SocketParams(this._sock, this._server);
-      SocketConnectAsyncTask sock_task = new SocketConnectAsyncTask();
-      try {
-        this._sock = sock_task.execute(sock_par).get();
-      } catch (InterruptedException e) {
+	  try {
+	    Console.send(1, "get socket in thread synch");
+        this._sock = new StratumSocket(this._server);
+	  } catch (IOException|InterruptedException|ExecutionException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
-        e.printStackTrace();
-      } catch (ExecutionException e) {
-        setChanged();
-        notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
-        e.printStackTrace();
+		throw new RuntimeException(e);
       }
 
       this._rx_thread = new AsyncRxSocketThread(this);
