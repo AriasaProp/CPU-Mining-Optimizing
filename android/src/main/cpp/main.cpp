@@ -29,7 +29,7 @@ JNI_Call(void, nHash) (JNIEnv* env, jclass, jbyteArray B, jintArray X) {
 	hasher::hash((void*)c_B, (unsigned int *)c_X);
 	
 	env->ReleaseIntArrayElements(X, c_X, 0);
-	env->ReleaseIntArrayElements(B, c_B, 0);
+	env->ReleaseByteArrayElements(B, c_B, 0);
 }
 #undef JNI_Call
 
