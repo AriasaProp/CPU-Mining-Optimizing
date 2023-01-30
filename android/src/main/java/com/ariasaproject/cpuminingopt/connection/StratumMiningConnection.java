@@ -177,7 +177,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
 	  try {
 	    Console.send(1, "get socket in thread synch");
         this._sock = new StratumSocket(this._server);
-	  } catch (IOException|ExecutionException e) {
+	  } catch (IOException e) {
         setChanged();
         notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
 		throw new RuntimeException(e);
