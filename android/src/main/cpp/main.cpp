@@ -23,12 +23,12 @@ JNI_Call(jstring, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Hasher_##M
 
 JNI_Call(void, nHash) (JNIEnv* env, jclass, jbyteArray B, jintArray X) {
-	int *c_X = env->GetIntArrayElements(X, NULL);
-	char *c_B = env->GetByteArrayElements(B, NULL);
+	jint *c_X = env->GetIntArrayElements(X, NULL);
+	jbyte *c_B = env->GetByteArrayElements(B, NULL);
 	
 	hasher::hash((void*)c_B, (unsigned int *)c_X);
 	
-	env->ReleaseIntArrayElements(X, c_X, 0);
+	env->ReleaseIntArrayElements(X, c_X, JNI_ABORT);
 	env->ReleaseByteArrayElements(B, c_B, 0);
 }
 #undef JNI_Call
