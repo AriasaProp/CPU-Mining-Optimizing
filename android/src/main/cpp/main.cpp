@@ -35,16 +35,16 @@ JNI_Call(void, nHash) (JNIEnv* env, jclass, jbyteArray B, jintArray X) {
 
 //native management
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
-    JNIEnv* env;
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
-        return JNI_ERR;
-    }
-    console_log::initialize();
-    hasher::initialize();
-    return JNI_VERSION_1_6;
+  JNIEnv* env;
+  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+      return JNI_ERR;
+  }
+  console_log::initialize();
+  //hasher::initialize();
+  return JNI_VERSION_1_6;
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM*, void*) {
 	console_log::destroy();
-	hasher::destroy();
+	//hasher::destroy();
 }
