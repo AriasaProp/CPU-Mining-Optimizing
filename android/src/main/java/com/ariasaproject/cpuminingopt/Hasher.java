@@ -1,4 +1,4 @@
-package com.ariasaproject.cpuminingopt.hasher;
+package com.ariasaproject.cpuminingopt;
 
 import static java.lang.Integer.rotateLeft;
 import static java.lang.System.arraycopy;
@@ -9,17 +9,15 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Hasher {
 
-  private Mac mac;
-  private byte[] H = new byte[32];
-  private byte[] B = new byte[128 + 4];
-  private int[] X = new int[32];
-  private int[] V = new int[32 * 1024];
+  private static Mac mac;
+  private static byte[] H = new byte[32];
+  private static byte[] B = new byte[128 + 4];
+  private static int[] X = new int[32];
+  private static int[] V = new int[32 * 1024];
 
-  public Hasher() throws GeneralSecurityException {
-    mac = Mac.getInstance("HmacSHA256");
-  }
-
-  public byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
+  public static byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
+  	if (mac == null)
+    		mac = Mac.getInstance("HmacSHA256");
     int i, j, k;
 
     arraycopy(header, 0, B, 0, 76);
@@ -71,7 +69,7 @@ public class Hasher {
     return H;
   }
 
-  private void xorSalsa8(int di, int xi) {
+  private static void xorSalsa8(int di, int xi) {
     int x00 = (X[di + 0] ^= X[xi + 0]);
     int x01 = (X[di + 1] ^= X[xi + 1]);
     int x02 = (X[di + 2] ^= X[xi + 2]);

@@ -1,26 +1,23 @@
 package com.ariasaproject.cpuminingopt;
 
-import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_BACKGROUND;
-import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_SCREEN;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_BACKGROUND;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_PASS;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_SCREEN;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_THREAD;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_TITLE;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
+import androidx.core.text.HtmlCompat;
+import android.text.Html;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.StrictMode;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -30,228 +27,238 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.ariasaproject.cpuminingopt.worker.CpuMiningWorker;
+
+import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
+import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
+import com.ariasaproject.cpuminingopt.stratum.StratumSocket;
+import com.ariasaproject.cpuminingopt.CpuMiningWorker;
+import com.ariasaproject.cpuminingopt.IMiningWorker;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
+
+import static android.R.id.edit;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
+import static com.ariasaproject.cpuminingopt.Constants.MSG_UIUPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_TERMINATED;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+
+import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_PASS;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_THREAD;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_THROTTLE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SCANTIME;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_RETRYPAUSE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SERVICE;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_PRIORITY;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_BACKGROUND;
+import static com.ariasaproject.cpuminingopt.Constants.PREF_SCREEN;
+
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_PRIORITY;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_THREAD;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_SCANTIME;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_RETRYPAUSE;
+import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_THROTTLE;
 
 public class MainActivity extends Activity {
+		static {
+			System.loadLibrary("ext");
+		}
+		
+	  IMiningConnection mc;
+	  IMiningWorker imw;
+	  SingleMiningChief smc;
+		
+    EditText et_serv;
+    EditText et_user;
+    EditText et_pass;
+    CheckBox cb_background_run;
+    CheckBox cb_keep_awake;
 
-  EditText et_serv;
-  EditText et_user;
-  EditText et_pass;
-  CheckBox cb_service;
-  CheckBox cb_screen_awake;
-
-  int baseThreadCount;
-  boolean mBound = false;
-  MinerService mService;
-  public int curScreenPos = 0;
-  String unit = " h/s";
-  Handler statusHandler = new Handler() {};
-  final Runnable rConsole =
-      new Runnable() {
-        public void run() {
-          TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
-          txt_console.setText(mService.cString);
-          txt_console.invalidate();
-        }
-      };
-
-  final Runnable rSpeed =
-      new Runnable() {
-        public void run() {
-          TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
-          DecimalFormat df = new DecimalFormat("#.##");
-          tv_speed.setText(df.format(mService.speed) + unit);
-        }
-      };
-  final Runnable rAccepted =
-      new Runnable() {
-        public void run() {
-          TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
-          txt_accepted.setText(String.valueOf(mService.accepted));
-        }
-      };
-  final Runnable rRejected =
-      new Runnable() {
-        public void run() {
-          TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
-          txt_rejected.setText(String.valueOf(mService.rejected));
-        }
-      };
-  final Runnable rStatus =
-      new Runnable() {
-        public void run() {
-          TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
-          txt_status.setText(mService.status);
-        }
-      };
-  final Runnable rBtnStart =
-      new Runnable() {
-        public void run() {
-          final Button b = (Button) findViewById(R.id.status_button_startstop);
-          b.setText(getString(R.string.main_button_start));
-          if (firstRunFlag) {
-            b.setEnabled(true);
-            b.setClickable(true);
-          } else if (StartShutdown) {
-            b.setEnabled(false);
-            b.setClickable(false);
-            if (!ShutdownStarted) {
-              ShutdownStarted = true;
-              CpuMiningWorker worker = (CpuMiningWorker) mService.imw;
-              ThreadStatusAsyncTask threadWaiter = new ThreadStatusAsyncTask();
-              threadWaiter.execute(worker);
-            }
-          }
-        }
-      };
-  final Runnable rBtnStop =
-      new Runnable() {
-        public void run() {
-          Button b = (Button) findViewById(R.id.status_button_startstop);
-          b.setText(getString(R.string.main_button_stop));
-          b.setEnabled(true);
-        }
-      };
-
-  public volatile boolean firstRunFlag = true;
-  public volatile boolean ShutdownStarted = false;
-  public volatile boolean StartShutdown = false;
-
-  final ServiceConnection mConnection =
-      new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-          MinerService.LocalBinder binder = (MinerService.LocalBinder) service;
-          mService = binder.getService();
-          updateThread.start();
-        }
-
-        public void onServiceDisconnected(ComponentName name) {
-          if (updateThread.isAlive()) updateThread.interrupt();
-        }
-      };
-  final Thread updateThread =
-      new Thread() {
-        @Override
-        public void run() {
-          try {
-            for (; ; ) {
-              if (mService.running) {
-                statusHandler.post(rBtnStop);
-              } else {
-                statusHandler.post(rBtnStart);
-              }
-              sleep(1000);
-              statusHandler.post(rConsole);
-              statusHandler.post(rSpeed);
-              statusHandler.post(rAccepted);
-              statusHandler.post(rRejected);
-              statusHandler.post(rStatus);
-            }
-          } catch (InterruptedException e) {
-          }
-        }
-      };
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    setContentView(R.layout.activity_main);
-    super.onCreate(savedInstanceState);
-
-    et_serv = (EditText) findViewById(R.id.server_et);
-    et_user = (EditText) findViewById((R.id.user_et));
-    et_pass = (EditText) findViewById(R.id.password_et);
-    cb_service = (CheckBox) findViewById(R.id.settings_checkBox_background);
-    cb_service.setChecked(DEFAULT_BACKGROUND);
-    cb_screen_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake);
-    cb_screen_awake.setChecked(DEFAULT_SCREEN);
-    SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
-    et_serv.setText(settings.getString(PREF_URL, ""));
-    et_user.setText(settings.getString(PREF_USER, ""));
-    et_pass.setText(settings.getString(PREF_PASS, ""));
-
-    // set number of Threads posibility use
-    try {
-      Spinner threadList = (Spinner) findViewById(R.id.spinner1);
-      String[] threadsAvailable = new String[Runtime.getRuntime().availableProcessors()];
-      for (int i = 0; i <= Runtime.getRuntime().availableProcessors(); i++) {
-        threadsAvailable[i] = Integer.toString(i + 1);
-        ArrayAdapter threads =
-            new ArrayAdapter<CharSequence>(
-                this, android.R.layout.simple_spinner_item, threadsAvailable);
-        threadList.setAdapter(threads);
-      }
-    } catch (Exception e) {
-    }
-    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    StrictMode.setThreadPolicy(policy);
-    Intent intent = new Intent(getApplicationContext(), MinerService.class);
-    startService(intent);
-    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-  }
-
-  public void startstopMining(View v) {
-    final Button b = (Button) v;
-    if (b.getText().equals(getString(R.string.status_button_start))) {
-      String url = et_serv.getText().toString();
-      String user = et_user.getText().toString();
-      String pass = et_pass.getText().toString();
-      Spinner threadList = (Spinner) findViewById(R.id.spinner1);
-      int threads = Integer.parseInt(threadList.getSelectedItem().toString());
-      SharedPreferences settings = getSharedPreferences(PREF_TITLE, 0);
-      SharedPreferences.Editor editor = settings.edit();
-      settings = getSharedPreferences(PREF_TITLE, 0);
-      editor = settings.edit();
-      editor.putString(PREF_URL, url);
-      editor.putString(PREF_USER, user);
-      editor.putString(PREF_PASS, pass);
-      editor.putInt(PREF_THREAD, threads);
-      editor.putBoolean(PREF_BACKGROUND, cb_service.isChecked());
-      editor.putBoolean(PREF_SCREEN, cb_screen_awake.isChecked());
-      editor.commit();
-      if (settings.getBoolean(PREF_SCREEN, DEFAULT_SCREEN)) {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-      }
-      mService.startMiner();
-      firstRunFlag = false;
-      b.setText(getString(R.string.main_button_stop));
-    } else {
-      mService.stopMiner();
-      StartShutdown = true;
-      b.setText(getString(R.string.status_button_start));
-    }
-  }
-
-  public void startMining() {
-    mService.startMiner();
-  }
-
-  public void stopMining() {
-    mService.stopMiner();
-  }
-
-  public void setButton(boolean flag) {
-    final Button btn = (Button) findViewById(R.id.status_button_startstop);
-    btn.setEnabled(flag);
-    btn.setClickable(flag);
-  }
-
-  public class ThreadStatusAsyncTask extends AsyncTask<CpuMiningWorker, Integer, Boolean> {
+    String unit = " h/s";
+    final Handler statusHandler = new Handler() {
+	      final DecimalFormat df = new DecimalFormat("#.##");
+	      @Override
+	      public void handleMessage(Message msg) {
+	          final Bundle bundle = msg.getData();
+	          if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
+				        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+								if(settings.getBoolean(PREF_SCREEN, false)) {
+										getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+								}
+			  				Button b = (Button) findViewById(R.id.status_button_startstop);
+			  				b.setText(R.string.main_button_stop);
+				        b.setEnabled(true);
+				        b.setClickable(true);
+	          }
+	          if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
+	      				if (imw != null) {
+		                CpuMiningWorker w = (CpuMiningWorker)imw;
+		                long lastTime = System.currentTimeMillis();
+				            long currTime;
+				            while (w.getThreadsStatus()) {
+				                currTime = System.currentTimeMillis();
+				                long deltaTime = currTime-lastTime;
+				                if (deltaTime>15000.0) {
+				                    Console.send(0, "Still cooling down...");
+				                    lastTime = currTime;
+				                }
+				            }
+				            imw = null;
+	      				}
+				        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+								if(settings.getBoolean(PREF_SCREEN, false)) {
+										getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+								}
+	      				Button b = (Button) findViewById(R.id.status_button_startstop);
+	      				b.setText(R.string.main_button_start);
+				        b.setEnabled(true);
+				        b.setClickable(true);
+	          }
+	          if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
+		            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
+		            tv_speed.setText(df.format(bundle.getFloat("speed"))+unit);
+	          }
+	          if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
+		            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
+		            txt_status.setText(bundle.getString("status"));
+	          }
+	          if ((msg.arg1 & MSG_ACCEPTED_UPDATE) == MSG_ACCEPTED_UPDATE) {
+		            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
+		            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
+	          }
+	          if ((msg.arg1 & MSG_REJECTED_UPDATE) == MSG_REJECTED_UPDATE) {
+		            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
+		            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
+	          }
+	          super.handleMessage(msg);
+	      }
+    };
+    
     @Override
-    protected Boolean doInBackground(CpuMiningWorker... params) {
-      long lastTime = System.currentTimeMillis();
-      long currTime;
-      while (params[0].getThreadsStatus()) {
-        currTime = System.currentTimeMillis();
-        double deltaTime = (double) (currTime - lastTime) / 1000.0;
-        if (deltaTime > 15.0) {
-          params[0].ConsoleWrite("Still cooling down...");
-          lastTime = currTime;
-        }
-      }
-      return true;
+    protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState);
+        
+				final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
+        Console.setReceiver(new Console.Receiver() {
+		  			@Override
+		  			public void receive(String msgs) {
+		  					statusHandler.post(new Runnable(){
+		        				@Override
+		        				public void run(){
+		        						//txt_console.setText(msgs);
+												if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+														txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+												else
+														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
+		        				}
+		        		});
+		  			}
+		  	});
+        
+        et_serv = (EditText) findViewById(R.id.server_et);
+        et_user = (EditText) findViewById((R.id.user_et));
+        et_pass = (EditText) findViewById(R.id.password_et);
+        cb_background_run = (CheckBox) findViewById(R.id.settings_checkBox_background) ;
+        cb_keep_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake) ;
+				SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        et_serv.setText(settings.getString(PREF_URL,"stratum+tcp://us2.litecoinpool.org:8080"));
+        et_user.setText(settings.getString(PREF_USER,"Ariasa.test"));
+        et_pass.setText(settings.getString(PREF_PASS,"1234"));
+        cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
+        cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
+        
+        //set number of Threads posibility use
+        try {
+            Spinner threadList = (Spinner)findViewById(R.id.spinner1);
+            String[] threadsAvailable = new String[Runtime.getRuntime().availableProcessors()];
+            for(int i = 0; i <= Runtime.getRuntime().availableProcessors();i++) {
+                threadsAvailable[i] = Integer.toString(i + 1);
+                ArrayAdapter threads = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, threadsAvailable);
+                threadList.setAdapter(threads);
+            }
+        } catch (Exception e){}
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
+		public void startstopMining(View v) {
+				final Button b = (Button) v;
+        b.setEnabled(false);
+        b.setClickable(false);
+				if (b.getText().equals(getString(R.string.main_button_start))) {
+						b.setText(R.string.main_button_onstart);
+						new Thread(new Runnable(){
+								@Override
+								public void run() {
+										String url = et_serv.getText().toString();
+										String user = et_user.getText().toString();
+										String pass = et_pass.getText().toString();
+										Spinner threadList = (Spinner)findViewById(R.id.spinner1);
+										int threads = Integer.parseInt(threadList.getSelectedItem().toString());
+										Console.send(1, "Try to start mining");
+										try {
+												mc = new StratumMiningConnection(url, user, pass);
+												imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
+												smc = new SingleMiningChief(mc, imw, statusHandler);
+												smc.startMining();
+												SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+												SharedPreferences.Editor editor = settings.edit();
+												editor.putString(PREF_URL, url);
+												editor.putString(PREF_USER, user);
+												editor.putString(PREF_PASS, pass);
+												editor.putInt(PREF_THREAD, threads);
+												editor.putBoolean(PREF_BACKGROUND, cb_background_run.isChecked());
+												editor.putBoolean(PREF_SCREEN, cb_keep_awake.isChecked());
+												editor.commit();
+												final Message msg = statusHandler.obtainMessage();
+												msg.arg1 = MSG_STARTED;
+												statusHandler.sendMessage(msg);
+										} catch (Exception e) {
+												Console.send(4, "Error start mining : "+ e.toString());
+												final Message msg = statusHandler.obtainMessage();
+												msg.arg1 = MSG_TERMINATED;
+												statusHandler.sendMessage(msg);
+										}
+								}
+						}).start();
+				} else {
+						b.setText(R.string.main_button_onstop);
+						new Thread(new Runnable() {
+								@Override
+								public void run(){
+										Console.send(1, "try stopping mining");
+										try {
+												smc.stopMining();
+										} catch (Exception e) {
+												Console.send(4, "Exception: "+ e.getMessage());
+										}
+										final Message msg = statusHandler.obtainMessage();
+										msg.arg1 = MSG_TERMINATED;
+										statusHandler.sendMessage(msg);
+								}
+						}).start();
+				}
+		}
+		
+		@Override
+		protected void onSaveInstanceState(Bundle savedInstanceState) {
+				super.onSaveInstanceState(savedInstanceState);
+				//savedInstanceState.putString("console", ((TextView) findViewById(R.id.status_textView_console)).getText().toString());
+		}
+>>>>>>> origin/main
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
@@ -295,11 +302,27 @@ public class MainActivity extends Activity {
       stopService(intent);
     }
 
-    try {
-      unbindService(mConnection);
-    } catch (RuntimeException e) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+    		SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        if (settings.getBoolean(PREF_BACKGROUND, false)) {
+            TextView tv_background = (TextView) findViewById(R.id.status_textView_background);
+            tv_background.setText("RUN IN BACKGROUND");
+        }
     }
 
-    super.onStop();
-  }
+    @Override
+    protected void onStop() {
+        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+				if(!settings.getBoolean(PREF_BACKGROUND, false) && (imw != null)) {
+            Console.send(0, "Try to stop mining");
+						try {
+								smc.stopMining();
+						} catch (Exception e) {
+								Console.send(4, "Error: "+ e.getMessage());
+						}
+        }
+        super.onStop();
+    }
 }

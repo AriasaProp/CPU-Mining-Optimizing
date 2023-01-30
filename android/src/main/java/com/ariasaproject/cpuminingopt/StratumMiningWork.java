@@ -8,6 +8,5 @@ public class StratumMiningWork extends MiningWork {
     super(i_data, i_target);
     this.job_id = i_job_id;
     this.xnonce2 = i_xnonce2;
-    return;
   }
 }

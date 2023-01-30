@@ -16,7 +16,7 @@ import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultStandard;
 import com.ariasaproject.cpuminingopt.stratum.StratumJsonResultSubscribe;
 import com.ariasaproject.cpuminingopt.stratum.StratumSocket;
 import com.ariasaproject.cpuminingopt.stratum.StratumWorkBuilder;
-import com.ariasaproject.cpuminingopt.worker.IMiningWorker;
+import com.ariasaproject.cpuminingopt.IMiningWorker;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -114,7 +114,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     }
 
     private Semaphore semaphore = new Semaphore(0);
-    /** JSON Result */
     public StratumJson waitForJsonResult(long i_id, Class<?> i_class, int i_wait_for_msec) {
       long time_out = i_wait_for_msec;
       do {
@@ -127,7 +126,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
           return null;
         }
         synchronized (this._json_q) {
-          // 受信キューをスキャン
           for (StratumJson json : this._json_q) {
             if (!(json.getClass() == i_class)) {
               continue;

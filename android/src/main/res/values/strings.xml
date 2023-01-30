@@ -6,7 +6,9 @@
     <string name="main_tv_username">Username:</string>
     <string name="main_tv_password">Password</string>
     <string name="main_button_start">Start Mining</string>
+    <string name="main_button_onstart">Starting ....</string>
     <string name="main_button_stop">Stop Mining</string>
+    <string name="main_button_onstop">Stopping ....</string>
     <string name="main_tv_thread">"Threads: "</string>
     <string name="main_button_settings">Settings</string>
     <string name="main_tv_speed_lbl">Speed:</string>
@@ -23,7 +25,6 @@
     <string name="settings_server_lbl">Server URL</string>
     <string name="settings_textView_throttle_lbl">Throttle (0-100%)</string>
     <string name="settings_button_load">Load</string>
-    <string name="status_button_start">Start Mining</string>
     <string name="status_textview_speed">Speed:</string>
     <string name="settings_textview_threadpriority">Thread Priority:</string>
     <string name="status_mining">Mining</string>

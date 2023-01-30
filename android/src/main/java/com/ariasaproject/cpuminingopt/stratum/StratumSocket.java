@@ -15,7 +15,6 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
 
-/** Created by Ben David on 01/08/2017. */
 public class StratumSocket extends Socket {
   private class LoggingWriter extends BufferedWriter {
     public LoggingWriter(Writer arg0) {
@@ -25,7 +24,6 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
-      Console.send(0, "TX>" + str);
     }
   }
 
@@ -36,7 +34,6 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
-      Console.send(0, "RX<" + s);
       return s;
     }
   }
@@ -60,8 +57,6 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    //        this._tx.write("{\"id\": "+id+", \"method\": \"mining.subscribe\", \"params\":
-    // [\""+i_agent_name+"\"]}\n");
     this._tx.write("{\"id\": " + id + ", \"method\": \"mining.subscribe\", \"params\": []}\n");
     this._tx.flush();
     return id;
@@ -73,14 +68,7 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    this._tx.write(
-        "{\"id\": "
-            + id
-            + ", \"method\": \"mining.authorize\", \"params\": [\""
-            + i_user
-            + "\",\""
-            + i_password
-            + "\"]}\n");
+    this._tx.write("{\"id\": " + id + ", \"method\": \"mining.authorize\", \"params\": [\"" + i_user + "\",\"" + i_password + "\"]}\n");
     this._tx.flush();
     return id;
   }
@@ -123,69 +111,47 @@ public class StratumSocket extends Socket {
   public StratumJson recvStratumJson() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jn = mapper.readTree(this._rx.readLine());
-    // parse method
     try {
       return new StratumJsonMethodGetVersion(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodMiningNotify(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodReconnect(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodSetDifficulty(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonMethodShowMessage(jn);
-    } catch (RuntimeException e) {
-    }
-    // parse result(複雑なものから順にね！)
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonResultSubscribe(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     try {
       return new StratumJsonResultStandard(jn);
-    } catch (RuntimeException e) {
-    }
+    } catch (RuntimeException e) {}
     return null;
   }
 
   public static void main(String[] args) {
-    // JsonParseTest
     ObjectMapper mapper = new ObjectMapper();
     try {
-      StratumJson s1 =
-          new StratumJsonMethodGetVersion(mapper.readTree(StratumJsonMethodGetVersion.TEST_PATT));
-      StratumJson s2 =
-          new StratumJsonMethodMiningNotify(
-              mapper.readTree(StratumJsonMethodMiningNotify.TEST_PATT));
-      StratumJson s3 =
-          new StratumJsonMethodReconnect(mapper.readTree(StratumJsonMethodReconnect.TEST_PATT));
-      StratumJson s4 =
-          new StratumJsonMethodSetDifficulty(
-              mapper.readTree(StratumJsonMethodSetDifficulty.TEST_PATT));
-      StratumJson s5 =
-          new StratumJsonMethodShowMessage(mapper.readTree(StratumJsonMethodShowMessage.TEST_PATT));
-      StratumJson s6 =
-          new StratumJsonResultStandard(mapper.readTree(StratumJsonResultStandard.TEST_PATT));
-      StratumJson s7 =
-          new StratumJsonResultSubscribe(mapper.readTree(StratumJsonResultSubscribe.TEST_PATT));
+      StratumJson s1 = new StratumJsonMethodGetVersion(mapper.readTree(StratumJsonMethodGetVersion.TEST_PATT));
+      StratumJson s2 = new StratumJsonMethodMiningNotify(mapper.readTree(StratumJsonMethodMiningNotify.TEST_PATT));
+      StratumJson s3 = new StratumJsonMethodReconnect(mapper.readTree(StratumJsonMethodReconnect.TEST_PATT));
+      StratumJson s4 = new StratumJsonMethodSetDifficulty(mapper.readTree(StratumJsonMethodSetDifficulty.TEST_PATT));
+      StratumJson s5 = new StratumJsonMethodShowMessage(mapper.readTree(StratumJsonMethodShowMessage.TEST_PATT));
+      StratumJson s6 = new StratumJsonResultStandard(mapper.readTree(StratumJsonResultStandard.TEST_PATT));
+      StratumJson s7 = new StratumJsonResultSubscribe(mapper.readTree(StratumJsonResultSubscribe.TEST_PATT));
       return;
     } catch (JsonProcessingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (RuntimeException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
+    } /*catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 }
