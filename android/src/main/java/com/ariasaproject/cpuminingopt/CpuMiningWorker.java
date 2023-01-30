@@ -34,7 +34,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       _step = i_step;
     }
     private static final int NUMBER_OF_ROUND = 1; // Original: 100
-
     @Override
     public void run() {
       this.number_of_hashed = 0;
@@ -68,12 +67,12 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         stopWork();
       } catch (InterruptedException ignored) {}
       Console.send(3, "Thread Ended. #Hashes=" + this.number_of_hashed);
-	    long curr_time = System.currentTimeMillis();
-	    double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
-	    double speed_calc = ((double) number_of_hashed / delta_time);
-	    _speed = (double) speed_calc;
-	    setChanged();
-	    notifyObservers(Notification.SPEED);
+	  long curr_time = System.currentTimeMillis();
+	  double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
+	  double speed_calc = ((double) number_of_hashed / delta_time);
+	  _speed = (double) speed_calc;
+	  setChanged();
+	  notifyObservers(Notification.SPEED);
       _last_time = curr_time;
     }
   }
@@ -94,10 +93,11 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
 
   @Override
   public boolean doWork(MiningWork i_work) {
+	int i;
     if (i_work != null) {
       stopWork();
       long hashes = 0;
-      for (int i = _number_of_thread - 1; i >= 0; i--) {
+      for (i = _number_of_thread - 1; i >= 0; i--) {
         hashes += _workr_thread[i].number_of_hashed;
       }
       _num_hashed = hashes;
@@ -108,8 +108,8 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
       notifyObservers(Notification.SPEED);
     }
     _last_time = System.currentTimeMillis();
-    for (int i = _number_of_thread - 1; i >= 0; i--) {
-      _workr_thread[i].setWork(i_work, (int) i, _number_of_thread);
+    for (i = _number_of_thread - 1; i >= 0; i--) {
+      _workr_thread[i].setWork(i_work, i, _number_of_thread);
       _workr_thread[i].setPriority(_thread_priorirty);
       if (!_workr_thread[i].isAlive()) {
         try {
@@ -119,7 +119,6 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         }
       }
     }
-
     return true;
   }
 

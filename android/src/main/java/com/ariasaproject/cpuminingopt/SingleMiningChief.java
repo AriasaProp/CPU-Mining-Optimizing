@@ -83,8 +83,7 @@ public class SingleMiningChief implements Observer {
       this._number_of_accept += (i_result ? 1 : 0);
       this._number_of_all++;
       setChanged();
-      notifyObservers(
-          i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
+      notifyObservers(i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
     }
 
     public boolean onDisconnect() {
@@ -101,8 +100,7 @@ public class SingleMiningChief implements Observer {
     }
   }
 
-  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Handler h)
-      throws Exception {
+  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Handler h) throws Exception {
     status = STATUS_CONNECTING;
     speed = 0.0f;
     mainHandler = h;

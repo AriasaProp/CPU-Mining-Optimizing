@@ -158,11 +158,10 @@ public class MainActivity extends Activity {
 		  					statusHandler.post(new Runnable(){
 		        				@Override
 		        				public void run(){
-		        						//txt_console.setText(msgs);
-												if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-														txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-												else
-														txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
+										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+												txt_console.setText(HtmlCompat.fromHtml(msgs, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+										else
+												txt_console.setText(Html.fromHtml(msgs), TextView.BufferType.SPANNABLE);
 		        				}
 		        		});
 		  			}
@@ -179,7 +178,6 @@ public class MainActivity extends Activity {
         et_pass.setText(settings.getString(PREF_PASS,"1234"));
         cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
         cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
-        
         //set number of Threads posibility use
         try {
             Spinner threadList = (Spinner)findViewById(R.id.spinner1);

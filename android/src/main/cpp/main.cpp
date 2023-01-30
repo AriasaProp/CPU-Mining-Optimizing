@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "console_log.h"
+#include "hasher.h"
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
@@ -18,6 +19,16 @@ JNI_Call(jstring, write) (JNIEnv* env, jclass, jint lv, jstring l) {
 		return env->NewStringUTF(r);
 }
 
+#undefine JNI_Call
+#define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Hasher_##M
+
+JNI_Call(void, xorSalsa) (JNIEnv* env, jclass, jintArray X) {
+	unsigned int *c_X = (unsigned int *)env->GetIntArrayElements(X, NULL);
+	hasher::xorSalsa(c_X);
+	env->Release<PrimitiveType>ArrayElements(X, c_X, 0);
+}
+#undefine JNI_Call
+
 //native management
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
@@ -25,9 +36,11 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
         return JNI_ERR;
     }
     console_log::initialize();
+    hasher::initialize();
     return JNI_VERSION_1_6;
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM*, void*) {
-		console_log::destroy();
+	console_log::destroy();
+	hasher::destroy();
 }

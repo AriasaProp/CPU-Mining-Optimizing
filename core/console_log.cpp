@@ -6,12 +6,14 @@
 #include <cstring>
 #include <string>
 
+using namespace console_log;
+
 #define MAX_MSG_SIZE 65535
 
 char *htmlMsg;
 char *endHtmlMsg;
 
-void console_log::initialize() {
+void initialize() {
 	htmlMsg = new char[MAX_MSG_SIZE+1];
 	memset(htmlMsg,' ', MAX_MSG_SIZE);
 	endHtmlMsg = htmlMsg+MAX_MSG_SIZE;
@@ -19,7 +21,7 @@ void console_log::initialize() {
 }
 const char *frontKey = "<font color='#";
 const char *endKey = "</font><br>";
-const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
+const char *write(unsigned int lv, const char *msg, unsigned long length) {
   memmove(htmlMsg+length+43, htmlMsg, MAX_MSG_SIZE-length-43);
   char *modif = htmlMsg;
 	memcpy(modif, frontKey, 14);
@@ -66,7 +68,7 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 	return htmlMsg;
 }
 
-void console_log::destroy() {
+void destroy() {
 	delete htmlMsg;
 	endHtmlMsg = nullptr;
 }

@@ -14,10 +14,9 @@ public class Hasher {
   private static byte[] B = new byte[128 + 4];
   private static int[] X = new int[32];
   private static int[] V = new int[32 * 1024];
-
+  //public static native byte[] hash(byte[] header, int nonce);
   public static byte[] hash(byte[] header, int nonce) throws GeneralSecurityException {
-  	if (mac == null)
-    		mac = Mac.getInstance("HmacSHA256");
+  	if (mac == null) mac = Mac.getInstance("HmacSHA256");
     int i, j, k;
 
     arraycopy(header, 0, B, 0, 76);
@@ -45,18 +44,20 @@ public class Hasher {
 
     for (i = 0; i < 1024; i++) {
       arraycopy(X, 0, V, i * 32, 32);
-      xorSalsa8(0, 16);
-      xorSalsa8(16, 0);
+      //xorSalsa(0, 16);
+      //xorSalsa(16, 0);
+	  xorSalsa(X);
     }
     for (i = 0; i < 1024; i++) {
       k = (X[16] & 1023) * 32;
       for (j = 0; j < 32; j++) X[j] ^= V[k + j];
-      xorSalsa8(0, 16);
-      xorSalsa8(16, 0);
+      //xorSalsa(0, 16);
+      //xorSalsa(16, 0);
+	  xorSalsa(X);
     }
 
     for (i = 0; i < 32; i++) {
-      B[i * 4 + 0] = (byte) (X[i] >> 0);
+      B[i * 4 + 0] = (byte) X[i];
       B[i * 4 + 1] = (byte) (X[i] >> 8);
       B[i * 4 + 2] = (byte) (X[i] >> 16);
       B[i * 4 + 3] = (byte) (X[i] >> 24);
@@ -68,8 +69,9 @@ public class Hasher {
 
     return H;
   }
-
-  private static void xorSalsa8(int di, int xi) {
+  private static native void xorSalsa(int[] X);
+  /*
+  private static void xorSalsa(int di, int xi) {
     int x00 = (X[di + 0] ^= X[xi + 0]);
     int x01 = (X[di + 1] ^= X[xi + 1]);
     int x02 = (X[di + 2] ^= X[xi + 2]);
@@ -137,4 +139,5 @@ public class Hasher {
     X[di + 14] += x14;
     X[di + 15] += x15;
   }
+*/
 }
