@@ -52,8 +52,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     public void run() {
       for (;;) {
         try {
-          StratumJson json = this._parent._sock.recvStratumJson();
-          if (json != null) {
+          StratumJson i_json = this._parent._sock.recvStratumJson();
+          if (i_json != null) {
 			      Class<?> iid = i_json.getClass();
 			      if (iid == StratumJsonMethodGetVersion.class) {
 			      } else if (iid == StratumJsonMethodMiningNotify.class) {
