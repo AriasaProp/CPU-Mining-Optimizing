@@ -24,6 +24,7 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
+  		Console.send(0, "Socket write: "+str);
     }
   }
 
@@ -34,6 +35,7 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
+  		Console.send(0, "Socket read: "+s);
       return s;
     }
   }
@@ -46,9 +48,12 @@ public class StratumSocket extends Socket {
 
   public StratumSocket(URI i_url) throws UnknownHostException, IOException {
     super(i_url.getHost(), i_url.getPort());
-    this._tx = new LoggingWriter(new OutputStreamWriter(this.getOutputStream()));
-    this._rx = new LoggingReader(new InputStreamReader(this.getInputStream()));
+    this._tx = new LoggingWriter(new OutputStreamWriter(getOutputStream()));
+    this._rx = new LoggingReader(new InputStreamReader(getInputStream()));
     this._id = 1;
+  }
+  private String jsonGenWriter(long id, String type, String params) {
+  	return String.format("{\"id\": %d,\"method\": \"mining.%s\", \"params\": [%s]}\n}", id,type,params);
   }
 
   public long subscribe(String i_agent_name) throws IOException {
@@ -57,7 +62,7 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    this._tx.write("{\"id\": " + id + ", \"method\": \"mining.subscribe\", \"params\": []}\n");
+    this._tx.write(jsonGenWriter(id, "subscribe", ""));
     this._tx.flush();
     return id;
   }
@@ -68,7 +73,8 @@ public class StratumSocket extends Socket {
       id = this._id;
       this._id++;
     }
-    this._tx.write("{\"id\": " + id + ", \"method\": \"mining.authorize\", \"params\": [\"" + i_user + "\",\"" + i_password + "\"]}\n");
+    String params = String.format("\"%s\",\"%s\"",i_user, i_password);
+    this._tx.write(jsonGenWriter(id, "authorize", params));
     this._tx.flush();
     return id;
   }
@@ -80,8 +86,8 @@ public class StratumSocket extends Socket {
       this._id++;
     }
     String sn = String.format("%08x", (((i_nonce & 0xff000000) >> 24) | ((i_nonce & 0x00ff0000) >> 8) | ((i_nonce & 0x0000ff00) << 8) | ((i_nonce & 0x000000ff) << 24)));
-    String s = "{\"id\": " + id + ", \"method\": \"mining.submit\", \"params\": [\"" + i_user + "\", \"" + i_jobid + "\",\"" + i_nonce2 + "\",\"" + i_ntime + "\",\"" + sn + "\"]}\n";
-    this._tx.write(s);
+    String params = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",i_user, i_jobid,i_nonce2,i_ntime,sn);
+    this._tx.write(jsonGenWriter(id, "submit", params));
     this._tx.flush();
     return id;
   }

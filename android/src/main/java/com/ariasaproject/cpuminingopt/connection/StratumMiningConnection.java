@@ -63,8 +63,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
             break;
           }
         } catch (IOException e) {
-			Console.send(4, "Socket IOExceptio: " + e.getMessage());
-		} catch (InterruptedException e) {
+        	Console.send(4, "Socket IOException: " + e.getMessage());
+        } catch (InterruptedException e) {
           break;
         }
       }
