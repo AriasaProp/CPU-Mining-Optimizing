@@ -16,8 +16,8 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 public class StratumSocket extends Socket {
-	public static String OutWriteLast;
-	public static String OutReadLast;
+	public static String OutWriteLast  = " ";
+	public static String OutReadLast = " ";
   private class LoggingWriter extends BufferedWriter {
     public LoggingWriter(Writer arg0) {
       super(arg0);
