@@ -26,7 +26,7 @@ JNI_Call(void, nHash) (JNIEnv* env, jclass, jbyteArray B, jintArray X) {
 	jint *c_X = env->GetIntArrayElements(X, NULL);
 	jbyte *c_B = env->GetByteArrayElements(B, NULL);
 	
-	hasher::hash((void*)c_B, (unsigned int *)c_X);
+	hasher::hash((void*)c_B, c_X);
 	
 	env->ReleaseIntArrayElements(X, c_X, JNI_ABORT);
 	env->ReleaseByteArrayElements(B, c_B, 0);

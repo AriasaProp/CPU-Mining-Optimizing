@@ -1,11 +1,10 @@
 #include "hasher.h"
 
-#include <cstdint>
 #include <cstring>
 
-unsigned int *tV;
+uint32_t *tV;
 
-void xorSalsa(unsigned int *X, unsigned int *tSl){
+void xorSalsa(uint32_t *X, uint32_t *tSl){
 	size_t i;
 	for (i = 0; i < 16;i++) {
 		tSl[i] = (X[i] ^= X[16 + i]);
@@ -88,19 +87,19 @@ void xorSalsa(unsigned int *X, unsigned int *tSl){
 	}
 }
 
-void hasher::hash(void *B, unsigned int *X) {
+void hasher::hash(void *B, uint32_t *X) {
 	size_t i, j, k;
-	unsigned int tV[32768];
-	unsigned int tSl[15];
+	uint32_t tV[32768];
+	uint32_t tSl[15];
 	for (i = 0; i < 1024; i++) {
-    memcpy(tV+(i*32), X, sizeof(unsigned int)*32);
-  	xorSalsa(X,tSl);
-  }
-	for (i = 0; i < 1024; i++) {
-    k = (X[16] & 1023) * 32;
-    for (j = 0; j < 32; j++) X[j] ^= tV[k + j];
+	  memcpy(tV+(i*32), X, sizeof(uint32_t)*32);
 	  xorSalsa(X,tSl);
-  }
-	memcpy(B, X, sizeof(unsigned int)*32);
+	}
+	for (i = 0; i < 1024; i++) {
+	  k = (X[16] & 1023) * 32;
+	  for (j = 0; j < 32; j++) X[j] ^= tV[k + j];
+		xorSalsa(X,tSl);
+	}
+	memcpy(B, X, sizeof(uint32_t)*32);
 }
 

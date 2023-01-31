@@ -172,10 +172,12 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
 		  notifyObservers(IMiningWorker.Notification.CONNECTION_ERROR);
 		  throw new RuntimeException(e);
 	  }
-      if (this._rx_thread.isAlive()) {
-      	this._rx_thread.interrupt();
-      	this._rx_thread.join();
-      }
+	  try {
+		  if (this._rx_thread.isAlive()) {
+			this._rx_thread.interrupt();
+			this._rx_thread.join();
+		  }
+	  } catch (InterruptedException e) {}
       this._rx_thread.start();
       int i;
       // subscribe
