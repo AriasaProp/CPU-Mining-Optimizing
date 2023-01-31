@@ -1,4 +1,4 @@
-0package com.ariasaproject.cpuminingopt.stratum;
+package com.ariasaproject.cpuminingopt.stratum;
 
 import com.ariasaproject.cpuminingopt.Console;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -111,5 +111,5 @@ public class StratumSocket extends Socket {
       return new StratumJsonResultStandard(jn);
     } catch (RuntimeException e) {}
     return null;
-  }0
+  }
 }
