@@ -323,7 +323,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     }
   }
 
-  public void synchronized submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
+  public synchronized void submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
     if (!(i_work instanceof StratumMiningWork)) {
       throw new RuntimeException("on Submitting nonce in connection, MiningWorker was different!");
     }
