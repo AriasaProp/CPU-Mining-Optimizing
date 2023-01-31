@@ -71,9 +71,7 @@ public class SingleMiningChief implements Observer {
         notifyObservers(IMiningWorker.Notification.NEW_BLOCK_DETECTED);
         setChanged();
         notifyObservers(IMiningWorker.Notification.NEW_WORK);
-        synchronized (this) {
-          this._parent._worker.doWork(i_work);
-        }
+        _parent._worker.doWork(i_work);
       } catch (Exception e) {
         Console.send(0, "Exception : " + e);
       }
@@ -81,7 +79,7 @@ public class SingleMiningChief implements Observer {
 
     @Override
     public void onSubmitResult(MiningWork i_listener, int i_nonce, boolean i_result) {
-    	if(i_result)
+      if(i_result)
       	this._number_of_accept++;
       this._number_of_all++;
       setChanged();
@@ -97,7 +95,7 @@ public class SingleMiningChief implements Observer {
       try {
         this._parent._connection.submitWork(i_work, i_nonce);
       } catch (Exception e) {
-      	Console.send(4, "Error on Submiting Founded nonce!");
+      	Console.send(4, "Error on Submiting Founded nonce! : "+e.getMessage());
       }
     }
   }
@@ -107,10 +105,10 @@ public class SingleMiningChief implements Observer {
     speed = 0.0f;
     mainHandler = h;
     this._connection = i_connection;
-    this._worker = i_worker;
+    _worker = i_worker;
     this._eventlistener = new EventListener(this);
     this._connection.addListener(this._eventlistener);
-    this._worker.addListener(this._eventlistener);
+    _worker.addListener(this._eventlistener);
   }
 
   public void startMining() {
@@ -120,16 +118,14 @@ public class SingleMiningChief implements Observer {
     MiningWork first_work = this._connection.connect();
     this._eventlistener.resetCounter();
     if (first_work != null) {
-      synchronized (this) {
-        this._worker.doWork(first_work);
-      }
+      _worker.doWork(first_work);
     }
   }
 
   public void stopMining() {
     Console.send(0, "Miner worker on stopping, This can take a few minutes");
     this._connection.disconnect();
-    this._worker.stopWork();
+    _worker.stopWork();
     speed = 0;
   }
   @Override

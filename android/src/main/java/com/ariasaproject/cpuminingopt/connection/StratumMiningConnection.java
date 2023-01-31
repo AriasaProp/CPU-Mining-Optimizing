@@ -57,14 +57,14 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
             Thread.sleep(1);
             continue;
           }
-          this.onJsonRx(json);
+          onJsonRx(json);
         } catch (SocketTimeoutException e) {
-          if (this.isInterrupted()) {
+          if (isInterrupted()) {
             break;
           }
         } catch (IOException e) {
-          e.printStackTrace();
-        } catch (InterruptedException e) {
+			Console.send(4, "Socket IOExceptio: " + e.getMessage());
+		} catch (InterruptedException e) {
           break;
         }
       }
@@ -323,7 +323,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     }
   }
 
-  public void submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
+  public void synchronized submitWork(MiningWork i_work, int i_nonce) throws RuntimeException {
     if (!(i_work instanceof StratumMiningWork)) {
       throw new RuntimeException("on Submitting nonce in connection, MiningWorker was different!");
     }
