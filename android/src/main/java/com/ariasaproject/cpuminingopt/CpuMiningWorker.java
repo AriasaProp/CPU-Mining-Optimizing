@@ -1,8 +1,5 @@
 package com.ariasaproject.cpuminingopt;
 
-import com.ariasaproject.cpuminingopt.Console;
-import com.ariasaproject.cpuminingopt.MiningWork;
-import com.ariasaproject.cpuminingopt.Hasher;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -26,13 +23,17 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     int _start;
     int _step;
     public long number_of_hashed;
+
     public Worker() {}
-	public void setWork(MiningWork i_work, int i_start, int i_step) {
+
+    public void setWork(MiningWork i_work, int i_start, int i_step) {
       _work = i_work;
       _start = i_start;
       _step = i_step;
     }
+
     private static final int NUMBER_OF_ROUND = 1; // Original: 100
+
     @Override
     public void run() {
       this.number_of_hashed = 0;
@@ -42,10 +43,10 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         byte[] header = work.header.refHex();
         byte[] target = work.target.refHex();
         Hasher hasher = new Hasher();
-        for (;;) {
+        for (; ; ) {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
             if (hasher.hashCheck(header, target, nonce))
-	            CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
+              CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);
             nonce += _step;
           }
           this.number_of_hashed += NUMBER_OF_ROUND;
@@ -56,15 +57,17 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         setChanged();
         notifyObservers(Notification.SYSTEM_ERROR);
         stopWork();
-      } catch (InterruptedException ignored) {}
-		  long curr_time = System.currentTimeMillis();
-		  double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
-		  _speed = ((double) number_of_hashed / delta_time);
-		  setChanged();
-		  notifyObservers(Notification.SPEED);
+      } catch (InterruptedException ignored) {
+      }
+      long curr_time = System.currentTimeMillis();
+      double delta_time = Math.max(1, curr_time - _last_time) / 1000.0;
+      _speed = ((double) number_of_hashed / delta_time);
+      setChanged();
+      notifyObservers(Notification.SPEED);
       _last_time = curr_time;
     }
   }
+
   public CpuMiningWorker(int i_number_of_thread, long retry_pause, int priority) {
     _thread_priorirty = priority;
     _retrypause = retry_pause;
@@ -82,7 +85,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
 
   @Override
   public boolean doWork(MiningWork i_work) {
-	int i;
+    int i;
     if (i_work != null) {
       stopWork();
       long hashes = 0;
@@ -142,7 +145,9 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
     }
     return false;
   }
+
   private EventList _as_listener = new EventList();
+
   public void addListener(IWorkerEvent i_listener) {
     _as_listener.add(i_listener);
   }

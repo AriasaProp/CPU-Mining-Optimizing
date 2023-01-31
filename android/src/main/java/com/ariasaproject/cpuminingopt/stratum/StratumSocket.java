@@ -1,7 +1,5 @@
 package com.ariasaproject.cpuminingopt.stratum;
 
-import com.ariasaproject.cpuminingopt.Console;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
@@ -9,8 +7,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -30,26 +26,47 @@ public class StratumSocket extends Socket {
   }
 
   public synchronized long subscribe(String i_agent_name) throws IOException {
-  	long id = this._id;
-  	this._id++;
-  	this._tx.write("{\"id\":"+id+",\"method\":\"mining.subscribe\",\"params\":[]}\n");
+    long id = this._id;
+    this._id++;
+    this._tx.write("{\"id\":" + id + ",\"method\":\"mining.subscribe\",\"params\":[]}\n");
     this._tx.flush();
     return id;
   }
 
   public synchronized long authorize(String i_user, String i_password) throws IOException {
-  	long id = this._id;
-  	this._id++;
-  	this._tx.write(String.format("{\"id\":"+id+",\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n", i_user, i_password));
+    long id = this._id;
+    this._id++;
+    this._tx.write(
+        String.format(
+            "{\"id\":" + id + ",\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",
+            i_user,
+            i_password));
     this._tx.flush();
     return id;
   }
 
-  public synchronized long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime) throws IOException {
-  	long id = this._id;
-  	this._id++;
-    String sn = String.format("%08x", (((i_nonce & 0xff000000) >> 24) | ((i_nonce & 0x00ff0000) >> 8) | ((i_nonce & 0x0000ff00) << 8) | ((i_nonce & 0x000000ff) << 24)));
-  	this._tx.write(String.format("{\"id\":"+id+",\"method\":\"mining.submit\",\"params\":[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}\n", i_user, i_jobid,i_nonce2,i_ntime,sn));
+  public synchronized long submit(
+      int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime)
+      throws IOException {
+    long id = this._id;
+    this._id++;
+    String sn =
+        String.format(
+            "%08x",
+            (((i_nonce & 0xff000000) >> 24)
+                | ((i_nonce & 0x00ff0000) >> 8)
+                | ((i_nonce & 0x0000ff00) << 8)
+                | ((i_nonce & 0x000000ff) << 24)));
+    this._tx.write(
+        String.format(
+            "{\"id\":"
+                + id
+                + ",\"method\":\"mining.submit\",\"params\":[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}\n",
+            i_user,
+            i_jobid,
+            i_nonce2,
+            i_ntime,
+            sn));
     this._tx.flush();
     return id;
   }
@@ -59,25 +76,32 @@ public class StratumSocket extends Socket {
     JsonNode jn = mapper.readTree(this._rx.readLine());
     try {
       return new StratumJsonMethodGetVersion(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonMethodMiningNotify(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonMethodReconnect(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonMethodSetDifficulty(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonMethodShowMessage(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonResultSubscribe(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     try {
       return new StratumJsonResultStandard(jn);
-    } catch (RuntimeException e) {}
+    } catch (RuntimeException e) {
+    }
     return null;
   }
 }

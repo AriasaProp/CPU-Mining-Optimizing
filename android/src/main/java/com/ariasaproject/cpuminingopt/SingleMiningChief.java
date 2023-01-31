@@ -1,19 +1,14 @@
 package com.ariasaproject.cpuminingopt;
 
+import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_CONNECTING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_ERROR;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_NOT_MINING;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_TERMINATED;
-
-import static com.ariasaproject.cpuminingopt.Constants.MSG_UIUPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_TERMINATED;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
-
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,10 +16,6 @@ import android.os.Message;
 import com.ariasaproject.cpuminingopt.connection.IConnectionEvent;
 import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
 import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
-import com.ariasaproject.cpuminingopt.CpuMiningWorker;
-import com.ariasaproject.cpuminingopt.IMiningWorker;
-import com.ariasaproject.cpuminingopt.IWorkerEvent;
-import com.ariasaproject.cpuminingopt.Console;
 import java.util.EventListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -48,7 +39,7 @@ public class SingleMiningChief implements Observer {
   private EventListener _eventlistener;
 
   public String status = STATUS_NOT_MINING;
-  
+
   public class EventListener extends Observable implements IConnectionEvent, IWorkerEvent {
     private SingleMiningChief _parent;
     private int _number_of_accept;
@@ -79,11 +70,11 @@ public class SingleMiningChief implements Observer {
 
     @Override
     public void onSubmitResult(MiningWork i_listener, int i_nonce, boolean i_result) {
-      if(i_result)
-      	this._number_of_accept++;
+      if (i_result) this._number_of_accept++;
       this._number_of_all++;
       setChanged();
-      notifyObservers(i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
+      notifyObservers(
+          i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
     }
 
     public boolean onDisconnect() {
@@ -95,12 +86,13 @@ public class SingleMiningChief implements Observer {
       try {
         this._parent._connection.submitWork(i_work, i_nonce);
       } catch (Exception e) {
-      	Console.send(4, "Error on Submiting Founded nonce! : "+e.getMessage());
+        Console.send(4, "Error on Submiting Founded nonce! : " + e.getMessage());
       }
     }
   }
 
-  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Handler h) throws Exception {
+  public SingleMiningChief(IMiningConnection i_connection, IMiningWorker i_worker, Handler h)
+      throws Exception {
     status = STATUS_CONNECTING;
     speed = 0.0f;
     mainHandler = h;
@@ -128,6 +120,7 @@ public class SingleMiningChief implements Observer {
     _worker.stopWork();
     speed = 0;
   }
+
   @Override
   public void update(Observable o, Object arg) {
     Message msg = mainHandler.obtainMessage();

@@ -1,6 +1,5 @@
 package com.ariasaproject.cpuminingopt;
 
-import com.ariasaproject.cpuminingopt.MiningWork;
 
 public interface IMiningWorker {
   public enum Notification {
@@ -19,9 +18,14 @@ public interface IMiningWorker {
     POW_FALSE,
     TERMINATED
   };
+
   public boolean doWork(MiningWork i_work) throws RuntimeException;
+
   public void stopWork() throws RuntimeException;
+
   public int getProgress();
+
   public long getNumberOfHash();
+
   public void addListener(IWorkerEvent i_listener) throws RuntimeException;
 }
