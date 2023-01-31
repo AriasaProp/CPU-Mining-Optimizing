@@ -16,8 +16,6 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 public class StratumSocket extends Socket {
-	public static String OutWriteLast  = " ";
-	public static String OutReadLast = " ";
   private class LoggingWriter extends BufferedWriter {
     public LoggingWriter(Writer arg0) {
       super(arg0);
@@ -26,9 +24,6 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
-      synchronized(OutWriteLast) {
-  			OutWriteLast = str;
-      }
     }
   }
 
@@ -39,9 +34,6 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
-      synchronized(OutReadLast) {
-  			OutReadLast = s;
-      }
       return s;
     }
   }
@@ -58,42 +50,22 @@ public class StratumSocket extends Socket {
     this._rx = new LoggingReader(new InputStreamReader(getInputStream()));
     this._id = 1;
   }
-  private String jsonGenWriter(long id, String type, String params) {
-  	return String.format("{\"id\": %d,\"method\": \"mining.%s\", \"params\": [%s]}\n}", id,type,params);
-  }
 
-  public long subscribe(String i_agent_name) throws IOException {
-    long id;
-    synchronized (this) {
-      id = this._id;
-      this._id++;
-    }
-    this._tx.write(jsonGenWriter(id, "subscribe", ""));
+  public synchronized long subscribe(String i_agent_name) throws IOException {
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.subscribe\",\"params\":[]}\n", this._id++));
     this._tx.flush();
     return id;
   }
 
-  public long authorize(String i_user, String i_password) throws IOException {
-    long id;
-    synchronized (this) {
-      id = this._id;
-      this._id++;
-    }
-    String params = String.format("\"%s\",\"%s\"",i_user, i_password);
-    this._tx.write(jsonGenWriter(id, "authorize", params));
+  public synchronized long authorize(String i_user, String i_password) throws IOException {
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n", this._id++, i_user, i_password));
     this._tx.flush();
     return id;
   }
 
-  public long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime) throws IOException {
-    long id;
-    synchronized (this) {
-      id = this._id;
-      this._id++;
-    }
+  public synchronized long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime) throws IOException {
     String sn = String.format("%08x", (((i_nonce & 0xff000000) >> 24) | ((i_nonce & 0x00ff0000) >> 8) | ((i_nonce & 0x0000ff00) << 8) | ((i_nonce & 0x000000ff) << 24)));
-    String params = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",i_user, i_jobid,i_nonce2,i_ntime,sn);
-    this._tx.write(jsonGenWriter(id, "submit", params));
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.submit\",\"params\":[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}\n", this._id++, i_user, i_jobid,i_nonce2,i_ntime,sn));
     this._tx.flush();
     return id;
   }
