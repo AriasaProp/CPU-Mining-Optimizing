@@ -92,7 +92,7 @@ public class StratumWorkBuilder {
     return new HexArray(target);
   }
 
-  public static void main(String[] args) {
+  public static void Test(String[] args) {
     try {
       String SR =
           "{\"error\": null, \"id\": 1, \"result\": [[\"mining.notify\","
@@ -114,8 +114,7 @@ public class StratumWorkBuilder {
               + " \"00000001\", \"1c00adb7\", \"52b54c29\", true], \"id\": null, \"method\":"
               + " \"mining.notify\"}";
       String ST = "{\"params\": [128], \"id\": null, \"method\": \"mining.set_difficulty\"}";
-      String WORK_DATA =
-          "000000018e50f956acdabb3f8e981a4797466043021388791bfa70b1c1a1ba54a8fbdf5093b73998a3b9d1ad9ee12578b6ffb49088bb9321fcb159e15f10b397cb514e4952b54c291c00adb700000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000";
+      String WORK_DATA = "000000018e50f956acdabb3f8e981a4797466043021388791bfa70b1c1a1ba54a8fbdf5093b73998a3b9d1ad9ee12578b6ffb49088bb9321fcb159e15f10b397cb514e4952b54c291c00adb700000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000";
       String WORK_TARGET = "000000000000000000000000000000000000000000000000000000feff010000";
       ObjectMapper mapper = new ObjectMapper();
       StratumJsonResultSubscribe s = new StratumJsonResultSubscribe(mapper.readTree(SR));

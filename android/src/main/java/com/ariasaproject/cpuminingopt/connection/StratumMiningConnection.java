@@ -70,7 +70,7 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       }
     }
 
-    private void onJsonRx(StratumJson i_json) {
+  private void onJsonRx(StratumJson i_json) {
 	  Class<?> iid = i_json.getClass();
 	  if (iid == StratumJsonMethodGetVersion.class) {
 		  //TO DO: 
@@ -83,31 +83,30 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
 	  } else if (iid == StratumJsonMethodSetDifficulty.class) {
         StratumMiningConnection.this.cbNewMiningDifficulty((StratumJsonMethodSetDifficulty) i_json);
 	  } else if(iid == StratumJsonResultStandard.class) {
-		StratumJsonResultStandard sjson = (StratumJsonResultStandard) i_json;
-		SubmitOrder so = null;
-		synchronized (this._submit_q) {
-		  for (SubmitOrder i : this._submit_q) {
-			if (i.id == sjson.id) {
-			  this._submit_q.remove(i);
-			  so = i;
-			  break;
+			StratumJsonResultStandard sjson = (StratumJsonResultStandard) i_json;
+			SubmitOrder so = null;
+			synchronized (this._submit_q) {
+			  for (SubmitOrder i : this._submit_q) {
+				if (i.id == sjson.id) {
+				  this._submit_q.remove(i);
+				  so = i;
+				  break;
+				}
+			  }
 			}
-		  }
-		}
-		if (so != null)
-		  StratumMiningConnection.this.cbSubmitRecv(so, sjson);
-		synchronized (this._json_q) {
-		  this._json_q.add(i_json);
-		}
-		this.semaphore.release();
+			if (so != null)
+			  StratumMiningConnection.this.cbSubmitRecv(so, sjson);
+			synchronized (this._json_q) {
+			  this._json_q.add(i_json);
+			}
+			this.semaphore.release();
 	  } else if(iid == StratumJsonResultSubscribe.class) {
-		synchronized (this._json_q) {
-		  this._json_q.add(i_json);
-		}
-		this.semaphore.release();
+			synchronized (this._json_q) {
+			  this._json_q.add(i_json);
+			}
+			this.semaphore.release();
 	  }
-    }
-
+  }
     public StratumJson waitForJsonResult(long i_id, Class<?> i_class, int i_wait_for_msec) {
       long time_out = i_wait_for_msec;
       do {
@@ -333,7 +332,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       long id = this._sock.submit(i_nonce, this._uid, w.job_id, w.xnonce2, ntime);
       this._rx_thread.addSubmitOrder(new SubmitOrder(id, w, i_nonce));
     } catch (IOException e) {
-      throw new RuntimeException(e.getMessage());
+      throw new RuntimeException(e.getMessage() + " on Submiting ");
     }
+    Console.send(1,"Submitted nonce "+ i_nonce);
   }
 }
