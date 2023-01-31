@@ -337,6 +337,5 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     } catch (IOException e) {
       throw new RuntimeException(e.getMessage() + " on Submiting ");
     }
-    Console.send(1, "Submitted nonce " + i_nonce);
   }
 }
