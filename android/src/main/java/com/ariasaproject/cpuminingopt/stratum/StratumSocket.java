@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 public class StratumSocket extends Socket {
+	public static String OutWriteLast;
+	public static String OutReadLast;
   private class LoggingWriter extends BufferedWriter {
     public LoggingWriter(Writer arg0) {
       super(arg0);
@@ -24,7 +26,9 @@ public class StratumSocket extends Socket {
     @Override
     public void write(String str) throws IOException {
       super.write(str);
-  		Console.send(0, "Socket write: "+str);
+      synchronized(OutWriteLast) {
+  			OutWriteLast = str;
+      }
     }
   }
 
@@ -35,7 +39,9 @@ public class StratumSocket extends Socket {
 
     public String readLine() throws IOException {
       String s = super.readLine();
-  		Console.send(0, "Socket read: "+s);
+      synchronized(OutReadLast) {
+  			OutReadLast = s;
+      }
       return s;
     }
   }
