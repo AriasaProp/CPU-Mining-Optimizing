@@ -333,14 +333,14 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       long id = this._sock.submit(i_nonce, this._uid, w.job_id, w.xnonce2, ntime);
       this._rx_thread.addSubmitOrder(new SubmitOrder(id, w, i_nonce));
     } catch (IOException e) {
-    	String w, r;
+    	String wout, rout;
     	synchronized(StratumSocket.OutWriteLast){
-    		w = StratumSocket.OutWriteLast;
+    		wout = StratumSocket.OutWriteLast;
     	}
     	synchronized(StratumSocket.OutReadLast){
-    		r = StratumSocket.OutReadLast;
+    		rout = StratumSocket.OutReadLast;
     	}
-      throw new RuntimeException(e.getMessage()+" w: "+ w + " r: "+r );
+      throw new RuntimeException(e.getMessage()+" w: "+ wout + " r: "+rout );
     }
   }
 }
