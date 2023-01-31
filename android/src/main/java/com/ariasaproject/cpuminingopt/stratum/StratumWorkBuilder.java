@@ -36,14 +36,6 @@ public class StratumWorkBuilder {
     try {
       this._xnonce2 = this._notify.getXnonce2(this._subscribe);
       this._coinbase = this._notify.getCoinbase(this._subscribe);
-      /*
-      //Generate merkle root
-      sha256d(merkle_root, sctx->job.coinbase, sctx->job.coinbase_size);
-      for (i = 0; i < sctx->job.merkle_count; i++) {
-      	memcpy(merkle_root + 32, sctx->job.merkle[i], 32);
-      	sha256d(merkle_root, merkle_root, 64);
-      }
-      */
       byte[] merkle_loot = new byte[64];
       System.arraycopy(sha256d(this._coinbase.refHex()), 0, merkle_loot, 0, 32);
       for (int i = 0; i < this._notify.merkle_arr.length; i++) {
