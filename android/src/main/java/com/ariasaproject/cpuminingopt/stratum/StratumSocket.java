@@ -52,20 +52,26 @@ public class StratumSocket extends Socket {
   }
 
   public synchronized long subscribe(String i_agent_name) throws IOException {
-  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.subscribe\",\"params\":[]}\n", this._id++));
+  	long id = this._id;
+  	this._id++;
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.subscribe\",\"params\":[]}\n", id));
     this._tx.flush();
     return id;
   }
 
   public synchronized long authorize(String i_user, String i_password) throws IOException {
-  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n", this._id++, i_user, i_password));
+  	long id = this._id;
+  	this._id++;
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n", id, i_user, i_password));
     this._tx.flush();
     return id;
   }
 
   public synchronized long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime) throws IOException {
+  	long id = this._id;
+  	this._id++;
     String sn = String.format("%08x", (((i_nonce & 0xff000000) >> 24) | ((i_nonce & 0x00ff0000) >> 8) | ((i_nonce & 0x0000ff00) << 8) | ((i_nonce & 0x000000ff) << 24)));
-  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.submit\",\"params\":[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}\n", this._id++, i_user, i_jobid,i_nonce2,i_ntime,sn));
+  	this._tx.write(String.format("{\"id\":%d,\"method\":\"mining.submit\",\"params\":[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}\n", id, i_user, i_jobid,i_nonce2,i_ntime,sn));
     this._tx.flush();
     return id;
   }
