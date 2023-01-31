@@ -6,7 +6,6 @@
 #include <ctime>
 
 #include "console_log.h"
-#include "hasher.h"
             
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_Console_##M
 
