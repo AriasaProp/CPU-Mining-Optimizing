@@ -6,10 +6,13 @@
 #include <cstring>
 #include <string>
 
-#define MAX_MSG_SIZE 65535
+#define MAX_MSG_SIZE 32767
 
 char *htmlMsg;
 char *endHtmlMsg;
+const char *colorHex = "8080800000ff00ff00ffff00ff0000";
+const char *frontKey = "<font color='#";
+const char *endKey = "</font><br>";
 
 void console_log::initialize() {
 	htmlMsg = new char[MAX_MSG_SIZE+1];
@@ -17,8 +20,6 @@ void console_log::initialize() {
 	endHtmlMsg = htmlMsg+MAX_MSG_SIZE;
 	*endHtmlMsg = '\0';
 }
-const char *frontKey = "<font color='#";
-const char *endKey = "</font><br>";
 const char *console_log::write(unsigned int lv, const char *msg, unsigned long length) {
   memmove(htmlMsg+length+43, htmlMsg, MAX_MSG_SIZE-length-43);
   char *modif = htmlMsg;
@@ -27,19 +28,19 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 	switch(lv) {
 		default:
 		case 0:
-			memcpy(modif,"808080",6);//debug
+			memcpy(modif, colorHex,6);//debug
 			break;
 		case 1:
-			memcpy(modif,"0000ff",6);//info
+			memcpy(modif, colorHex+6,6);//info
 			break;
 		case 2:
-			memcpy(modif,"00ff00",6);//success
+			memcpy(modif, colorHex+12,6);//success
 			break;
 		case 3:
-			memcpy(modif,"ffff00",6);//warning
+			memcpy(modif, colorHex+18,6);//warning
 			break;
 		case 4:
-			memcpy(modif,"ff0000",6);//Error
+			memcpy(modif, colorHex+24,6);//Error
 			break;
   }
   memcpy((modif+=6), "'>", 2);
@@ -54,9 +55,8 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
   //check if html format was incomplete
   char *tF = endHtmlMsg-14;
   while (--tF > modif) {
-  	
   	if (memcmp(tF, frontKey, 14) == 0) {
-  		char *bF = strstr(tF, endKey);
+  		char *bF = strstr(tF+14, endKey);
   		if (bF && ((bF+12)<endHtmlMsg))
 				tF = bF+11;
 			memset(tF, ' ', endHtmlMsg-tF);

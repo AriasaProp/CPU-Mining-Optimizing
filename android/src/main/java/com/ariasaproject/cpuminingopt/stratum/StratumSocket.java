@@ -1,4 +1,4 @@
-package com.ariasaproject.cpuminingopt.stratum;
+0package com.ariasaproject.cpuminingopt.stratum;
 
 import com.ariasaproject.cpuminingopt.Console;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,36 +73,14 @@ public class StratumSocket extends Socket {
     return id;
   }
 
-  public long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime)
-      throws IOException {
+  public long submit(int i_nonce, String i_user, String i_jobid, String i_nonce2, String i_ntime) throws IOException {
     long id;
     synchronized (this) {
       id = this._id;
       this._id++;
     }
-    String sn =
-        String.format(
-            "%08x",
-            (((i_nonce & 0xff000000) >> 24)
-                | ((i_nonce & 0x00ff0000) >> 8)
-                | ((i_nonce & 0x0000ff00) << 8)
-                | ((i_nonce & 0x000000ff) << 24)));
-    // {"method": "mining.submit", "params": ["nyajira.xa", "e4c", "00000000", "52b7a1a9",
-    // "79280100"], "id":4}
-    String s =
-        "{\"id\": "
-            + id
-            + ", \"method\": \"mining.submit\", \"params\": [\""
-            + i_user
-            + "\", \""
-            + i_jobid
-            + "\",\""
-            + i_nonce2
-            + "\",\""
-            + i_ntime
-            + "\",\""
-            + sn
-            + "\"]}\n";
+    String sn = String.format("%08x", (((i_nonce & 0xff000000) >> 24) | ((i_nonce & 0x00ff0000) >> 8) | ((i_nonce & 0x0000ff00) << 8) | ((i_nonce & 0x000000ff) << 24)));
+    String s = "{\"id\": " + id + ", \"method\": \"mining.submit\", \"params\": [\"" + i_user + "\", \"" + i_jobid + "\",\"" + i_nonce2 + "\",\"" + i_ntime + "\",\"" + sn + "\"]}\n";
     this._tx.write(s);
     this._tx.flush();
     return id;
@@ -133,25 +111,5 @@ public class StratumSocket extends Socket {
       return new StratumJsonResultStandard(jn);
     } catch (RuntimeException e) {}
     return null;
-  }
-
-  public static void main(String[] args) {
-    ObjectMapper mapper = new ObjectMapper();
-    try {
-      StratumJson s1 = new StratumJsonMethodGetVersion(mapper.readTree(StratumJsonMethodGetVersion.TEST_PATT));
-      StratumJson s2 = new StratumJsonMethodMiningNotify(mapper.readTree(StratumJsonMethodMiningNotify.TEST_PATT));
-      StratumJson s3 = new StratumJsonMethodReconnect(mapper.readTree(StratumJsonMethodReconnect.TEST_PATT));
-      StratumJson s4 = new StratumJsonMethodSetDifficulty(mapper.readTree(StratumJsonMethodSetDifficulty.TEST_PATT));
-      StratumJson s5 = new StratumJsonMethodShowMessage(mapper.readTree(StratumJsonMethodShowMessage.TEST_PATT));
-      StratumJson s6 = new StratumJsonResultStandard(mapper.readTree(StratumJsonResultStandard.TEST_PATT));
-      StratumJson s7 = new StratumJsonResultSubscribe(mapper.readTree(StratumJsonResultSubscribe.TEST_PATT));
-      return;
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    } catch (RuntimeException e) {
-      e.printStackTrace();
-    } /*catch (IOException e) {
-      e.printStackTrace();
-    }*/
-  }
+  }0
 }

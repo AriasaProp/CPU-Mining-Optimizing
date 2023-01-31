@@ -81,7 +81,8 @@ public class SingleMiningChief implements Observer {
 
     @Override
     public void onSubmitResult(MiningWork i_listener, int i_nonce, boolean i_result) {
-      this._number_of_accept += (i_result ? 1 : 0);
+    	if(i_result)
+      	this._number_of_accept++;
       this._number_of_all++;
       setChanged();
       notifyObservers(i_result ? IMiningWorker.Notification.POW_TRUE : IMiningWorker.Notification.POW_FALSE);
