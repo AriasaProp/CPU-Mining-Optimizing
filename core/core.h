@@ -1,4 +1,9 @@
 #ifndef _Included_Core_
 #define _Included_Core_
-void sayHello();
+
+namespace core {
+	void startMining(void**);
+	void stopMining();
+}
+
 #endif //_Included_Core_
