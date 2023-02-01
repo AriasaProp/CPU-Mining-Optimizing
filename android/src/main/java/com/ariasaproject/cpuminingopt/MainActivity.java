@@ -2,8 +2,8 @@ package com.ariasaproject.cpuminingopt;
 
 import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_PRIORITY;
 import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_RETRYPAUSE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_RESULT_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SIGNAL_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
             TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
             txt_status.setText(bundle.getString("status"));
           }
-          if ((msg.arg1 & MSG_RESULT_UPDATE) == MSG_ACCEPTED_UPDATE) {
+          if ((msg.arg1 & MSG_RESULT_UPDATE) == MSG_RESULT_UPDATE) {
             TextView txt_result = (TextView) findViewById(R.id.status_textView_result);
             txt_result.setText(bundle.getString("result"));
           }

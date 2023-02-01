@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import com.ariasaproject.cpuminingopt.connection.IConnectionEvent;
 import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
+import com.ariasaproject.cpuminingopt.connection.IMiningConnection.Notification;
 import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
 import java.util.EventListener;
 import java.util.Observable;
@@ -167,7 +168,7 @@ public class SingleMiningChief implements Observer {
 		      bundle.putString("status", status);
 		      msg.arg1 |= MSG_STATUS_UPDATE;
 		      break;
-	    	case COMMUNICATION_ERRO: 
+	    	case COMMUNICATION_ERROR: 
 		      status = STATUS_ERROR;
 		      Console.send(4, "Miner: Communication error");
 		      bundle.putString("status", status);

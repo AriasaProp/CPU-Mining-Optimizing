@@ -3,7 +3,7 @@ package com.ariasaproject.cpuminingopt.connection;
 import com.ariasaproject.cpuminingopt.MiningWork;
 
 public interface IMiningConnection {
-	public enum Notifications {
+	public enum Notification {
 		SIGNAL_READ,
 		SIGNAL_ERROR
 	};
