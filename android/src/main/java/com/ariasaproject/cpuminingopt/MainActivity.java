@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
   final Handler statusHandler =
       new Handler() {
         final DecimalFormat df = new DecimalFormat("#.##");
-
+        int acc, recj;
         @Override
         public void handleMessage(Message msg) {
           final Bundle bundle = msg.getData();
@@ -102,13 +102,13 @@ public class MainActivity extends Activity {
             TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
             txt_status.setText(bundle.getString("status"));
           }
-          if ((msg.arg1 & MSG_ACCEPTED_UPDATE) == MSG_ACCEPTED_UPDATE) {
-            TextView txt_accepted = (TextView) findViewById(R.id.status_textView_accepted);
-            txt_accepted.setText(String.valueOf(bundle.getLong("accepted")));
+          if ((msg.arg1 & MSG_RESULT_UPDATE) == MSG_ACCEPTED_UPDATE) {
+            TextView txt_result = (TextView) findViewById(R.id.status_textView_result);
+            txt_result.setText(bundle.getString("result"));
           }
-          if ((msg.arg1 & MSG_REJECTED_UPDATE) == MSG_REJECTED_UPDATE) {
-            TextView txt_rejected = (TextView) findViewById(R.id.status_textView_rejected);
-            txt_rejected.setText(String.valueOf(bundle.getLong("rejected")));
+          if ((msg.arg1 & MSG_SIGNAL_UPDATE) == MSG_SIGNAL_UPDATE) {
+            TextView txt_signal = (TextView) findViewById(R.id.status_textView_signal);
+            txt_signal.setText(bundle.getString("signal"));
           }
           super.handleMessage(msg);
         }

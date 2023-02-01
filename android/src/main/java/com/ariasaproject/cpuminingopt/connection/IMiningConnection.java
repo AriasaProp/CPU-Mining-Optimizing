@@ -3,6 +3,11 @@ package com.ariasaproject.cpuminingopt.connection;
 import com.ariasaproject.cpuminingopt.MiningWork;
 
 public interface IMiningConnection {
+	public enum Notifications {
+		SIGNAL_READ,
+		SIGNAL_ERROR
+	};
+	
   public void addListener(IConnectionEvent i_listener) throws RuntimeException;
 
   public MiningWork connect() throws RuntimeException;

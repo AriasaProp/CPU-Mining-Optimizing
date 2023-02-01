@@ -43,7 +43,7 @@ public class CpuMiningWorker extends Observable implements IMiningWorker {
         byte[] header = work.header.refHex();
         byte[] target = work.target.refHex();
         Hasher hasher = new Hasher();
-        for (; ; ) {
+        for (;;) {
           for (long i = NUMBER_OF_ROUND - 1; i >= 0; i--) {
             if (hasher.hashCheck(header, target, nonce))
               CpuMiningWorker.this._as_listener.invokeNonceFound(work, nonce);

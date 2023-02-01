@@ -1,7 +1,7 @@
 package com.ariasaproject.cpuminingopt;
 
-import static com.ariasaproject.cpuminingopt.Constants.MSG_ACCEPTED_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_REJECTED_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_SIGNAL_UPDATE;
+import static com.ariasaproject.cpuminingopt.Constants.MSG_RESULT_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.STATUS_CONNECTING;
@@ -96,10 +96,10 @@ public class SingleMiningChief implements Observer {
     status = STATUS_CONNECTING;
     speed = 0.0f;
     mainHandler = h;
-    this._connection = i_connection;
+    _connection = i_connection;
     _worker = i_worker;
     this._eventlistener = new EventListener(this);
-    this._connection.addListener(this._eventlistener);
+    _connection.addListener(this._eventlistener);
     _worker.addListener(this._eventlistener);
   }
 
@@ -107,7 +107,7 @@ public class SingleMiningChief implements Observer {
     Console.send(0, "Miner starting worker thread, priority: " + priority);
     ((StratumMiningConnection) _connection).addObserver(this);
     ((CpuMiningWorker) _worker).addObserver(this);
-    MiningWork first_work = this._connection.connect();
+    MiningWork first_work = _connection.connect();
     this._eventlistener.resetCounter();
     if (first_work != null) {
       _worker.doWork(first_work);
@@ -116,7 +116,7 @@ public class SingleMiningChief implements Observer {
 
   public void stopMining() {
     Console.send(0, "Miner worker on stopping, This can take a few minutes");
-    this._connection.disconnect();
+    _connection.disconnect();
     _worker.stopWork();
     speed = 0;
   }
@@ -126,96 +126,128 @@ public class SingleMiningChief implements Observer {
     Message msg = mainHandler.obtainMessage();
     msg.arg1 = 0;
     Bundle bundle = new Bundle();
-
-    IMiningWorker.Notification n = (IMiningWorker.Notification) arg;
-    if (n == IMiningWorker.Notification.SYSTEM_ERROR) {
-      Console.send(4, "Miner: System error");
-      status = STATUS_ERROR;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.PERMISSION_ERROR) {
-      Console.send(4, "Miner: Permission error");
-      status = STATUS_ERROR;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.TERMINATED) {
-      Console.send(4, "Miner: Worker terminated");
-      status = STATUS_TERMINATED;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-      bundle.putFloat("speed", 0);
-      msg.arg1 |= MSG_SPEED_UPDATE;
-    } else if (n == IMiningWorker.Notification.CONNECTING) {
-      Console.send(1, "Miner: Worker connecting");
-      status = STATUS_CONNECTING;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.AUTHENTICATION_ERROR) {
-      status = STATUS_ERROR;
-      Console.send(4, "Miner: Authentication error");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.CONNECTION_ERROR) {
-      status = STATUS_ERROR;
-      Console.send(4, "Miner: Connection error");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.COMMUNICATION_ERROR) {
-      status = STATUS_ERROR;
-      Console.send(4, "Miner: Communication error");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.LONG_POLLING_FAILED) {
-      status = STATUS_NOT_MINING;
-      Console.send(4, "Miner: Long polling failed");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.LONG_POLLING_ENABLED) {
-      status = STATUS_MINING;
-      Console.send(1, "Miner: Long polling enabled");
-      Console.send(1, "Miner: Speed updates as work is completed");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.NEW_BLOCK_DETECTED) {
-      status = STATUS_MINING;
-      Console.send(1, "Miner: Detected new block");
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-    } else if (n == IMiningWorker.Notification.POW_TRUE) {
-      status = STATUS_MINING;
-      Console.send(2, "Miner: PROOF OF WORK RESULT: true");
-      accepted += 1;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-      msg.arg1 |= MSG_ACCEPTED_UPDATE;
-      bundle.putLong("accepted", accepted);
-    } else if (n == IMiningWorker.Notification.POW_FALSE) {
-      status = STATUS_MINING;
-      rejected += 1;
-      bundle.putString("status", status);
-      msg.arg1 |= MSG_STATUS_UPDATE;
-      bundle.putLong("rejected", rejected);
-      msg.arg1 |= MSG_REJECTED_UPDATE;
-    } else if (n == IMiningWorker.Notification.SPEED) {
-      if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
-        speed = 0;
-      } else {
-        speed = (float) ((CpuMiningWorker) _worker).get_speed();
-      }
-      bundle.putFloat("speed", speed);
-      msg.arg1 |= MSG_SPEED_UPDATE;
-    } else if (n == IMiningWorker.Notification.NEW_WORK) {
-      if (lastWorkTime > 0L) {
-        long hashes = _worker.getNumberOfHash() - lastWorkHashes;
-        speed = (float) ((CpuMiningWorker) _worker).get_speed();
-        status = STATUS_MINING;
-        bundle.putString("status", status);
-        msg.arg1 |= MSG_STATUS_UPDATE;
-        bundle.putFloat("speed", speed);
-        msg.arg1 |= MSG_SPEED_UPDATE;
-      }
-      lastWorkTime = System.currentTimeMillis();
-      lastWorkHashes = _worker.getNumberOfHash();
+    
+    if (arg instanceof IMiningWorker.Notification) {
+	    switch ((IMiningWorker.Notification) arg) {
+		    case SYSTEM_ERROR:
+		      Console.send(4, "Miner: System error");
+		      status = STATUS_ERROR;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      break;
+	    	case PERMISSION_ERROR:
+		      Console.send(4, "Miner: Permission error");
+		      status = STATUS_ERROR;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      break;
+	    	case TERMINATED:
+		      Console.send(4, "Miner: Worker terminated");
+		      status = STATUS_TERMINATED;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      bundle.putFloat("speed", 0);
+		      msg.arg1 |= MSG_SPEED_UPDATE;
+		    	break;
+	    	case CONNECTING:
+		      Console.send(1, "Miner: Worker connecting");
+		      status = STATUS_CONNECTING;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      break;
+	    	case AUTHENTICATION_ERROR:
+		      status = STATUS_ERROR;
+		      Console.send(4, "Miner: Authentication error");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+			    break;
+		    case CONNECTION_ERROR:
+		      status = STATUS_ERROR;
+		      Console.send(4, "Miner: Connection error");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      break;
+	    	case COMMUNICATION_ERRO: 
+		      status = STATUS_ERROR;
+		      Console.send(4, "Miner: Communication error");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		    	break;
+	    	case LONG_POLLING_FAILED:
+		      status = STATUS_NOT_MINING;
+		      Console.send(4, "Miner: Long polling failed");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		    	break;
+	    	case LONG_POLLING_ENABLED:
+		      status = STATUS_MINING;
+		      Console.send(1, "Miner: Long polling enabled");
+		      Console.send(1, "Miner: Speed updates as work is completed");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+			    break;
+		    case NEW_BLOCK_DETECTED:
+		      status = STATUS_MINING;
+		      Console.send(1, "Miner: Detected new block");
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+			    break;
+		    case POW_TRUE:
+		      status = STATUS_MINING;
+		      Console.send(2, "Miner: PROOF OF WORK RESULT: true");
+		      accepted += 1;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      msg.arg1 |= MSG_RESULT_UPDATE;
+		      bundle.putString("result", accepted + " / " + (accepted+rejected));
+		    	break;
+	    	case POW_FALSE:
+		      status = STATUS_MINING;
+		      rejected += 1;
+		      msg.arg1 |= MSG_STATUS_UPDATE;
+		      bundle.putString("status", status);
+		      msg.arg1 |= MSG_RESULT_UPDATE;
+		      bundle.putString("result", accepted + " / " + (accepted+rejected));
+			    break;
+		    case SPEED:
+		      if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
+		        speed = 0;
+		      } else {
+		        speed = (float) ((CpuMiningWorker) _worker).get_speed();
+		      }
+		      bundle.putFloat("speed", speed);
+		      msg.arg1 |= MSG_SPEED_UPDATE;
+		      break;
+	      case NEW_WORK:
+		      if (lastWorkTime > 0L) {
+		        long hashes = _worker.getNumberOfHash() - lastWorkHashes;
+		        speed = (float) ((CpuMiningWorker) _worker).get_speed();
+		        status = STATUS_MINING;
+		        bundle.putString("status", status);
+		        msg.arg1 |= MSG_STATUS_UPDATE;
+		        bundle.putFloat("speed", speed);
+		        msg.arg1 |= MSG_SPEED_UPDATE;
+		      }
+		      lastWorkTime = System.currentTimeMillis();
+		      lastWorkHashes = _worker.getNumberOfHash();
+		    	break;
+		    default:
+		    	break;
+	    }
+    }
+    if(arg instanceof IMiningConnection.Notification) {
+      msg.arg1 |= MSG_SIGNAL_UPDATE;
+      StratumMiningConnection c = (StratumMiningConnection)_connection;
+	    switch ((IMiningConnection.Notification) arg) {
+				default:
+	    		break;
+				case SIGNAL_READ:
+	    		bundle.putString("signal", c.signal_read+" ms");
+	    		break;
+				case SIGNAL_ERROR:
+	    		bundle.putString("signal", "error");
+	    		break;
+	    }
     }
     msg.setData(bundle);
     mainHandler.sendMessage(msg);

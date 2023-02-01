@@ -13,13 +13,13 @@ public class Hasher {
   private byte[] B = new byte[128 + 4];
   private int[] X = new int[32];
   private int[] V = new int[32 * 1024];
+  private int[] salsa = new int[16];
 
   public Hasher() throws GeneralSecurityException {
     mac = Mac.getInstance("HmacSHA256");
   }
 
-  public boolean hashCheck(byte[] header, byte[] target, int nonce)
-      throws GeneralSecurityException {
+  public boolean hashCheck(byte[] header, byte[] target, int nonce) throws GeneralSecurityException {
     int i, j, k;
 
     arraycopy(header, 0, B, 0, 76);
@@ -80,71 +80,71 @@ public class Hasher {
   }
 
   private void xorSalsa8(int di, int xi) {
-    int x00 = (X[di + 0] ^= X[xi + 0]);
-    int x01 = (X[di + 1] ^= X[xi + 1]);
-    int x02 = (X[di + 2] ^= X[xi + 2]);
-    int x03 = (X[di + 3] ^= X[xi + 3]);
-    int x04 = (X[di + 4] ^= X[xi + 4]);
-    int x05 = (X[di + 5] ^= X[xi + 5]);
-    int x06 = (X[di + 6] ^= X[xi + 6]);
-    int x07 = (X[di + 7] ^= X[xi + 7]);
-    int x08 = (X[di + 8] ^= X[xi + 8]);
-    int x09 = (X[di + 9] ^= X[xi + 9]);
-    int x10 = (X[di + 10] ^= X[xi + 10]);
-    int x11 = (X[di + 11] ^= X[xi + 11]);
-    int x12 = (X[di + 12] ^= X[xi + 12]);
-    int x13 = (X[di + 13] ^= X[xi + 13]);
-    int x14 = (X[di + 14] ^= X[xi + 14]);
-    int x15 = (X[di + 15] ^= X[xi + 15]);
+    salsa[0] = (X[di + 0] ^= X[xi + 0]);
+    salsa[1] = (X[di + 1] ^= X[xi + 1]);
+    salsa[2] = (X[di + 2] ^= X[xi + 2]);
+    salsa[3] = (X[di + 3] ^= X[xi + 3]);
+    salsa[4] = (X[di + 4] ^= X[xi + 4]);
+    salsa[5] = (X[di + 5] ^= X[xi + 5]);
+    salsa[6] = (X[di + 6] ^= X[xi + 6]);
+    salsa[7] = (X[di + 7] ^= X[xi + 7]);
+    salsa[8] = (X[di + 8] ^= X[xi + 8]);
+    salsa[9] = (X[di + 9] ^= X[xi + 9]);
+    salsa[10] = (X[di + 10] ^= X[xi + 10]);
+    salsa[11] = (X[di + 11] ^= X[xi + 11]);
+    salsa[12] = (X[di + 12] ^= X[xi + 12]);
+    salsa[13] = (X[di + 13] ^= X[xi + 13]);
+    salsa[14] = (X[di + 14] ^= X[xi + 14]);
+    salsa[15] = (X[di + 15] ^= X[xi + 15]);
     for (int i = 0; i < 8; i += 2) {
-      x04 ^= rotateLeft(x00 + x12, 7);
-      x08 ^= rotateLeft(x04 + x00, 9);
-      x12 ^= rotateLeft(x08 + x04, 13);
-      x00 ^= rotateLeft(x12 + x08, 18);
-      x09 ^= rotateLeft(x05 + x01, 7);
-      x13 ^= rotateLeft(x09 + x05, 9);
-      x01 ^= rotateLeft(x13 + x09, 13);
-      x05 ^= rotateLeft(x01 + x13, 18);
-      x14 ^= rotateLeft(x10 + x06, 7);
-      x02 ^= rotateLeft(x14 + x10, 9);
-      x06 ^= rotateLeft(x02 + x14, 13);
-      x10 ^= rotateLeft(x06 + x02, 18);
-      x03 ^= rotateLeft(x15 + x11, 7);
-      x07 ^= rotateLeft(x03 + x15, 9);
-      x11 ^= rotateLeft(x07 + x03, 13);
-      x15 ^= rotateLeft(x11 + x07, 18);
-      x01 ^= rotateLeft(x00 + x03, 7);
-      x02 ^= rotateLeft(x01 + x00, 9);
-      x03 ^= rotateLeft(x02 + x01, 13);
-      x00 ^= rotateLeft(x03 + x02, 18);
-      x06 ^= rotateLeft(x05 + x04, 7);
-      x07 ^= rotateLeft(x06 + x05, 9);
-      x04 ^= rotateLeft(x07 + x06, 13);
-      x05 ^= rotateLeft(x04 + x07, 18);
-      x11 ^= rotateLeft(x10 + x09, 7);
-      x08 ^= rotateLeft(x11 + x10, 9);
-      x09 ^= rotateLeft(x08 + x11, 13);
-      x10 ^= rotateLeft(x09 + x08, 18);
-      x12 ^= rotateLeft(x15 + x14, 7);
-      x13 ^= rotateLeft(x12 + x15, 9);
-      x14 ^= rotateLeft(x13 + x12, 13);
-      x15 ^= rotateLeft(x14 + x13, 18);
+      salsa[4] ^= rotateLeft(salsa[0] + salsa[12], 7);
+      salsa[8] ^= rotateLeft(salsa[4] + salsa[0], 9);
+      salsa[12] ^= rotateLeft(salsa[8] + salsa[4], 13);
+      salsa[0] ^= rotateLeft(salsa[12] + salsa[8], 18);
+      salsa[9] ^= rotateLeft(salsa[5] + salsa[1], 7);
+      salsa[13] ^= rotateLeft(salsa[9] + salsa[5], 9);
+      salsa[1] ^= rotateLeft(salsa[13] + salsa[9], 13);
+      salsa[5] ^= rotateLeft(salsa[1] + salsa[13], 18);
+      salsa[14] ^= rotateLeft(salsa[10] + salsa[6], 7);
+      salsa[2] ^= rotateLeft(salsa[14] + salsa[10], 9);
+      salsa[6] ^= rotateLeft(salsa[2] + salsa[14], 13);
+      salsa[10] ^= rotateLeft(salsa[6] + salsa[2], 18);
+      salsa[3] ^= rotateLeft(salsa[15] + salsa[11], 7);
+      salsa[7] ^= rotateLeft(salsa[3] + salsa[15], 9);
+      salsa[11] ^= rotateLeft(salsa[7] + salsa[3], 13);
+      salsa[15] ^= rotateLeft(salsa[11] + salsa[7], 18);
+      salsa[1] ^= rotateLeft(salsa[0] + salsa[3], 7);
+      salsa[2] ^= rotateLeft(salsa[1] + salsa[0], 9);
+      salsa[3] ^= rotateLeft(salsa[2] + salsa[1], 13);
+      salsa[0] ^= rotateLeft(salsa[3] + salsa[2], 18);
+      salsa[6] ^= rotateLeft(salsa[5] + salsa[4], 7);
+      salsa[7] ^= rotateLeft(salsa[6] + salsa[5], 9);
+      salsa[4] ^= rotateLeft(salsa[7] + salsa[6], 13);
+      salsa[5] ^= rotateLeft(salsa[4] + salsa[7], 18);
+      salsa[11] ^= rotateLeft(salsa[10] + salsa[9], 7);
+      salsa[8] ^= rotateLeft(salsa[11] + salsa[10], 9);
+      salsa[9] ^= rotateLeft(salsa[8] + salsa[11], 13);
+      salsa[10] ^= rotateLeft(salsa[9] + salsa[8], 18);
+      salsa[12] ^= rotateLeft(salsa[15] + salsa[14], 7);
+      salsa[13] ^= rotateLeft(salsa[12] + salsa[15], 9);
+      salsa[14] ^= rotateLeft(salsa[13] + salsa[12], 13);
+      salsa[15] ^= rotateLeft(salsa[14] + salsa[13], 18);
     }
-    X[di + 0] += x00;
-    X[di + 1] += x01;
-    X[di + 2] += x02;
-    X[di + 3] += x03;
-    X[di + 4] += x04;
-    X[di + 5] += x05;
-    X[di + 6] += x06;
-    X[di + 7] += x07;
-    X[di + 8] += x08;
-    X[di + 9] += x09;
-    X[di + 10] += x10;
-    X[di + 11] += x11;
-    X[di + 12] += x12;
-    X[di + 13] += x13;
-    X[di + 14] += x14;
-    X[di + 15] += x15;
+    X[di + 0] += salsa[0];
+    X[di + 1] += salsa[1];
+    X[di + 2] += salsa[2];
+    X[di + 3] += salsa[3];
+    X[di + 4] += salsa[4];
+    X[di + 5] += salsa[5];
+    X[di + 6] += salsa[6];
+    X[di + 7] += salsa[7];
+    X[di + 8] += salsa[8];
+    X[di + 9] += salsa[9];
+    X[di + 10] += salsa[10];
+    X[di + 11] += salsa[11];
+    X[di + 12] += salsa[12];
+    X[di + 13] += salsa[13];
+    X[di + 14] += salsa[14];
+    X[di + 15] += salsa[15];
   }
 }
