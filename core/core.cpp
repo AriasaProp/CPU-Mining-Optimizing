@@ -71,4 +71,5 @@ static void *miningThread(void *dat) {
 	dt->destroy = false;
 	pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&mutex);
+  return NULL;
 }
