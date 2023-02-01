@@ -59,13 +59,13 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
           onJsonRx(json);
           StratumMiningConnection.this.setChanged();
           StratumMiningConnection.this.signal_read = System.currentTimeMillis() - s;
-        	StratumMiningConnection.this.notifyObservers(Notification.SEND_READ);
+        	StratumMiningConnection.this.notifyObservers(Notification.SIGNAL_READ);
         } catch (SocketTimeoutException e) {
           if (isInterrupted()) {
             break;
           }
           StratumMiningConnection.this.setChanged();
-        	StratumMiningConnection.this.notifyObservers(Notification.SEND_ERROR);
+        	StratumMiningConnection.this.notifyObservers(Notification.SIGNAL_ERROR);
         } catch (IOException e) {
         } catch (InterruptedException e) {
           break;
