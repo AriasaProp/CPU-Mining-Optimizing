@@ -10,6 +10,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.os.AsyncTask;
 
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.transition.Scene;
 
@@ -28,22 +31,6 @@ public class MainActivity extends Activity {
   }
   Scene startS,onstartS,stopS,onstopS;
   Transition mtransition;
-  private AsyncTask task = new AsyncTask<Runnable, Void, Runnable>(){
-	  @Override
-	  protected Runnable doInBackground(Runnable... voids) {
-	  	if (voids !=null) {
-	  		voids[0].run();
-	  		if (voids.length > 1)
-	  			return voids[1];
-  		}
-  		return null;
-	  }
-	  @Override
-	  protected void onPostExecute(Runnable ui) {
-	  	if (ui != null)
-	  		ui.run();
-	  }
-	};
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,36 +47,35 @@ public class MainActivity extends Activity {
   Runnable[] runs = new Runnable[2];
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-  	runs[0] = new Runnable(){
-			@Override
-			public void run(){
+  	AsyncTask t = new AsyncTask<Void, Void, Void>() {
+		  @Override
+		  protected Void doInBackground(Void... voids) {
 				startMining();
-			}
-		};
-  	runs[1] = new Runnable(){
-			@Override
-			public void run(){
+				stopMining();
+	  		return null;
+		  }
+		  @Override
+		  protected void onPostExecute(Void ui) {
 				TransitionManager.go(stopS, mtransition);
-			}
-  	};
-  	task.execute(runs);
+		  }
+		};
+  	t.execute();
   }
   
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-  	runs[0] = new Runnable(){
-			@Override
-			public void run(){
+		AsyncTask t = new AsyncTask<Void, Void, Void>() {
+		  @Override
+		  protected Void doInBackground(Void... voids) {
 				stopMining();
-			}
-		};
-  	runs[1] = new Runnable(){
-			@Override
-			public void run(){
+	  		return null;
+		  }
+		  @Override
+		  protected void onPostExecute(Void ui) {
 				TransitionManager.go(startS, mtransition);
-			}
-  	};
-  	task.execute(runs);
+		  }
+		};
+  	t.execute();
   }
   
   private native void startMining();
