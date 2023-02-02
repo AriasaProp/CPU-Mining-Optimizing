@@ -39,9 +39,9 @@ void core::stopMining(void(*r)()) {
 static void *miningThread(void *dat) {
 	data_transfer *dt = (data_transfer*)dat;
 	
+	//this for preparation like socket validation auth etc.
   pthread_mutex_lock(&mutex);
 	sleep(3);
-	dt->running = true;
 	if(dt->toRun) {
 		(*dt->toRun)();
 		dt->toRun = nullptr;
@@ -58,6 +58,7 @@ static void *miningThread(void *dat) {
 	  pthread_mutex_unlock(&mutex);
 	}
 	
+	//this for cleaning like socket close etc.
 	sleep(3);
   pthread_mutex_lock(&mutex);
 	if(dt->toRun) {
