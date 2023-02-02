@@ -55,13 +55,12 @@ public class MainActivity extends Activity {
 		  }
 		  @Override
 		  protected void onPostExecute(Void ui) {
-				TransitionManager.go(stopS, mtransition);
-				/*
 		  	runOnUiThread(new Runnable(){
 		  		@Override
 		  		public void run () {
+						TransitionManager.go(stopS, mtransition);
 		  		}
-		  	});*/
+		  	});
 		  }
 		};
   	t.execute();
@@ -77,7 +76,12 @@ public class MainActivity extends Activity {
 		  }
 		  @Override
 		  protected void onPostExecute(Void ui) {
-				TransitionManager.go(startS, mtransition);
+		  	runOnUiThread(new Runnable(){
+		  		@Override
+		  		public void run () {
+						TransitionManager.go(startS, mtransition);
+		  		}
+		  	});
 		  }
 		};
   	t.execute();
