@@ -4,56 +4,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
+    android:padding="1dp"
     tools:context="com.ariasaproject.cpuminingopt">
 		<LinearLayout
+    		android:orientation="vertical"
+				android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-		    android:orientation="horizontal">
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="Mining URI: " />
-		    <EditText
-						android:id="@+id/edt_uri"
-		        android:layout_weight="1"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:hint="Mining host " />
-		</LinearLayout>
-		<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-		    android:orientation="horizontal">
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="Auth: " />
-		    <EditText
-						android:id="@+id/edt_user"
-		        android:layout_weight="0.5"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:hint=" user " />
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text=" : " />
-		    <EditText
-						android:id="@+id/edt_pass"
-		        android:layout_weight="0.5"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:hint=" pass" />
-		</LinearLayout>
-		<Button
-				android:id="@+id/btn_mining"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-				android:text="Mining!"/>
+        android:layout_height="wrap_content"/>
 		<TextView
 				android:id="@+id/txview_console"
+				android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="try to make very long text\n but not now\n i was do my best\n forgive me, my future!"/>

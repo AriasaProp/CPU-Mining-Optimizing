@@ -1,6 +1,7 @@
 #include "core.h"
 
 #include <iostream>
+#include <unistd.h>
 #include <pthread.h>
 
 pthread_mutex_t mutex;
@@ -53,6 +54,7 @@ static void *miningThread(void *dat) {
 	while(!dt->begining) {
   	pthread_cond_wait(&cond, &mutex);
 	}
+	sleep(3);
 	dt->begining = false;
 	dt->running = true;
 	pthread_cond_broadcast(&cond);
@@ -60,6 +62,7 @@ static void *miningThread(void *dat) {
 	
 	do {
 		//do nothing right now
+		sleep(1);
 		if (dt->destroy) {
 		  pthread_mutex_lock(&mutex);
 			dt->running = false;
@@ -67,6 +70,7 @@ static void *miningThread(void *dat) {
 		}
 	} while (dt->running);
 	
+	sleep(3);
   pthread_mutex_lock(&mutex);
 	dt->destroy = false;
 	pthread_cond_broadcast(&cond);
