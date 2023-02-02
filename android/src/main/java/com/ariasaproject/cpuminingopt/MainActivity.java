@@ -51,12 +51,17 @@ public class MainActivity extends Activity {
 		  @Override
 		  protected Void doInBackground(Void... voids) {
 				startMining();
-				stopMining();
 	  		return null;
 		  }
 		  @Override
 		  protected void onPostExecute(Void ui) {
 				TransitionManager.go(stopS, mtransition);
+				/*
+		  	runOnUiThread(new Runnable(){
+		  		@Override
+		  		public void run () {
+		  		}
+		  	});*/
 		  }
 		};
   	t.execute();
