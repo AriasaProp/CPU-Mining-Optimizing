@@ -18,7 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.os.AsyncTask;
+import java.lang.Thread;
 
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
+    
     startS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_start, this);
 		onstartS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstart, this);
 		stopS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_stop, this);
@@ -47,14 +48,10 @@ public class MainActivity extends Activity {
   Runnable[] runs = new Runnable[2];
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-  	AsyncTask t = new AsyncTask<Void, Void, Void>() {
+  	new Thread(new Runnable(){
 		  @Override
-		  protected Void doInBackground(Void... voids) {
+		  public void run() {
 				startMining();
-	  		return null;
-		  }
-		  @Override
-		  protected void onPostExecute(Void ui) {
 		  	runOnUiThread(new Runnable(){
 		  		@Override
 		  		public void run () {
@@ -62,20 +59,15 @@ public class MainActivity extends Activity {
 		  		}
 		  	});
 		  }
-		};
-  	t.execute();
+		}).start();
   }
   
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-		AsyncTask t = new AsyncTask<Void, Void, Void>() {
+		new Thread(new Runnable() {
 		  @Override
-		  protected Void doInBackground(Void... voids) {
+		  public void run() {
 				stopMining();
-	  		return null;
-		  }
-		  @Override
-		  protected void onPostExecute(Void ui) {
 		  	runOnUiThread(new Runnable(){
 		  		@Override
 		  		public void run () {
@@ -83,8 +75,7 @@ public class MainActivity extends Activity {
 		  		}
 		  	});
 		  }
-		};
-  	t.execute();
+		}).start();
   }
   
   private native void startMining();
