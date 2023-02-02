@@ -12,7 +12,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	  jmethodID mid = env->GetMethodID(cls, "afterStartMining", "()V");
 	  env->CallVoidMethod(o, mid);
 	  jvm->DetachCurrentThread();
-	});
+	};
 	core::startMining(f);
 }
 JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
@@ -24,7 +24,7 @@ JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 	  jmethodID mid = env->GetMethodID(cls, "afterStopMining", "()V");
 	  env->CallVoidMethod(o, mid);
 	  jvm->DetachCurrentThread();
-	});
+	};
 	core::stopMining(f);
 }
 #undef JNI_Call
