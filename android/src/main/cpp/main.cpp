@@ -4,7 +4,7 @@
 
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_MainActivity_##M
 JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
-	void(*execAfterReady)() = [&](){
+	void(execAfterReady)() = [&](){
 		JavaVM* jvm;
 	  env->GetJavaVM(&jvm);
 	  jvm->AttachCurrentThread(&env, NULL);
@@ -13,10 +13,10 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	  env->CallVoidMethod(o, mid);
 	  jvm->DetachCurrentThread();
 	};
-	core::startMining(execAfterReady);
+	core::startMining(&execAfterReady);
 }
 JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
-	void(*execAfterDone)() = [&](){
+	void(execAfterDone)() = [&](){
 		JavaVM* jvm;
 	  env->GetJavaVM(&jvm);
 	  jvm->AttachCurrentThread(&env, NULL);
@@ -25,7 +25,7 @@ JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 	  env->CallVoidMethod(o, mid);
 	  jvm->DetachCurrentThread();
 	};
-	core::stopMining(execAfterDone);
+	core::stopMining(&execAfterDone);
 }
 #undef JNI_Call
 //native management
