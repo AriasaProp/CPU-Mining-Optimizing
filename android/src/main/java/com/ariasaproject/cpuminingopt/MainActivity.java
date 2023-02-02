@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
   }
   Scene startS,onstartS,stopS,onstopS;
   Transition mtransition;
-  private AsyncTask task = new AsyncTask<Runnable, Void, Runnable> {
+  private AsyncTask task = new AsyncTask<Runnable, Void, Runnable>(){
 	  @Override
 	  protected Runnable doInBackground(Runnable... voids) {
 	  	if (voids !=null) {
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
   
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-  	task.execute(new Runnable[2]{
+  	final Runnable[] runs = new Runnable[2]{
   		new Runnable(){
   			@Override
   			public void run(){
@@ -73,12 +73,13 @@ public class MainActivity extends Activity {
 					TransitionManager.go(stopS, mtransition);
   			}
   		}
-  	});
+  	};
+  	task.execute(runs);
   }
   
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-  	task.execute(new Runnable[2]{
+  	final Runnable[] runs = new Runnable[2]{
   		new Runnable(){
   			@Override
   			public void run(){
@@ -91,7 +92,8 @@ public class MainActivity extends Activity {
 					TransitionManager.go(startS, mtransition);
   			}
   		}
-  	});
+  	};
+  	task.execute(runs);
   }
   
   private native void startMining();
