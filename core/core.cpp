@@ -11,10 +11,10 @@ pthread_t thread;
 static void *miningThread(void*);
 struct data_transfer {
 	bool destroy;
-	void(toRun)();
+	std::function<void()> toRun;
 } *loc_data;
 
-void core::startMining(void(r)()) {
+void core::startMining(std::function<void()> r) {
 	loc_data = new data_transfer;
 	loc_data->toRun = r;
 	pthread_mutex_init(&mutex, NULL);
@@ -26,7 +26,7 @@ void core::startMining(void(r)()) {
   pthread_attr_destroy(&attr);
 }
 
-void core::stopMining(void(r)()) {
+void core::stopMining(std::function<void()> r) {
   pthread_mutex_lock(&mutex);
 	loc_data->toRun = r;
   loc_data->destroy = true;
