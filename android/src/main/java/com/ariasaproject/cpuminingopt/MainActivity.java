@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 	  	if (ui != null)
 	  		ui.run();
 	  }
-	}
+	};
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -57,41 +57,37 @@ public class MainActivity extends Activity {
 		mtransition = TransitionInflater.from(this).inflateTransition(R.transition.mining_transition);
 		TransitionManager.go(startS, mtransition);
   }
-  
+  Runnable[] runs = new Runnable[2];
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-  	final Runnable[] runs = new Runnable[2]{
-  		new Runnable(){
-  			@Override
-  			public void run(){
-  				startMining();
-  			}
-  		},
-  		new Runnable(){
-  			@Override
-  			public void run(){
-					TransitionManager.go(stopS, mtransition);
-  			}
-  		}
+  	runs[0] = new Runnable(){
+			@Override
+			public void run(){
+				startMining();
+			}
+		};
+  	runs[1] = new Runnable(){
+			@Override
+			public void run(){
+				TransitionManager.go(stopS, mtransition);
+			}
   	};
   	task.execute(runs);
   }
   
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-  	final Runnable[] runs = new Runnable[2]{
-  		new Runnable(){
-  			@Override
-  			public void run(){
-  				startMining();
-  			}
-  		},
-  		new Runnable(){
-  			@Override
-  			public void run(){
-					TransitionManager.go(startS, mtransition);
-  			}
-  		}
+  	runs[0] = new Runnable(){
+			@Override
+			public void run(){
+				stopMining();
+			}
+		};
+  	runs[1] = new Runnable(){
+			@Override
+			public void run(){
+				TransitionManager.go(startS, mtransition);
+			}
   	};
   	task.execute(runs);
   }
