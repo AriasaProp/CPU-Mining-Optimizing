@@ -36,10 +36,12 @@ void core::stopMining(void*) {
 void miningThread() {
 	//this for preparation like socket validation auth etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
+	{
 	std::unique_lock<std::mutex> lck(mutex);
 	loc_data->create = false;
 	cv.notify_one();
 	lck.unlock();
+	}
 
 	for(;;) {
 		std::unique_lock<std::mutex> lck(mutex);
@@ -49,10 +51,11 @@ void miningThread() {
 		//do nothing right now
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 	}
-
+	{
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	std::unique_lock<std::mutex> lck(mutex);
 	loc_data->destroy = false;
 	lck.unlock();
+	}
 }
