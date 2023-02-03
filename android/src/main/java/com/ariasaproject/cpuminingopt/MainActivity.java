@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import java.lang.Thread;
 
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -30,11 +31,14 @@ public class MainActivity extends Activity {
   }
   Scene startS,onstartS,stopS,onstopS;
   Transition mtransition;
+  Handler mHandler;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
+    
+    mHandler = new Handler(Looper.getMainLooper());
     
     startS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_start, this);
 		onstartS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstart, this);
@@ -46,27 +50,33 @@ public class MainActivity extends Activity {
   }
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-		startMining();
-  }
-  private void afterStartMining() {
-  	runOnUiThread(new Runnable(){
-  		@Override
-  		public void run () {
-				TransitionManager.go(stopS, mtransition);
-  		}
-  	});
+		new Thread(new Runnable(){
+			@Override
+			public void run(){
+				startMining();
+		  	mHandler.post(new Runnable(){
+		  		@Override
+		  		public void run () {
+						TransitionManager.go(stopS, mtransition);
+		  		}
+		  	});
+			}
+		}).start();
   }
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-		stopMining();
-  }
-  private void afterStopMining() {
-  	runOnUiThread(new Runnable(){
-  		@Override
-  		public void run () {
-				TransitionManager.go(startS, mtransition);
-  		}
-  	});
+		new Thread(new Runnable(){
+			@Override
+			public void run(){
+				stopMining();
+		  	mHandler.post(new Runnable(){
+		  		@Override
+		  		public void run () {
+						TransitionManager.go(startS, mtransition);
+		  		}
+		  	});
+			}
+		}).start();
   }
   
   private native void startMining();
