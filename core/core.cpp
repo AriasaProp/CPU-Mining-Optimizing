@@ -31,6 +31,7 @@ void core::stopMining(void*) {
 	loc_data->destroy = true;
 	thread.join();
 	delete loc_data;
+	loc_data = nullptr;
 }
 
 void miningThread() {
