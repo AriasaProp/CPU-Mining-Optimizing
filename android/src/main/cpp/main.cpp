@@ -3,10 +3,10 @@
 #include "core.h"
 
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_MainActivity_##M
-JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
+JNI_Call(void, startMining) (JNIEnv *, jobject) {
 	core::startMining(0);
 }
-JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
+JNI_Call(void, stopMining) (JNIEnv *, jobject) {
 	core::stopMining(0);
 }
 #undef JNI_Call
