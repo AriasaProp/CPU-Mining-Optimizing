@@ -8,7 +8,7 @@ static jmethodID mainClass_afterstopId;
 JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	JavaVM* jvm;
   env->GetJavaVM(&jvm);
-	core::startMining([&jvm]{
+	core::startMining([&]{
     JNIEnv* nEnv;
     jvm->AttachCurrentThread(&nEnv, 0);
   	nEnv->CallVoidMethod(o, mainClass_afterstartId, 0);
@@ -18,7 +18,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 	JavaVM* jvm;
   env->GetJavaVM(&jvm);
-	core::stopMining([&jvm]{
+	core::stopMining([&]{
     JNIEnv* nEnv;
     jvm->AttachCurrentThread(&nEnv, 0);
   	nEnv->CallVoidMethod(o, mainClass_afterstopId, 0);
