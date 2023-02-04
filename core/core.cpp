@@ -46,7 +46,7 @@ void miningThread() {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//do nothing right now
 		
-	} while (running)
+	} while (running);
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	mutex.lock();
