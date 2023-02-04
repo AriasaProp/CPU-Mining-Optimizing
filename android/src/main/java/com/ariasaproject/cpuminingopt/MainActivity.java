@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
   	mHandler.post(new Runnable(){
   		@Override
   		public void run () {
-  			Toast.makeText(this, "After Start, Now!", Toast.LENGTH_SHORT).show();
+  			Toast.makeText(MainActivity.this, "After Start, Now!", Toast.LENGTH_SHORT).show();
   		}
   	});
   }
@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
   	mHandler.post(new Runnable(){
   		@Override
   		public void run () {
-  			Toast.makeText(this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
+  			Toast.makeText(MainActivity.this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
   		}
   	});
   }
