@@ -82,10 +82,20 @@ public class MainActivity extends Activity {
   }
   
   private void callAfterStart(){
-  	Toast.makeText(this, "After Start, Now!", Toast.LENGTH_SHORT).show();
+  	mHandler.post(new Runnable(){
+  		@Override
+  		public void run () {
+  			Toast.makeText(this, "After Start, Now!", Toast.LENGTH_SHORT).show();
+  		}
+  	});
   }
   private void callAfterStop(){
-  	Toast.makeText(this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
+  	mHandler.post(new Runnable(){
+  		@Override
+  		public void run () {
+  			Toast.makeText(this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
+  		}
+  	});
   }
   
   private native void startMining();
