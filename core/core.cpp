@@ -19,7 +19,7 @@ void core::startMining() {
 	running = false;
 	thread = std::thread(miningThread);
 	thread.detach();
-	std::unique_lock<mutex> lck(mutex);
+	std::unique_lock<std::mutex> lck(mutex);
 	cv.wait(lck, []{return running;});
 }
 
