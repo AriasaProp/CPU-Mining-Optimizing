@@ -16,7 +16,9 @@ bool running;
 void core::startMining() {
 	if(thread.joinable()) return;
 	//you should call stopMining first
+	mutex.lock();
 	running = false;
+	mutex.unlock();
 	thread = std::thread(miningThread);
 	std::unique_lock<std::mutex> lck(mutex);
 	cv.wait(lck, []{return running;});
