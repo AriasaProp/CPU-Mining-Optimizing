@@ -6,63 +6,45 @@
 #include <chrono>
 #include <mutex>
 
+std::thread thread;
+std::mutex mutex;
+//std::condition_variable cv;
 
-struct data_transfer {
-	std::mutex mutex;
-	std::condition_variable cv;
-	std::thread thread;
-	std::function<void()> shouldRun;
-	bool create;
-	bool destroy;
-} *loc_data;
+bool running;
 
-void miningThread();
-
-void core::startMining(std::function<void()> f) {
-	if(loc_data) return;
-	loc_data = new data_transfer;
-	loc_data->shouldRun = f;
-	loc_data->create = true;
-	loc_data->thread = std::thread(miningThread);
+void core::startMining() {
+	if(thread.joinable()) return;
+	//you should call stopMining first
+	running = true;
+	thread = std::thread(miningThread);
+	thread.detach();
 }
 
-void core::stopMining(std::function<void()> f) {
-	if(!loc_data) return;
-	loc_data->mutex.lock();
-	loc_data->shouldRun = f;
-	loc_data->destroy = true;
-	loc_data->mutex.unlock();
-	loc_data->thread.join();
-	delete loc_data;
-	loc_data = nullptr;
+void core::stopMining() {
+	if(!thread.joinable()) return;
+	//you should call startMining first
+	mutex.lock();
+	running = false;
+	mutex.unlock();
 }
 
-void miningThread() {
+void core::miningThread() {
 	//this for preparation like socket validation auth etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	loc_data->mutex.lock();
-	loc_data->create = false;
-	if(loc_data->shouldRun) {
-		loc_data->shouldRun();
-		loc_data->shouldRun = 0;
-	}
-	loc_data->mutex.unlock();
+	mutex.lock();
+	if(afterCall) afterCall(running);
+	mutex.unlock();
 
 	for(;;) {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
-		//do nothing right now6
-		loc_data->mutex.lock();
-		if (loc_data->destroy)
-			break;
-		loc_data->mutex.unlock();
+		//do nothing right now
+		mutex.lock();
+		if(!running) break;
+		mutex.unlock();
 	}
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	loc_data->mutex.lock();
-	loc_data->destroy = false;
-	if(loc_data->shouldRun) {
-		loc_data->shouldRun();
-		loc_data->shouldRun = 0;
-	}
-	loc_data->mutex.unlock();
+	mutex.lock();
+	if(afterCall) afterCall(running);
+	mutex.unlock();
 }

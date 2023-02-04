@@ -4,9 +4,13 @@
 #include <functional>
 
 
-namespace core {
-	void startMining(std::function<void()>);
-	void stopMining(std::function<void()>);
-}
+struct core {
+public:
+	std::function<void(bool)> afterCall;
+	void startMining();
+	void stopMining();
+private:
+	void miningThread();
+};
 
 #endif //_Included_Core_
