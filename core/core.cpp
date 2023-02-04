@@ -10,6 +10,7 @@ std::thread thread;
 std::mutex mutex;
 std::condition_variable cv;
 
+void miningThread();
 bool running;
 
 void core::startMining() {
@@ -31,7 +32,7 @@ void core::stopMining() {
 	thread.join();
 }
 
-void core::miningThread() {
+void miningThread() {
 	//this for preparation like socket validation auth etc.
 	//create state
 	std::this_thread::sleep_for(std::chrono::seconds(3));
