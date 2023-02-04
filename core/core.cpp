@@ -17,46 +17,44 @@ struct data_transfer {
 
 void miningThread();
 
-void core::startMining(void*) {
+void core::startMining(std::function<void()> &f) {
 	if(loc_data) return;
 	loc_data = new data_transfer;
 	loc_data->create = true;
 	thread = std::thread(miningThread);
 	std::unique_lock<std::mutex> lck(mutex);
 	cv.wait(lck, []{return !loc_data->create;});
+	f();
 }
 
-void core::stopMining(void*) {
+void core::stopMining(std::function<void()> &f) {
 	if(!loc_data) return;
 	loc_data->destroy = true;
 	thread.join();
 	delete loc_data;
 	loc_data = nullptr;
+	f();
 }
 
 void miningThread() {
 	//this for preparation like socket validation auth etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	{
-	std::unique_lock<std::mutex> lck(mutex);
+	mutex.lock();
 	loc_data->create = false;
-	cv.notify_one();
-	lck.unlock();
-	}
+	cv.notify_all();
+	mutex.unlock();
 
 	for(;;) {
-		std::unique_lock<std::mutex> lck(mutex);
+		std::this_thread::sleep_for(std::chrono::seconds(1)); 
+		//do nothing right now6
+		mutex.lock();
 		if (loc_data->destroy)
 			break;
-		lck.unlock();
-		//do nothing right now
-		std::this_thread::sleep_for(std::chrono::seconds(1)); 
+		mutex.unlock();
 	}
-	{
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	std::unique_lock<std::mutex> lck(mutex);
+	mutex.lock();
 	loc_data->destroy = false;
-	lck.unlock();
-	}
+	mutex.unlock();
 }

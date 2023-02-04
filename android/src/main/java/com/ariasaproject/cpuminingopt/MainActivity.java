@@ -13,6 +13,7 @@ import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -78,6 +79,13 @@ public class MainActivity extends Activity {
 		  	});
 			}
 		}).start();
+  }
+  
+  private void callAfterStart(){
+  	Toast.makeText(this, "After Start, Now!", Toast.LENGTH_SHORT).show();
+  }
+  private void callAfterStop(){
+  	Toast.makeText(this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
   }
   
   private native void startMining();
