@@ -5,8 +5,8 @@
 
 
 namespace core {
-	void startMining(std::function<void()>&);
-	void stopMining(std::function<void()>&);
+	void startMining(std::function<void()>);
+	void stopMining(std::function<void()>);
 }
 
 #endif //_Included_Core_

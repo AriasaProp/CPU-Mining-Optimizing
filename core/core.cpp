@@ -17,7 +17,7 @@ struct data_transfer {
 
 void miningThread();
 
-void core::startMining(std::function<void()> &f) {
+void core::startMining(std::function<void()> f) {
 	if(loc_data) return;
 	loc_data = new data_transfer;
 	loc_data->create = true;
@@ -27,7 +27,7 @@ void core::startMining(std::function<void()> &f) {
 	f();
 }
 
-void core::stopMining(std::function<void()> &f) {
+void core::stopMining(std::function<void()> f) {
 	if(!loc_data) return;
 	loc_data->destroy = true;
 	thread.join();

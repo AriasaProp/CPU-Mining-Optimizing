@@ -32,7 +32,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
   if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
       return JNI_ERR;
   }
-  jclass mainClass = eny->FindClass("com/ariasaproject/cpuminingopt/MainActivity");
+  jclass mainClass = env->FindClass("com/ariasaproject/cpuminingopt/MainActivity");
 	//initialize static variable
   mainClass_afterstartId = env->GetMethodID(mainClass, "callAfterStart", "()V");
   mainClass_afterstopId = env->GetMethodID(mainClass, "callAfterStop", "()V");
