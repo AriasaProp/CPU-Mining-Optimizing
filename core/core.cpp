@@ -8,16 +8,18 @@
 
 std::thread thread;
 std::mutex mutex;
-//std::condition_variable cv;
+std::condition_variable cv;
 
 bool running;
 
 void core::startMining() {
 	if(thread.joinable()) return;
 	//you should call stopMining first
-	running = true;
-	thread = std::thread(this->miningThread);
+	running = false;
+	thread = std::thread(miningThread);
 	thread.detach();
+	std::unique_lock lck(mutex);
+	cv.wait(lck, []{return running;});
 }
 
 void core::stopMining() {
@@ -26,13 +28,16 @@ void core::stopMining() {
 	mutex.lock();
 	running = false;
 	mutex.unlock();
+	thread.join();
 }
 
 void core::miningThread() {
 	//this for preparation like socket validation auth etc.
+	//create state
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	mutex.lock();
-	if(afterCall) afterCall(running);
+	running = true;
+	cv.notify_all();
 	mutex.unlock();
 
 	for(;;) {
@@ -45,6 +50,6 @@ void core::miningThread() {
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	mutex.lock();
-	if(afterCall) afterCall(running);
+	//destroy state
 	mutex.unlock();
 }

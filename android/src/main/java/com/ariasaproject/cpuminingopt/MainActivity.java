@@ -52,30 +52,34 @@ public class MainActivity extends Activity {
   }
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-		startMining();
+		new Thread(new Runnable(){
+  		@Override
+  		public void run () {
+				startMining();
+		  	mHandler.post(new Runnable(){
+		  		@Override
+		  		public void run () {
+						TransitionManager.go(stopS, mtransition);
+		  		}
+		  	});
+  		}
+		});
   }
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-		stopMining();
-  }
-  
-  private synchronized void callAfterStart(){
-  	mHandler.post(new Runnable(){
+		new Thread(new Runnable(){
   		@Override
   		public void run () {
-				TransitionManager.go(stopS, mtransition);
+				stopMining();
+		  	mHandler.post(new Runnable(){
+		  		@Override
+		  		public void run () {
+						TransitionManager.go(startS, mtransition);
+		  		}
+		  	});
   		}
-  	});
+		});
   }
-  private synchronized void callAfterStop(){
-  	mHandler.post(new Runnable(){
-  		@Override
-  		public void run () {
-				TransitionManager.go(startS, mtransition);
-  		}
-  	});
-  }
-  
   private native void startMining();
   private native void stopMining();
 }
