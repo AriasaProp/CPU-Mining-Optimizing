@@ -8,20 +8,20 @@ static jmethodID mainClass_afterstopId;
 JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	JavaVM* jvm;
   env->GetJavaVM(&jvm);
-	core::startMining([&]{
+	core::startMining([&jvm,&o]{
     JNIEnv* nEnv;
     jvm->AttachCurrentThread(&nEnv, 0);
-  	nEnv->CallVoidMethod(o, mainClass_afterstartId, 0);
+  	nEnv->CallVoidMethod(o, mainClass_afterstartId);
     jvm->DetachCurrentThread();
 	});
 }
 JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 	JavaVM* jvm;
   env->GetJavaVM(&jvm);
-	core::stopMining([&]{
+	core::stopMining([&jvm,&o]{
     JNIEnv* nEnv;
     jvm->AttachCurrentThread(&nEnv, 0);
-  	nEnv->CallVoidMethod(o, mainClass_afterstopId, 0);
+  	nEnv->CallVoidMethod(o, mainClass_afterstopId);
     jvm->DetachCurrentThread();
 	});
 }
@@ -29,7 +29,7 @@ JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 //native management
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
   JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+  if (vm->GetEnv(&env, JNI_VERSION_1_6) != JNI_OK) {
       return JNI_ERR;
   }
   jclass mainClass = env->FindClass("com/ariasaproject/cpuminingopt/MainActivity");

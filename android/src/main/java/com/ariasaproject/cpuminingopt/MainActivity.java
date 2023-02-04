@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
     
-    mHandler = new Handler(Looper.getMainLooper());
+    mHandler = getMainLooper().getThread().getHandler();
     
     startS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_start, this);
 		onstartS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstart, this);
@@ -52,48 +52,26 @@ public class MainActivity extends Activity {
   }
   public void startMining(View v) {
 		TransitionManager.go(onstartS, mtransition);
-		new Thread(new Runnable(){
-			@Override
-			public void run(){
-				startMining();
-		  	mHandler.post(new Runnable(){
-		  		@Override
-		  		public void run () {
-						TransitionManager.go(stopS, mtransition);
-		  		}
-		  	});
-			}
-		}).start();
+		startMining();
   }
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
-		new Thread(new Runnable(){
-			@Override
-			public void run(){
-				stopMining();
-		  	mHandler.post(new Runnable(){
-		  		@Override
-		  		public void run () {
-						TransitionManager.go(startS, mtransition);
-		  		}
-		  	});
-			}
-		}).start();
+		stopMining();
   }
   
-  private void callAfterStart(){
+  private synchronized void callAfterStart(){
   	mHandler.post(new Runnable(){
   		@Override
   		public void run () {
-  			Toast.makeText(MainActivity.this, "After Start, Now!", Toast.LENGTH_SHORT).show();
+				TransitionManager.go(stopS, mtransition);
   		}
   	});
   }
-  private void callAfterStop(){
+  private synchronized void callAfterStop(){
   	mHandler.post(new Runnable(){
   		@Override
   		public void run () {
-  			Toast.makeText(MainActivity.this, "After Stop, Now!", Toast.LENGTH_SHORT).show();
+				TransitionManager.go(startS, mtransition);
   		}
   	});
   }
