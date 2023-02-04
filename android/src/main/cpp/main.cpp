@@ -29,7 +29,7 @@ JNI_Call(void, stopMining) (JNIEnv *env, jobject o) {
 //native management
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
   JNIEnv* env;
-  if (vm->GetEnv(&env, JNI_VERSION_1_6) != JNI_OK) {
+  if (vm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
       return JNI_ERR;
   }
   jclass mainClass = env->FindClass("com/ariasaproject/cpuminingopt/MainActivity");
