@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 		  		}
 		  	});
   		}
-		});
+		}).start();
   }
   public void stopMining(View v) {
 		TransitionManager.go(onstopS, mtransition);
@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
 		  		}
 		  	});
   		}
-		});
+		}).start();
   }
   private native void startMining();
   private native void stopMining();
