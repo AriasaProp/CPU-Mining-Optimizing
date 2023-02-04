@@ -42,13 +42,11 @@ void miningThread() {
 	mutex.unlock();
 	cv.notify_all();
 
-	for(;;) {
+	do {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//do nothing right now
-		mutex.lock();
-		if(!running) break;
-		mutex.unlock();
-	}
+		
+	} while (running)
 	//this for cleaning like socket close etc.
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	mutex.lock();
