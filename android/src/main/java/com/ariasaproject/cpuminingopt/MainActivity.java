@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
     
-    mHandler = getMainLooper().getThread().getHandler();
+    mHandler = new Handler(Looper.getMainLooper());
     
     startS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_start, this);
 		onstartS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstart, this);
