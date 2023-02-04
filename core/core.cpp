@@ -16,7 +16,7 @@ void core::startMining() {
 	if(thread.joinable()) return;
 	//you should call stopMining first
 	running = true;
-	thread = std::thread(miningThread);
+	thread = std::thread(this->miningThread);
 	thread.detach();
 }
 
