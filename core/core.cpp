@@ -20,7 +20,7 @@ void core::startMining() {
 	thread = std::thread(miningThread);
 	thread.detach();
 	std::unique_lock<std::mutex> lck(mutex);
-	cv.wait(lck, []{return !running;});
+	cv.wait(lck, []{return running;});
 }
 
 void core::stopMining() {
@@ -38,8 +38,8 @@ void miningThread() {
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	mutex.lock();
 	running = true;
-	cv.notify_all();
 	mutex.unlock();
+	cv.notify_all();
 
 	for(;;) {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
