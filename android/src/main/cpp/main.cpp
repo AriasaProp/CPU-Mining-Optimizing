@@ -10,13 +10,13 @@ jmethodID receiveMsgId;
 JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	if (!initializedOnce) {
 		JavaVM *vm;
-		env->GetJavaVM((void**)&vm);
+		env->GetJavaVM(&vm);
 		initializedOnce = true;
 		jclass cls = env->GetObjectClass(o);
 	  receiveMsgId = env->GetMethodID(cls,"receiveMessage", "(ILjava/lang/String;)V");
 		console::initialize([&vm,&o](const char *msg, const unsigned int length){
 			JNIEnv *n;
-			vm->AttachCurrentThread((void **) &n, 0);
+			vm->AttachCurrentThread(&n, 0);
 			//vm->GetEnv((void**)&n, 0);
 			char tmsg[length+1];
 			memcpy(tmsg, msg, length);
