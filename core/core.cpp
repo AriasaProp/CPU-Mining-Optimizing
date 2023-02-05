@@ -1,4 +1,5 @@
 #include "core.h"
+#include "../console.h"
 
 #include <iostream>
 #include <thread>
@@ -36,7 +37,9 @@ void core::stopMining() {
 void miningThread() {
 	//this for preparation like socket validation auth etc.
 	//create state
+	console::write(1, "Logging App ....", 16);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
+	console::write(1, "Logged App", 10);
 	mutex.lock();
 	running = true;
 	mutex.unlock();
@@ -48,7 +51,9 @@ void miningThread() {
 		
 	} while (running);
 	//this for cleaning like socket close etc.
+	console::write(1, "Unlogging App ....", 18);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
+	console::write(1, "Unlogged App", 12);
 	mutex.lock();
 	//destroy state
 	mutex.unlock();
