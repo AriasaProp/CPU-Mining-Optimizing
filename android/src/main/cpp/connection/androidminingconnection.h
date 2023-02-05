@@ -8,7 +8,7 @@ struct AndroidSocket: public MiningSocket {
 	~AndroidSocket();
 	bool openConnection(const char*, unsigned int&) override;
 	bool write(const char*) override;
-	char *read(const char*) override;
+	char *read() override;
 	bool closeConnection() override;
 };
 

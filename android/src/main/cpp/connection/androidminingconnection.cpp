@@ -16,7 +16,7 @@ pthread_t thread;
 bool hasSocket;
 bool hasConnection;
 
-struct sockaddr_in server_addr;
+sockaddr_in server_addr;
 
 void socketLoop(void*);
 
@@ -41,12 +41,11 @@ AndroidSocket::~AndroidSocket() {
 }
 
 bool AndroidSocket::openConnection(const char *server, unsigned int &port) {
-	struct hostent *srv = gethostbyname(server);
+	hostent *srv = gethostbyname(server);
   if (!srv) {
     std::cerr << "Error: failed to resolve hostname" << std::endl;
     return false;
   }
-  struct sockaddr_in server_addr;
   memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
   memcpy(&server_addr.sin_addr.s_addr, srv->h_addr, srv->h_length);
@@ -81,6 +80,7 @@ void socketLoop(void*) {
     std::cerr << "Socket: failed to create socket" << std::endl;
   pthread_mutex_lock(&mutex);
   hasSocket = true;
+  hasConnection = false;
 	pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&mutex);
 	//loop connection

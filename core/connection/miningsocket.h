@@ -4,7 +4,7 @@
 struct MiningSocket {
 	virtual bool openConnection(const char*, unsigned int&) = 0;
 	virtual bool write(const char*) = 0;
-	virtual char *read(const char*) = 0;
+	virtual char *read() = 0;
 	virtual bool closeConnection() = 0;
 };
 
