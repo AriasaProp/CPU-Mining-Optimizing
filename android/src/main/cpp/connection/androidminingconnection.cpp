@@ -7,9 +7,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-
-const std::string stratum_server = "us2.litecoinpool.org";
-const int stratum_port = 9332;
+#include <pthread>
 
 pthread_mutex_t mutex;
 pthread_cond_t cond;
