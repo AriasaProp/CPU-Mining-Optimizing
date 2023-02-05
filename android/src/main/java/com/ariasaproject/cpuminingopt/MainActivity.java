@@ -27,7 +27,7 @@ import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.transition.Scene;
 
-public class MainActivity extends Activity implements Handler.Callback {
+public class MainActivity extends Activity {
   static {
     System.loadLibrary("ext");
   }
