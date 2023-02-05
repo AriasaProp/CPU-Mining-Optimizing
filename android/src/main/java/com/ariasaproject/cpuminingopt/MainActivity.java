@@ -47,8 +47,46 @@ public class MainActivity extends Activity implements Handler.Callback {
 		onstopS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstop, this);
 		mtransition = TransitionInflater.from(this).inflateTransition(R.transition.mining_transition);
 		TransitionManager.go(startS, mtransition);
-    mHandler = new Handler(Looper.getMainLooper());
-    mHandler.setCallback((Handler.Callback)this);
+    //mHandler = new Handler(Looper.getMainLooper());
+    mHandler = new Handler(){
+		  //for main Ui Thread Update
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+					default:
+						break;
+		      case 1: //request start
+		      	TransitionManager.go(onstartS, mtransition);
+		      	new Thread(new Runnable(){
+				  		@Override
+				  		public void run () {
+								MainActivity.this.startMining();
+								MainActivity.this.receiveMessage(2,"");
+				  		}
+						}).start();
+						break;
+					case 2: //after start
+						TransitionManager.go(stopS, mtransition);
+						break;
+		      case 3: //request stop
+						TransitionManager.go(onstopS, mtransition);
+						new Thread(new Runnable(){
+				  		@Override
+				  		public void run () {
+								MainActivity.this.stopMining();
+						  	MainActivity.this.receiveMessage(4,"");
+				  		}
+						}).start();
+						break;
+					case 4: //after stop
+						TransitionManager.go(startS, mtransition);
+						break;
+					case 9: //console tag
+		        console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
+						break;
+				}
+			}
+    };
   }
   public void startMining(View v) {
   	receiveMessage(1,"");
@@ -64,44 +102,6 @@ public class MainActivity extends Activity implements Handler.Callback {
   	m.setAsynchronous(true);
   	mHandler.sendMessage(m);
   }
-  //for main Ui Thread Update
-	@Override
-	public boolean handleMessage(Message msg) {
-		switch (msg.what) {
-			default:
-				break;
-      case 1: //request start
-      	TransitionManager.go(onstartS, mtransition);
-      	new Thread(new Runnable(){
-		  		@Override
-		  		public void run () {
-						MainActivity.this.startMining();
-						MainActivity.this.receiveMessage(2,"");
-		  		}
-				}).start();
-				break;
-			case 2: //after start
-				TransitionManager.go(stopS, mtransition);
-				break;
-      case 3: //request stop
-				TransitionManager.go(onstopS, mtransition);
-				new Thread(new Runnable(){
-		  		@Override
-		  		public void run () {
-						MainActivity.this.stopMining();
-				  	MainActivity.this.receiveMessage(4,"");
-		  		}
-				}).start();
-				break;
-			case 4: //after stop
-				TransitionManager.go(startS, mtransition);
-				break;
-			case 9: //console tag
-        console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
-				break;
-		}
-		return true;
-	}
   private native void startMining();
   private native void stopMining();
 }
