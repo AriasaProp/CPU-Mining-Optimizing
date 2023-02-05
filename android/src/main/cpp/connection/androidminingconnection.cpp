@@ -8,11 +8,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <pthread.h>
-
-pthread_mutex_t mutex;
-pthread_cond_t cond;
-pthread_t thread;
 
 bool hasSocket;
 bool hasConnection;

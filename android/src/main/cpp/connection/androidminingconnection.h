@@ -2,8 +2,12 @@
 #define _AndroidMiningConnection_Included
 
 #include "connection/miningsocket.h"
+#include <pthread.h>
 
 struct AndroidSocket: public MiningSocket {
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	pthread_t thread;
 	AndroidSocket();
 	~AndroidSocket();
 	bool openConnection(const char*, unsigned int&) override;
