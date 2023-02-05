@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -18,7 +19,7 @@ bool hasConnection;
 
 sockaddr_in server_addr;
 
-void socketLoop(void*);
+static void *socketLoop(void*);
 
 AndroidSocket::AndroidSocket() {
 	hasSocket = false;
@@ -41,6 +42,7 @@ AndroidSocket::~AndroidSocket() {
 }
 
 bool AndroidSocket::openConnection(const char *server, unsigned int &port) {
+	
 	hostent *srv = gethostbyname(server);
   if (!srv) {
     std::cerr << "Error: failed to resolve hostname" << std::endl;
@@ -73,7 +75,7 @@ bool AndroidSocket::closeConnection() {
 	return 0;
 }
 
-void socketLoop(void*) {
+static void *socketLoop(void*) {
 	//try make socket
 	int sockfd;
 	while ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -103,5 +105,6 @@ void socketLoop(void*) {
   hasSocket = false;
 	pthread_cond_broadcast(&cond);
   pthread_mutex_unlock(&mutex);
+  return NULL;
 }
 
