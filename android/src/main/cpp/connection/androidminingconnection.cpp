@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <pthread>
+#include <pthread.h>
 
 pthread_mutex_t mutex;
 pthread_cond_t cond;
