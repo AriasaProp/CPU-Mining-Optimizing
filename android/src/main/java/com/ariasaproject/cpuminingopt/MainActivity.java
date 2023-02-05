@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
 				break;
 		}
-		return true;
+		return super.handleMessage(msg);
 	}
   private native void startMining();
   private native void stopMining();
