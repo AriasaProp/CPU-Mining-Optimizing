@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements Handler.Callback {
 		mtransition = TransitionInflater.from(this).inflateTransition(R.transition.mining_transition);
 		TransitionManager.go(startS, mtransition);
     mHandler = new Handler(Looper.getMainLooper());
-    mHandler.setCallback(this);
+    mHandler.setCallback((Handler.Callback)this);
   }
   public void startMining(View v) {
   	receiveMessage(1,"");
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
 				break;
 		}
-		return super.handleMessage(msg);
+		return true;
 	}
   private native void startMining();
   private native void stopMining();
