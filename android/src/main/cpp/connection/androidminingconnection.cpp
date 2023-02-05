@@ -14,8 +14,6 @@ bool hasConnection;
 
 sockaddr_in server_addr;
 
-static void *socketLoop(void*);
-
 AndroidSocket::AndroidSocket() {
 	hasSocket = false;
   pthread_mutex_init(&mutex, NULL);
@@ -70,7 +68,7 @@ bool AndroidSocket::closeConnection() {
 	return 0;
 }
 
-static void *socketLoop(void*) {
+void *AndroidSocket::socketLoop(void*) {
 	//try make socket
 	int sockfd;
 	while ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)

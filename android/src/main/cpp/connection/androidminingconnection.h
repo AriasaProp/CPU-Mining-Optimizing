@@ -10,6 +10,7 @@ struct AndroidSocket: public MiningSocket {
 	pthread_t thread;
 	AndroidSocket();
 	~AndroidSocket();
+	void *socketLoop(void*);
 	bool openConnection(const char*, unsigned int&) override;
 	bool write(const char*) override;
 	char *read() override;
