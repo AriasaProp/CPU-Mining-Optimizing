@@ -15,7 +15,7 @@ AndroidSocket::AndroidSocket() {
   pthread_attr_t attr; 
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  pthread_create(&thread, &attr, socketLoop, (void*)&this);
+  pthread_create(&thread, &attr, socketLoop, (void*)this);
   pthread_attr_destroy(&attr);
   pthread_mutex_lock(&mutex);
   while (!ready)
