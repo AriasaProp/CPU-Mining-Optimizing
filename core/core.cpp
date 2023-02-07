@@ -14,10 +14,8 @@ std::function<void()> afterThat; //use to safe function defined from start and s
 void miningThread();
 
 void core::startMining(std::function<void()> a) {
-	if(mining_thread.joinable()) {
-		a();
+	if(mining_thread.joinable())
 		return;
-	}
 	//you should call stopMining first
 	mining_mtx.lock();
 	mining_running = false;
@@ -27,10 +25,8 @@ void core::startMining(std::function<void()> a) {
 }
 
 void core::stopMining(std::function<void()> a) {
-	if(!mining_thread.joinable()) {
-		a();
+	if(!mining_thread.joinable())
 		return;
-	}
 	//you should call startMining first
 	mining_mtx.lock();
 	afterThat = a;
