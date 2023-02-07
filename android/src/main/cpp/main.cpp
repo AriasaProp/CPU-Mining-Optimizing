@@ -5,6 +5,7 @@
 
 bool initializedOnce = false;
 jmethodID receiveMsgId;
+jobject mainobj;
 
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_MainActivity_##M
 JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
@@ -12,6 +13,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		JavaVM *vm;
 		env->GetJavaVM(&vm);
 		initializedOnce = true;
+		mainobj = env->NewGlobalRef(o);
 		console::initialize([vm,&o](const char *msg, const unsigned int length){
 			JNIEnv *n;
 			vm->AttachCurrentThread(&n, 0);
@@ -19,7 +21,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			memcpy(tmsg, msg, length);
 			tmsg[length] = '\0';
 			jstring p2 = n->NewStringUTF(tmsg);
-			n->CallVoidMethod(o, receiveMsgId, 9, p2);
+			n->CallVoidMethod(mainobj, receiveMsgId, 9, p2);
 			vm->DetachCurrentThread();
 		});
 		
@@ -41,8 +43,11 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
   return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNI_OnUnload(JavaVM*, void*) {
+JNIEXPORT void JNI_OnUnload(JavaVM *vm, void*) {
+  JNIEnv* env;
+  vm->GetEnv((void**)&env,  0);
 	//uninitialize static variable
 	console::destroy();
+	env->DeleteGlobalRef(mainobj);
 	initializedOnce = false;
 }
