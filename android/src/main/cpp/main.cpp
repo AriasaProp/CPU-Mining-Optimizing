@@ -12,7 +12,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		JavaVM *vm;
 		env->GetJavaVM(&vm);
 		initializedOnce = true;
-		console::receiveMsg = [vm,&o](const char *msg, const unsigned int length){
+		console::initialize([vm,&o](const char *msg, const unsigned int length){
 			JNIEnv *n;
 			vm->AttachCurrentThread(&n, 0);
 			char tmsg[length+1];
@@ -21,7 +21,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			jstring p2 = n->NewStringUTF(tmsg);
 			n->CallVoidMethod(o, receiveMsgId, 9, p2);
 			vm->DetachCurrentThread();
-		};
+		});
 		
 	}
 	core::startMining();
