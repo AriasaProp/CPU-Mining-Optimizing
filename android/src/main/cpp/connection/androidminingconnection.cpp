@@ -3,11 +3,8 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <unistd.h>
+
+static void *socketLoop(void*);
 
 AndroidSocket::AndroidSocket() {
 	ready = false;

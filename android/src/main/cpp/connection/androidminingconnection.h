@@ -3,6 +3,11 @@
 
 #include "connection/miningsocket.h"
 #include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <unistd.h>
 
 struct AndroidSocket: public MiningSocket {
 public:
@@ -18,7 +23,6 @@ public:
 	bool write(const char*) override;
 	char *read() override;
 	bool closeConnection() override;
-	friend static void *socketLoop(void*);
 };
 
 #endif //_AndroidMiningConnection_Included
