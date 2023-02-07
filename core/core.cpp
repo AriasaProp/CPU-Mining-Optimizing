@@ -6,32 +6,36 @@
 #include <condition_variable>
 #include <chrono>
 #include <mutex>
+#include <functional>
 
-std::thread thread;
-std::mutex mutex;
-std::condition_variable cv;
+std::thread mining_thread;
+std::mutex mining_mtx;
+std::condition_variable mining_cv;
 
-void miningThread();
 bool running;
+std::function<void()> afterThat; //use to safe function defined from start and stop
+void miningThread();
 
-void core::startMining() {
-	if(thread.joinable()) return;
+void core::startMining(std::function<void()> a) {
+	if(mining_thread.joinable()) return;
 	//you should call stopMining first
-	mutex.lock();
+	afterThat = a;
+	mining_mtx.lock();
 	running = false;
-	mutex.unlock();
-	thread = std::thread(miningThread);
-	std::unique_lock<std::mutex> lck(mutex);
-	cv.wait(lck, []{return running;});
+	mining_mtx.unlock();
+	mining_thread = std::thread(miningThread);
+	std::unique_lock<std::mutex> lck(mining_mtx);
+	mining_cv.wait(lck, []{return running;});
 }
 
-void core::stopMining() {
-	if(!thread.joinable()) return;
+void core::stopMining(std::function<void()> a) {
+	if(!mining_thread.joinable()) return;
 	//you should call startMining first
-	mutex.lock();
+	afterThat = a;
+	mining_mtx.lock();
 	running = false;
-	mutex.unlock();
-	thread.join();
+	mining_mtx.unlock();
+	mining_thread.join();
 }
 
 void miningThread() {
@@ -40,10 +44,14 @@ void miningThread() {
 	console::write(1, "Logging App ....", 16);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	console::write(1, "Logged App", 10);
-	mutex.lock();
+	mining_mtx.lock();
 	running = true;
-	mutex.unlock();
-	cv.notify_all();
+	if(afterThat) {
+		afterThat();
+		afterThat = NULL;
+	}
+	mining_mtx.unlock();
+	mining_cv.notify_all();
 
 	do {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
@@ -54,7 +62,10 @@ void miningThread() {
 	console::write(1, "Unlogging App ....", 18);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	console::write(1, "Unlogged App", 12);
-	mutex.lock();
-	//destroy state
-	mutex.unlock();
+	mining_mtx.lock();
+	if(afterThat) {
+		afterThat();
+		afterThat = NULL;
+	}
+	mining_mtx.unlock();
 }

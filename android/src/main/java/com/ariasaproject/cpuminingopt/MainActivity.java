@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 				  		@Override
 				  		public void run () {
 								MainActivity.this.startMining();
-								MainActivity.this.receiveMessage(2,"");
+								//MainActivity.this.receiveMessage(2,"");
 				  		}
 						}).start();
 						break;
@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
 				  		@Override
 				  		public void run () {
 								MainActivity.this.stopMining();
-						  	MainActivity.this.receiveMessage(4,"");
+						  	//MainActivity.this.receiveMessage(4,"");
 				  		}
 						}).start();
 						break;
@@ -98,7 +98,8 @@ public class MainActivity extends Activity {
   	mHandler.removeCallbacksAndMessages(flag);
   	Message m = mHandler.obtainMessage();
   	m.what = flag;
-  	m.obj = msg;
+  	if (msg != null)
+  		m.obj = msg;
   	mHandler.sendMessage(m);
   }
   private native void startMining();
