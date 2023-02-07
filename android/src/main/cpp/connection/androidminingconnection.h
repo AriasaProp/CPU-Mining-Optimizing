@@ -19,6 +19,7 @@ public:
 	bool write(const char*) override;
 	char *read() override;
 	bool closeConnection() override;
+	friend static void *socketLoop(void*); //access private value
 };
 
 #endif //_AndroidMiningConnection_Included
