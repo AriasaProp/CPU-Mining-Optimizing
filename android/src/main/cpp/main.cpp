@@ -12,7 +12,6 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 	JavaVM *vm;
 	env->GetJavaVM(&vm);
 	if (!initializedOnce) {
-		initializedOnce = true;
 		mainobj = env->NewGlobalRef(o);
 		console::initialize([vm](const char *msg, const unsigned int length){
 			JNIEnv *n;
@@ -24,6 +23,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			n->CallVoidMethod(mainobj, receiveMsgId, 9, p2);
 			vm->DetachCurrentThread();
 		});
+		initializedOnce = true;
 	}
 	core::startMining([vm]{
 		JNIEnv *n;
