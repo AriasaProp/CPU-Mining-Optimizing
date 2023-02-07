@@ -2,13 +2,9 @@
 #define Console_Included
 
 #include <functional>
-#include <mutex>
 
 namespace console {
-	std::mutex console_mtx;
-	std::function<void(const char *, const unsigned int)> receiveMsg;
-
-	void initialize();
+	void initialize(std::function<void(const char *, const unsigned int)>);
 	void write(const unsigned int&, const char *, const unsigned int);
 	void destroy();
 }
