@@ -73,40 +73,40 @@ bool AndroidSocket::closeConnection() {
 }
 
 static void *socketLoop(void *arg) {
-	AndroidSocket as = (AndroidSocket) arg;
+	AndroidSocket *as = (AndroidSocket*) arg;
 	//try make socket
 	int sockfd;
 	while ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     std::cerr << "Socket: failed to create socket" << std::endl;
-  pthread_mutex_lock(&mutex);
-  ready = true;
-  hasConnection = false;
-	pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&mutex);
+  pthread_mutex_lock(&as->mutex);
+  as->ready = true;
+  as->hasConnection = false;
+	pthread_cond_broadcast(&as->cond);
+  pthread_mutex_unlock(&as->mutex);
 	//loop connection
-	while(ready) {
+	while(as->ready) {
 		//wait till has connection request
-	  pthread_mutex_lock(&mutex);
-	  while (!hasConnection)
-	  	pthread_cond_wait(&cond, &mutex);
-	  pthread_mutex_unlock(&mutex);
+	  pthread_mutex_lock(&as->mutex);
+	  while (!as->hasConnection)
+	  	pthread_cond_wait(&as->cond, &as->mutex);
+	  pthread_mutex_unlock(&as->mutex);
 		//connect to connection
-		if (connect(sockfd, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+		if (connect(sockfd, (sockaddr*) &as->server_addr, sizeof(as->server_addr)) < 0) {
 	    std::cerr << "Socket: failed to connect server" << std::endl;
 			continue;
 		}
 	    
-	  while (hasConnection) {
+	  while (as->hasConnection) {
 	  	//loop for connection
 	  }
   	//close connection
   	close(sockfd);
 	}
 	//try destroy socket
-  pthread_mutex_lock(&mutex);
-  ready = true;
-	pthread_cond_broadcast(&cond);
-  pthread_mutex_unlock(&mutex);
+  pthread_mutex_lock(&as->mutex);
+  as->ready = true;
+	pthread_cond_broadcast(&as->cond);
+  pthread_mutex_unlock(&as->mutex);
   return NULL;
 }
 
