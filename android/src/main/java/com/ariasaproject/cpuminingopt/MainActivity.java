@@ -55,36 +55,36 @@ public class MainActivity extends Activity {
 		      	ed_user.setEnabled(false);
 		      	ed_user.setClickable(false);
 		      	ed_pass.setEnabled(false);
-		      	btn_mining.setClickable(false);
+		      	ed_pass.setClickable(false);
 						MainActivity.this.startMining();
 						break;
 					case 2: //after start
 		      	btn_mining.setText(R.string.state_button_stop);
-						btn_mining.setEnabled(true);
-		      	btn_mining.setClickable(true);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
 				        @Override
 				        public void onClick(View v) {
 				        		sendMessage(obtainMessage(3));
 				        }
 				    });
+		      	btn_mining.setClickable(true);
+						btn_mining.setEnabled(true);
 						break;
 		      case 3: //request stop
-		      	btn_mining.setText(R.string.state_button_onstop);
 						btn_mining.setEnabled(false);
 		      	btn_mining.setClickable(false);
+		      	btn_mining.setText(R.string.state_button_onstop);
 						MainActivity.this.stopMining();
 						break;
 					case 4: //after stop
 		      	btn_mining.setText(R.string.state_button_start);
-						btn_mining.setEnabled(true);
-		      	btn_mining.setClickable(true);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
 				        @Override
 				        public void onClick(View v) {
 				        		sendMessage(obtainMessage(1));
 				        }
 				    });
+						btn_mining.setEnabled(true);
+		      	btn_mining.setClickable(true);
 		      	ed_uri.setEnabled(true);
 		      	ed_uri.setClickable(true);
 		      	ed_user.setEnabled(true);
