@@ -6,7 +6,6 @@
 #include <condition_variable>
 #include <chrono>
 #include <mutex>
-#include <functional>
 
 std::thread mining_thread;
 std::mutex mining_mtx;
