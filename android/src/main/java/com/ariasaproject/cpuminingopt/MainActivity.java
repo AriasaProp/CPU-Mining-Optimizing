@@ -99,7 +99,6 @@ public class MainActivity extends Activity {
   	Message m = mHandler.obtainMessage();
   	m.what = flag;
   	m.obj = msg;
-  	m.setAsynchronous(true);
   	mHandler.sendMessage(m);
   }
   private native void startMining();
