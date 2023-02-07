@@ -20,7 +20,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import java.lang.Thread;
 
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -57,26 +56,14 @@ public class MainActivity extends Activity {
 						break;
 		      case 1: //request start
 		      	TransitionManager.go(onstartS, mtransition);
-		      	new Thread(new Runnable(){
-				  		@Override
-				  		public void run () {
-								MainActivity.this.startMining();
-								//MainActivity.this.receiveMessage(2,"");
-				  		}
-						}).start();
+						MainActivity.this.startMining();
 						break;
 					case 2: //after start
 						TransitionManager.go(stopS, mtransition);
 						break;
 		      case 3: //request stop
 						TransitionManager.go(onstopS, mtransition);
-						new Thread(new Runnable(){
-				  		@Override
-				  		public void run () {
-								MainActivity.this.stopMining();
-						  	//MainActivity.this.receiveMessage(4,"");
-				  		}
-						}).start();
+						MainActivity.this.stopMining();
 						break;
 					case 4: //after stop
 						TransitionManager.go(startS, mtransition);

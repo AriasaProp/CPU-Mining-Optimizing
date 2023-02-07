@@ -22,6 +22,8 @@
 		        android:layout_weight="1"
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
+		    		android:clickable="false"
+		    		android:enabled="false"
 		        android:hint="Mining host " />
 		</LinearLayout>
 		<LinearLayout
@@ -40,6 +42,8 @@
 		        android:layout_weight="0.5"
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
+		    		android:clickable="false"
+		    		android:enabled="false"
 		        android:hint=" user " />
 		    <TextView
 						android:id="@+id/lbl_pass"
@@ -51,11 +55,15 @@
 		        android:layout_weight="0.5"
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
+		    		android:clickable="false"
+		    		android:enabled="false"
 		        android:hint=" pass" />
 		</LinearLayout>
 		<Button
 				android:id="@+id/btn_mining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+    		android:clickable="false"
+    		android:enabled="false"
 				android:text="Starting .... "/>
 </LinearLayout>
