@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 		      case 1: //request start
 		      	btn_mining.setEnabled(false);
 		      	btn_mining.setClickable(false);
-		      	btn.setText(R.string.state_button_onstart);
+		      	btn_mining.setText(R.string.state_button_onstart);
 		      	ed_uri.setEnabled(false);
 		      	ed_uri.setClickable(false);
 		      	ed_user.setEnabled(false);
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 						MainActivity.this.startMining();
 						break;
 					case 2: //after start
-		      	btn.setText(R.string.state_button_stop);
+		      	btn_mining.setText(R.string.state_button_stop);
 						btn_mining.setEnabled(true);
 		      	btn_mining.setClickable(true);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
 				    });
 						break;
 		      case 3: //request stop
-		      	btn.setText(R.string.state_button_onstop);
+		      	btn_mining.setText(R.string.state_button_onstop);
 						btn_mining.setEnabled(false);
 		      	btn_mining.setClickable(false);
 						MainActivity.this.stopMining();
