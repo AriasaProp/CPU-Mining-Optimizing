@@ -14,7 +14,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		env->GetJavaVM(&vm);
 		initializedOnce = true;
 		mainobj = env->NewGlobalRef(o);
-		console::initialize([vm,&o](const char *msg, const unsigned int length){
+		console::initialize([vm](const char *msg, const unsigned int length){
 			JNIEnv *n;
 			vm->AttachCurrentThread(&n, 0);
 			char tmsg[length+1];
