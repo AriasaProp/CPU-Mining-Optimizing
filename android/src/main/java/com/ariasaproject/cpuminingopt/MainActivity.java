@@ -21,33 +21,25 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
-import android.transition.Scene;
-
 public class MainActivity extends Activity {
   static {
     System.loadLibrary("ext");
   }
-  Scene startS, onstartS, stopS, onstopS;
   TextView console;
-  Transition mtransition;
+  EditText ed_uri, ed_user,ed_pass;
+  Button btn_mining;
   Handler mHandler;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
+		ed_uri = (EditText)findViewById(R.id.edt_uri);
+		ed_user = (EditText)findViewById(R.id.edt_user);
+		ed_pass = (EditText)findViewById(R.id.edt_pass);
+		btn_mining = (Button)findViewById(R.id.btn_mining);
 		console = (TextView)findViewById(R.id.txview_console);
-    startS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_start, this);
-		onstartS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstart, this);
-		stopS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_stop, this);
-		onstopS = Scene.getSceneForLayout((ViewGroup) findViewById(R.id.container), R.layout.activity_layout_onstop, this);
-		mtransition = TransitionInflater.from(this).inflateTransition(R.transition.mining_transition);
-		TransitionManager.go(startS, mtransition);
-    //mHandler = new Handler(Looper.getMainLooper());
-    mHandler = new Handler(){
+    mHandler = new Handler() {
 		  //for main Ui Thread Update
 			@Override
 			public void handleMessage(Message msg) {
@@ -55,18 +47,50 @@ public class MainActivity extends Activity {
 					default:
 						break;
 		      case 1: //request start
-		      	TransitionManager.go(onstartS, mtransition);
+		      	btn_mining.setEnabled(false);
+		      	btn_mining.setClickable(false);
+		      	btn.setText(R.string.state_button_onstart);
+		      	ed_uri.setEnabled(false);
+		      	ed_uri.setClickable(false);
+		      	ed_user.setEnabled(false);
+		      	ed_user.setClickable(false);
+		      	ed_pass.setEnabled(false);
+		      	btn_mining.setClickable(false);
 						MainActivity.this.startMining();
 						break;
 					case 2: //after start
-						TransitionManager.go(stopS, mtransition);
+		      	btn.setText(R.string.state_button_stop);
+						btn_mining.setEnabled(true);
+		      	btn_mining.setClickable(true);
+		      	btn_mining.setOnClickListener(new View.OnClickListener() {
+				        @Override
+				        public void onClick(View v) {
+				        		sendMessage(obtainMessage(3));
+				        }
+				    });
 						break;
 		      case 3: //request stop
-						TransitionManager.go(onstopS, mtransition);
+		      	btn.setText(R.string.state_button_onstop);
+						btn_mining.setEnabled(false);
+		      	btn_mining.setClickable(false);
 						MainActivity.this.stopMining();
 						break;
 					case 4: //after stop
-						TransitionManager.go(startS, mtransition);
+		      	btn_mining.setText(R.string.state_button_start);
+						btn_mining.setEnabled(true);
+		      	btn_mining.setClickable(true);
+		      	btn_mining.setOnClickListener(new View.OnClickListener() {
+				        @Override
+				        public void onClick(View v) {
+				        		sendMessage(obtainMessage(1));
+				        }
+				    });
+		      	ed_uri.setEnabled(true);
+		      	ed_uri.setClickable(true);
+		      	ed_user.setEnabled(true);
+		      	ed_user.setClickable(true);
+		      	ed_pass.setEnabled(true);
+		      	ed_pass.setClickable(true);
 						break;
 					case 9: //console tag
 		        console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
@@ -74,20 +98,12 @@ public class MainActivity extends Activity {
 				}
 			}
     };
+    mHandler.sendMessage(mHandler.obtainMessage(4));
   }
-  public void startMining(View v) {
-  	receiveMessage(1,"");
-  }
-  public void stopMining(View v) {
-  	receiveMessage(3,"");
-  }
+  //used to call from Native
   private void receiveMessage(int flag, String msg) {
   	mHandler.removeCallbacksAndMessages(flag);
-  	Message m = mHandler.obtainMessage();
-  	m.what = flag;
-  	if (msg != null)
-  		m.obj = msg;
-  	mHandler.sendMessage(m);
+  	mHandler.sendMessage(mHandler.obtainMessage(flag,msg));
   }
   private native void startMining();
   private native void stopMining();
