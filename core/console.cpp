@@ -5,8 +5,9 @@
 #include <ctime>
 #include <cstring>
 #include <string>
+#include <mutex>
 
-#define MAX_MSG_SIZE 32767
+#define MAX_MSG_SIZE 16383
 
 char *htmlMsg;
 char *endHtmlMsg;
@@ -19,6 +20,7 @@ const char *color5 = "ff0000";
 const char *frontKey1 = "'>";
 const char *endKey = "</font><br>";
 
+std::mutex mutex;
 std::function<void(const char *, const unsigned int)> receiveMsg;
 
 void console::initialize(std::function<void(const char *, const unsigned int)> f) {
@@ -29,6 +31,14 @@ void console::initialize(std::function<void(const char *, const unsigned int)> f
     *endHtmlMsg = '\0';
 }
 void console::write(const unsigned int &lv, const char *msg, const unsigned int length) {
+		if (length > 8192) {
+				unsigned int hLength = length/2;
+				unsigned int nLength = length - hLength;//to prove when length is odd
+				write(lv,msg,hLength);
+				write(lv,msg+hLength,nLength);
+				return;
+		}
+		mutex.lock();
     memmove(htmlMsg + length + 43, htmlMsg, MAX_MSG_SIZE - length - 43);
     char *modif = htmlMsg;
     memcpy(modif, frontKey, 14);
@@ -61,16 +71,17 @@ void console::write(const unsigned int &lv, const char *msg, const unsigned int 
     memcpy((modif += length), endKey, 11);
     modif += 11;
     //check if html format was incomplete
-    char *tF = endHtmlMsg - 11;
+    char *tF = endHtmlMsg - 7;
     unsigned int lastLength = 43 + length;
     while (--tF > modif) {
-        if (memcmp(tF, endKey, 11) == 0) {
-            tF += 11;
+        if (memcmp(tF, endKey, 7) == 0) {
+            tF += 7;
             memset(tF, ' ', endHtmlMsg - tF);
             lastLength = tF - htmlMsg;
             break;
         }
     }
+    mutex.unlock();
     if (receiveMsg)
         receiveMsg(htmlMsg, lastLength);
 }

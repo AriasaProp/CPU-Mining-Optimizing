@@ -12,18 +12,14 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		JavaVM *vm;
 		env->GetJavaVM(&vm);
 		initializedOnce = true;
-		jclass cls = env->GetObjectClass(o);
-	  receiveMsgId = env->GetMethodID(cls,"receiveMessage", "(ILjava/lang/String;)V");
-		console::initialize([&vm,&o](const char *msg, const unsigned int length){
+		console::initialize([vm,&o](const char *msg, const unsigned int length){
 			JNIEnv *n;
 			vm->AttachCurrentThread(&n, 0);
-			//vm->GetEnv((void**)&n, 0);
 			char tmsg[length+1];
 			memcpy(tmsg, msg, length);
 			tmsg[length] = '\0';
-			jint p1 = 9;
 			jstring p2 = n->NewStringUTF(tmsg);
-			n->CallVoidMethod(o, receiveMsgId, p1, p2);
+			n->CallVoidMethod(o, receiveMsgId, 9, p2);
 			vm->DetachCurrentThread();
 		});
 		
@@ -40,8 +36,8 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
   JNIEnv* env;
   if (vm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK)
       return JNI_ERR;
-  //jclass mainClass = env->FindClass("com/ariasaproject/cpuminingopt/MainActivity");
-	//initialize static variable
+  jclass cls = env->FindClass("com/ariasaproject/cpuminingopt/MainActivity");
+  receiveMsgId = env->GetMethodID(cls,"receiveMessage", "(ILjava/lang/String;)V");
   return JNI_VERSION_1_6;
 }
 
