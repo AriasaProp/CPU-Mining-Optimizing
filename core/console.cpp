@@ -5,11 +5,10 @@
 #include <ctime>
 #include <cstring>
 #include <string>
-#include <mutex>
 
 #define MAX_MSG_SIZE 16383
 
-char *htmlMsg;
+char htmlMsg[MAX_MSG_SIZE + 1];
 char *endHtmlMsg;
 const char *frontKey = "<font color='#";
 const char *color1 = "808080";
@@ -20,12 +19,7 @@ const char *color5 = "ff0000";
 const char *frontKey1 = "'>";
 const char *endKey = "</font><br>";
 
-std::mutex mutex;
-std::function<void(const char *, const unsigned int)> receiveMsg;
-
-void console::initialize(std::function<void(const char *, const unsigned int)> f) {
-    receiveMsg = f;
-    htmlMsg = new char[MAX_MSG_SIZE + 1];
+void console::initialize() {
     memset(htmlMsg, ' ', MAX_MSG_SIZE);
     endHtmlMsg = htmlMsg + MAX_MSG_SIZE;
     *endHtmlMsg = '\0';
@@ -38,7 +32,7 @@ void console::write(const unsigned int &lv, const char *msg, const unsigned int 
 				write(lv,msg+hLength,nLength);
 				return;
 		}
-		mutex.lock();
+		console_mtx.lock();
     memmove(htmlMsg + length + 43, htmlMsg, MAX_MSG_SIZE - length - 43);
     char *modif = htmlMsg;
     memcpy(modif, frontKey, 14);
@@ -81,14 +75,12 @@ void console::write(const unsigned int &lv, const char *msg, const unsigned int 
             break;
         }
     }
-    mutex.unlock();
+    console_mtx.unlock();
     if (receiveMsg)
         receiveMsg(htmlMsg, lastLength);
 }
 
 void console::destroy() {
-    delete[] htmlMsg;
-    htmlMsg = nullptr;
     endHtmlMsg = nullptr;
 }
 
