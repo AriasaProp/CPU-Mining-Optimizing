@@ -6,31 +6,28 @@
 #include <chrono>
 #include <mutex>
 
+#define MININGREQ_CREATE 1
+#define MININGREQ_DESTROY 2
+
 std::thread mining_thread;
 std::mutex mining_mtx;
+unsigned int mining_req;
 
-bool mining_running = false;
 std::function<void()> afterThat; //use to safe function defined from start and stop
 void miningThread();
 
 void core::startMining(std::function<void()> a) {
-	if(mining_thread.joinable())
-		return;
-	//you should call stopMining first
 	mining_mtx.lock();
-	mining_running = false;
 	afterThat = a;
 	mining_mtx.unlock();
 	mining_thread = std::thread(miningThread);
+	mining_thread.detach();
 }
 
 void core::stopMining(std::function<void()> a) {
-	if(!mining_thread.joinable())
-		return;
-	//you should call startMining first
 	mining_mtx.lock();
+	mining_req |= MININGREQ_DESTROY;
 	afterThat = a;
-	mining_running = false;
 	mining_mtx.unlock();
 }
 
@@ -40,18 +37,26 @@ void miningThread() {
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	console::write(1, "Logged App", 10);
 	mining_mtx.lock();
-	mining_running = true;
 	if(afterThat) {
 		afterThat();
 		afterThat = NULL;
 	}
 	mining_mtx.unlock();
-
-	do {
+	bool running = true;
+	while (running) {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//do nothing right now
 		
-	} while (mining_running);
+		mining_mtx.lock();
+		if (mining_req) {
+			
+			if (mining_req&MININGREQ_DESTROY) {
+				running = false;
+			}
+			mining_req = 0;
+		}
+		mining_mtx.unlock();
+	}
 	//this for cleaning like socket close etc.
 	console::write(1, "Unlogging App ....", 18);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
