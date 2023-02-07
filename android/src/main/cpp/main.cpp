@@ -31,7 +31,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		mainVM->DetachCurrentThread();
 	});
 }
-JNI_Call(void, stopMining) (JNIEnv *env, jobject) {
+JNI_Call(void, stopMining) (JNIEnv *, jobject) {
 	core::stopMining([]{
 		JNIEnv *n;
 		mainVM->AttachCurrentThread(&n, 0);
