@@ -1,7 +1,6 @@
 #ifndef _AndroidMiningConnection_Included
 #define _AndroidMiningConnection_Included
 
-#include "connection/miningsocket.h"
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
