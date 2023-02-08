@@ -23,7 +23,7 @@ bool _hasConnection = false;
 bool _openConnection(const char *server, const unsigned int port) {
 	if (_hasConnection) _closeConnection();
 	if(socketFd < 0) {
-		if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 			console::write(4, "Failed to create socket");
 			return false;
 		}
@@ -49,7 +49,7 @@ bool _openConnection(const char *server, const unsigned int port) {
 bool _closeConnection() {
 	if(socketFd < 0 || !_hasConnection) return false;
 	
-	close(sockFd);
+	close(socketFd);
 	_hasConnection = false;
 	console::write(2, "Connection Closed");
 	return true;
