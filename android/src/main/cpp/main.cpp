@@ -4,6 +4,7 @@
 
 #include "core.h"
 #include "console.h"
+#include <cstring>
 
 bool initializedOnce = false;
 jmethodID receiveMsgId;
@@ -26,10 +27,10 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			n->CallVoidMethod(mainobj, receiveMsgId, 4, 0);
 			mainVM->DetachCurrentThread();
 		};
-		bool(*openConnection)(const char *, const unsigned int) = []bool(){
+		bool(*openConnection)(const char *, const unsigned int) = [](const char *, const unsigned int)->bool{
 			return false;
 		};
-		bool(*closeConnection)() = []bool(){
+		bool(*closeConnection)() = []()->bool{
 			return false;
 		};
 		void(*consoleMessage)(const char *, const unsigned int) = [](const char *msg, const unsigned int length){
