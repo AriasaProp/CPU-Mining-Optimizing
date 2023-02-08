@@ -19,13 +19,13 @@ namespace function_set {
 #include <unistd.h>
 
 //define socket
-int socketFd;
+int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
 bool _openConnection(const char *server, const unsigned int port) {
 	if (_hasConnection) _closeConnection();
 	if(socketFd < 0) {
-		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			console::write(4, "Failed to create socket");
 			console::write(4, strerror(errno));
 			return false;
