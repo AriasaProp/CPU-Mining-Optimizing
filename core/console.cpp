@@ -1,4 +1,5 @@
 #include "console.h"
+#include "pass_function_set.h"
 
 #include <cstdint>
 #include <cstdio>
@@ -7,13 +8,13 @@
 #include <string>
 #include <mutex>
 
+
 #define MAX_MSG_SIZE 16383
 
 std::mutex console_mtx;
-std::function<void(const char *, const unsigned int)> receiveMsg;
 
 char htmlMsg[MAX_MSG_SIZE + 1];
-char *endHtmlMsg;
+char *endHtmlMsg = htmlMsg + MAX_MSG_SIZE;
 const char *frontKey = "<font color='#";
 const char *color1 = "808080";
 const char *color2 = "0000ff";
@@ -23,10 +24,8 @@ const char *color5 = "ff0000";
 const char *frontKey1 = "'>";
 const char *endKey = "</font><br>";
 
-void console::initialize(std::function<void(const char *, const unsigned int)> f) {
-		receiveMsg = f;
+void console::initialize() {
     memset(htmlMsg, ' ', MAX_MSG_SIZE);
-    endHtmlMsg = htmlMsg + MAX_MSG_SIZE;
     *endHtmlMsg = '\0';
 }
 void console::write(const unsigned int &lv, const char *msg, const unsigned int length) {
@@ -81,8 +80,7 @@ void console::write(const unsigned int &lv, const char *msg, const unsigned int 
         }
     }
     console_mtx.unlock();
-    if (receiveMsg)
-        receiveMsg(htmlMsg, lastLength);
+    function_set::consoleMessage(htmlMsg, lastLength);
 }
 
 void console::destroy() {

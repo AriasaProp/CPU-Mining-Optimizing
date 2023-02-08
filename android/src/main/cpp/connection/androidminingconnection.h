@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-struct AndroidSocket: public MiningSocket {
+struct AndroidSocket {
 public:
 	bool ready;
 	bool hasConnection;
@@ -19,10 +19,10 @@ public:
 	sockaddr_in server_addr;
 	AndroidSocket();
 	~AndroidSocket();
-	bool openConnection(const char*, unsigned int&) override;
-	bool write(const char*) override;
-	char *read() override;
-	bool closeConnection() override;
+	bool openConnection(const char*, unsigned int&);
+	bool write(const char*);
+	char *read();
+	bool closeConnection();
 };
 
 #endif //_AndroidMiningConnection_Included
