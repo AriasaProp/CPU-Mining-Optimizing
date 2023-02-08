@@ -41,7 +41,7 @@ bool _openConnection(const char *server, const unsigned int port) {
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, " then ");
 		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, '\0');
+		strcat(_tempMsg, ".\0");
 		console::write(4, _tempMsg);
 		return false;
 	}
