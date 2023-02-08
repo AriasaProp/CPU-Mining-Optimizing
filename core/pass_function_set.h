@@ -7,7 +7,7 @@ namespace function_set {
 	extern void (*afterStop) ();
 	//socket connection
 	//return false cause error or has connection 
-	extern void (*openConnection) (const char*,const unsigned int);
+	extern bool (*openConnection) (const char*,const unsigned int);
 	//return false cause error or no connection 
 	extern bool (*closeConnection) ();
 	//console receiver msg

@@ -26,10 +26,10 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			n->CallVoidMethod(mainobj, receiveMsgId, 4, 0);
 			mainVM->DetachCurrentThread();
 		};
-		bool(*openConnection)(const char *, const unsigned int) = []{
+		bool(*openConnection)(const char *, const unsigned int) = []bool(){
 			return false;
 		};
-		bool(*closeConnection)() = []{
+		bool(*closeConnection)() = []bool(){
 			return false;
 		};
 		void(*consoleMessage)(const char *, const unsigned int) = [](const char *msg, const unsigned int length){
