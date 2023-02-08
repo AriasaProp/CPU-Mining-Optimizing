@@ -1,5 +1,5 @@
 #include "core.h"
-#include "../console.h"
+#include "console.h"
 
 #include <iostream>
 #include <thread>
