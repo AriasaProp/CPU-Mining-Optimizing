@@ -10,6 +10,7 @@ namespace function_set {
 }
 #include "console.h"
 #include <cstring>
+#include <cerrno>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -26,6 +27,7 @@ bool _openConnection(const char *server, const unsigned int port) {
 	if(socketFd < 0) {
 		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 			console::write(4, "Failed to create socket");
+			console::write(4, strerror(errno));
 			return false;
 		}
 		console::write(2, "Created socket");
@@ -35,6 +37,7 @@ bool _openConnection(const char *server, const unsigned int port) {
   server_addr.sin_port = htons(port);
 	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
 		console::write(4, "Failed to connect server");
+		console::write(4, strerror(errno));
 		return false;
 	}
 	console::write(2, "Connected to server");
