@@ -33,17 +33,19 @@ void core::stopMining() {
 void miningThread() {
 	//create state
 	console::write(1, "Logging App ....");
-	std::this_thread::sleep_for(std::chrono::seconds(3));
-	console::write(1, "Logged App");
-	mining_mtx.lock();
-	mining_mtx.unlock();
-	
-	bool running = function_set::openConnection("us2.litecoinpool.org",8080);
+	//try connect to server
+	bool running = true;
+	unsigned int trying = 0;
+	while (!(running = function_set::openConnection("us2.litecoinpool.org", 8080)) && (trying++ < 3)){
+		console::write(4, "Failed Connect!");
+		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
+		console::write(0, "Try conect again");
+	}
 	if (running) {
 		function_set::afterStart();
 	}
 	while (running) {
-		std::this_thread::sleep_for(std::chrono::seconds(1)); 
+		std::this_thread::sleep_for(std::chrono::seconds(3)); 
 		//do nothing right now
 		
 		mining_mtx.lock();
@@ -56,12 +58,12 @@ void miningThread() {
 		}
 		mining_mtx.unlock();
 	}
-	//this for cleaning like socket close etc.
-	console::write(1, "Unlogging App ....");
-	std::this_thread::sleep_for(std::chrono::seconds(3));
+	//cleaning
 	console::write(1, "Unlogged App");
 	function_set::closeConnection();
 	function_set::afterStop();
+	/*
 	mining_mtx.lock();
 	mining_mtx.unlock();
+	*/
 }
