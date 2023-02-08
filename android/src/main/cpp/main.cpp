@@ -1,6 +1,17 @@
 #include <jni.h>
 
-#include "pass_function_set.h"
+namespace function_set {
+	//trigger mining
+	void (*afterStart) ();
+	void (*afterStop) ();
+	//socket connection
+	//return false cause error or has connection 
+	bool (*openConnection) (const char*,const unsigned int);
+	//return false cause error or no connection 
+	bool (*closeConnection) ();
+	//console receiver msg
+	void (*consoleMessage) (const char*,const unsigned int);
+}
 
 #include "core.h"
 #include "console.h"
