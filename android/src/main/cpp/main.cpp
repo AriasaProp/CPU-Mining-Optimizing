@@ -4,11 +4,6 @@ namespace function_set {
 	//trigger mining
 	void (*afterStart) ();
 	void (*afterStop) ();
-	//socket connection
-	//return false cause error or has connection 
-	bool (*openConnection) (const char*,const unsigned int);
-	//return false cause error or no connection 
-	bool (*closeConnection) ();
 	//console receiver msg
 	void (*consoleMessage) (const char*,const unsigned int);
 }
@@ -16,6 +11,13 @@ namespace function_set {
 #include "core.h"
 #include "console.h"
 #include <cstring>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
 
 bool initializedOnce = false;
 jmethodID receiveMsgId;
@@ -38,12 +40,6 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 			n->CallVoidMethod(mainobj, receiveMsgId, 4, 0);
 			mainVM->DetachCurrentThread();
 		};
-		bool(*openConnection)(const char *, const unsigned int) = [](const char *, const unsigned int)->bool{
-			return false;
-		};
-		bool(*closeConnection)() = []()->bool{
-			return false;
-		};
 		void(*consoleMessage)(const char *, const unsigned int) = [](const char *msg, const unsigned int length){
 			JNIEnv *n;
 			mainVM->AttachCurrentThread(&n, 0);
@@ -56,8 +52,6 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o) {
 		};
 		function_set::afterStart = afterStart;
 		function_set::afterStop = afterStop;
-		function_set::openConnection = openConnection;
-		function_set::closeConnection = closeConnection;
 		function_set::consoleMessage = consoleMessage;
 		initializedOnce = true;
 	}

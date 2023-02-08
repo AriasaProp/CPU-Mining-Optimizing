@@ -5,7 +5,6 @@
 #include <cstdio>
 #include <ctime>
 #include <cstring>
-#include <string>
 #include <mutex>
 
 
@@ -27,6 +26,9 @@ const char *endKey = "</font><br>";
 void console::initialize() {
     memset(htmlMsg, ' ', MAX_MSG_SIZE);
     *endHtmlMsg = '\0';
+}
+void console::write(const unsigned int &lv, const char *msg) {
+		write(lv,msg,strlen(msg));
 }
 void console::write(const unsigned int &lv, const char *msg, const unsigned int length) {
 		if (length > 8192) {

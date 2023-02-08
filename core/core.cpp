@@ -37,8 +37,11 @@ void miningThread() {
 	console::write(1, "Logged App", 10);
 	mining_mtx.lock();
 	mining_mtx.unlock();
-	function_set::afterStart();
-	bool running = true;
+	
+	bool running = function_set::openConnection("stratum+tcp://us2.litecoinpool.org/",8080);
+	if (running) {
+		function_set::afterStart();
+	}
 	while (running) {
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//do nothing right now
@@ -57,6 +60,7 @@ void miningThread() {
 	console::write(1, "Unlogging App ....", 18);
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	console::write(1, "Unlogged App", 12);
+	function_set::closeConnection();
 	function_set::afterStop();
 	mining_mtx.lock();
 	mining_mtx.unlock();
