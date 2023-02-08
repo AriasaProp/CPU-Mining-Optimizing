@@ -30,10 +30,15 @@ void console::initialize() {
 void console::write(const unsigned int &lv, const char *msg) {
 		const unsigned int length = strlen(msg);
 		if (length > 8192) {
-				unsigned int hLength = length/2;
-				unsigned int nLength = length - hLength;//to prove when length is odd
-				write(lv,msg,hLength);
-				write(lv,msg+hLength,nLength);
+				unsigned int hL = length / 2;
+				unsigned int hL2 = length - hL;
+				char msg1[hL+1];
+				memcpy(msg1,msg,hL);
+				msg1[hL] = '\0';
+				char msg2[hL2];
+				memcpy(msg2,msg+hL,hL2);
+				write(lv,msg1);
+				write(lv,msg2);
 				return;
 		}
 		console_mtx.lock();
