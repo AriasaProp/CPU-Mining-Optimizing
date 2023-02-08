@@ -14,6 +14,7 @@ namespace function_set {
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 
 //define socket
@@ -31,7 +32,6 @@ bool _openConnection(const char *server, const unsigned int port) {
 	}
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = inet_addr(server);
-  memcpy(&, srv->h_addr, srv->h_length);
   server_addr.sin_port = htons(port);
 	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
 		console::write(4, "Failed to connect server");
