@@ -35,9 +35,14 @@ bool _openConnection(const char *server, const unsigned int port) {
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = inet_addr(server);
   server_addr.sin_port = htons(port);
-	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-		console::write(4, "Failed to connect server");
-		console::write(4, strerror(errno));
+	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) == -1) {
+		char _tempMsg[512];
+		strcpy(_tempMsg, "Error connect server cause: ");
+		strcat(_tempMsg, strerror(errno));
+		strcat(_tempMsg, " then ");
+		strcat(_tempMsg, strerror(errno));
+		strcat(_tempMsg, '\0');
+		console::write(4, _tempMsg);
 		return false;
 	}
 	console::write(2, "Connected to server");
