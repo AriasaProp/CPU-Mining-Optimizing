@@ -29,14 +29,9 @@ bool _openConnection(const char *server, const unsigned int port) {
 		}
 		console::write(2, "Created socket");
 	}
-	hostent *srv = gethostbyname(server);
-  if (!srv) {
-		console::write(4, "Failed to resolve hostname");
-    return false;
-  }
-  memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
-  memcpy(&server_addr.sin_addr.s_addr, srv->h_addr, srv->h_length);
+  server_addr.sin_addr.s_addr = inet_addr(server);
+  memcpy(&, srv->h_addr, srv->h_length);
   server_addr.sin_port = htons(port);
 	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
 		console::write(4, "Failed to connect server");

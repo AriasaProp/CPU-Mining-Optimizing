@@ -38,7 +38,7 @@ void miningThread() {
 	mining_mtx.lock();
 	mining_mtx.unlock();
 	
-	bool running = function_set::openConnection("stratum+tcp://us2.litecoinpool.org/",8080);
+	bool running = function_set::openConnection("us2.litecoinpool.org",8080);
 	if (running) {
 		function_set::afterStart();
 	}
