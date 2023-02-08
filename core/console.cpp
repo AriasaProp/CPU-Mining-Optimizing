@@ -28,9 +28,7 @@ void console::initialize() {
     *endHtmlMsg = '\0';
 }
 void console::write(const unsigned int &lv, const char *msg) {
-		write(lv,msg,strlen(msg));
-}
-void console::write(const unsigned int &lv, const char *msg, const unsigned int length) {
+		const unsigned int length = strlen(msg);
 		if (length > 8192) {
 				unsigned int hLength = length/2;
 				unsigned int nLength = length - hLength;//to prove when length is odd

@@ -32,9 +32,9 @@ void core::stopMining() {
 
 void miningThread() {
 	//create state
-	console::write(1, "Logging App ....", 16);
+	console::write(1, "Logging App ....");
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	console::write(1, "Logged App", 10);
+	console::write(1, "Logged App");
 	mining_mtx.lock();
 	mining_mtx.unlock();
 	
@@ -57,9 +57,9 @@ void miningThread() {
 		mining_mtx.unlock();
 	}
 	//this for cleaning like socket close etc.
-	console::write(1, "Unlogging App ....", 18);
+	console::write(1, "Unlogging App ....");
 	std::this_thread::sleep_for(std::chrono::seconds(3));
-	console::write(1, "Unlogged App", 12);
+	console::write(1, "Unlogged App");
 	function_set::closeConnection();
 	function_set::afterStop();
 	mining_mtx.lock();

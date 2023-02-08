@@ -3,7 +3,7 @@
 
 namespace console {
 	void initialize();
-	void write(const unsigned int&, const char *, const unsigned int);
+	void write(const unsigned int&, const char *);
 	void destroy();
 }
 
