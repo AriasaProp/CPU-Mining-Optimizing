@@ -81,18 +81,15 @@ bool _openConnection(const char *server, const unsigned int port) {
 char recvBuffer[2048];
 const char *_recvConnection() {
 	if (!_hasConnection) return "No connection already!";
-	for(unsigned int i = 0; i < 3; i++) {
-		int length = recv(socketFd, recvBuffer, 2048, MSG_WAITALL);
-		if (length > 0) {
-			recvBuffer[length] = '\0';
-			return recvBuffer;
-		} else if(length < 0) {
-			strcpy(_tempMsg, "Recv: ");
-			strcat(_tempMsg, strerror(errno));
-			strcat(_tempMsg, ".\0");
-			console::write(4, _tempMsg);
-		}
-		sleep(3); //sleep for 3 seconds
+	int length = recv(socketFd, recvBuffer, 2048, MSG_WAITALL);
+	if (length > 0) {
+		recvBuffer[length] = '\0';
+		return recvBuffer;
+	} else if(length < 0) {
+		strcpy(_tempMsg, "Recv: ");
+		strcat(_tempMsg, strerror(errno));
+		strcat(_tempMsg, ".\0");
+		console::write(4, _tempMsg);
 	}
 	return "No such message!";
 }
