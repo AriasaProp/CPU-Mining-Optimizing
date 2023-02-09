@@ -84,8 +84,8 @@ const char *_recvConnection() {
 	for(unsigned int i = 0; i < 3; i++) {
 		unsigned int length = recv(socketFd, recvBuffer, 2048, 0);
 		if (length) {
-			recv[length] = '\0';
-			return recv;
+			recvBuffer[length] = '\0';
+			return recvBuffer;
 		}
 		strcpy(_tempMsg, "Recv: ");
 		strcat(_tempMsg, strerror(errno));
