@@ -1,5 +1,7 @@
 
 bool _openConnection(const char *, const unsigned int); 
+const char *_recvConnection();
+bool _sendMessage(const char *);
 bool _closeConnection();
 
 namespace function_set {
@@ -24,7 +26,7 @@ namespace function_set {
 #include <unistd.h>
 
 //define socket
-char *const _tempMsg[256];
+char *_tempMsg[256];
 int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
