@@ -46,9 +46,9 @@ bool _openConnection(const char *server, const unsigned int port) {
   //server_addr.sin_addr.s_addr = inet_addr(server);
   server_addr.sin_port = htons(port);
   //made ip address from host name
-  struct hostent *he;
+  struct hostent *he = gethostbyname(server);
   struct in_addr **addr_list;
-  if (!(he = gethostbyname(server))) {
+  if (he == NULL) {
   	strcpy(_tempMsg, "Hostname : ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");

@@ -37,7 +37,8 @@ void miningThread() {
 	//try connect to server
 	bool running = true;
 	unsigned int trying = 0;
-	while (!(running = function_set::openConnection("https://catfact.ninja/fact", 8080)) && (trying++ < 3)){
+	//https://catfact.ninja/fact
+	while (!(running = function_set::openConnection("us2.litecoinpool.org", 8080)) && (trying++ < 3)){
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
