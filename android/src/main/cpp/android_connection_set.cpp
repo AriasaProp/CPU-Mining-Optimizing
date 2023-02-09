@@ -94,13 +94,16 @@ const char *_recvConnection() {
 	return "No such message!";
 }
 bool _sendMessage(const char *msg) {
-	if(!_hasConnection) return false;
-	if (send(socketFd, msg, strlen(msg), 0) < 0) {
-		strcpy(_tempMsg, "Send: ");
-		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, ".\0");
-		console::write(4, _tempMsg);
-    return false;
+	if (!_hasConnection) return false;
+	for (int sent = 0, total = strlen(msg), n; sent < total; sent += n) {
+    n = send(socketFd, msg + sent, total - sent, 0);
+    if (n == -1) {
+    	strcpy(_tempMsg, "Send: ");
+			strcat(_tempMsg, strerror(errno));
+			strcat(_tempMsg, ".\0");
+			console::write(4, _tempMsg);
+	    return false;
+    }
 	}
   return true;
 }

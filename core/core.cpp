@@ -44,18 +44,18 @@ void miningThread() {
 	}
 	if (running) {
 		char sendToServer[2048];
-		strcpy(sendToServer, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
-		function_set::sendMessage(sendToServer);
-		strcpy(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"Ariasa.test\",\"1234\"]}\0");
+		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},\n");
+		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"Ariasa.test\",\"1234\"]}}");
 		function_set::sendMessage(sendToServer);
 		function_set::afterStart();
 	}
 	while (running) {
-		//receive Mesage
-		
 		console::write(0, function_set::recvConnection());
 		//do nothing right now
 		
+		
+		std::this_thread::sleep_for(std::chrono::seconds(1)); 
+		//receive Mesage
 		
 		mining_mtx.lock();
 		if (mining_req) {
