@@ -60,7 +60,7 @@ bool _openConnection(const char *server, const unsigned int port) {
   for (unsigned int i = 0; addr_list[i] != NULL; i++) {
     ipAddress = inet_ntoa(*addr_list[i]);
   }
-  if (inet_pton(AF_INET, ipAddress, &server.sin_addr) <= 0) {
+  if (inet_pton(AF_INET, ipAddress, (const char *)&server.sin_addr) <= 0) {
     strcpy(_tempMsg, "Servername : ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");
@@ -97,7 +97,7 @@ const char *_recvConnection() {
 }
 bool _sendMessage(const char *msg) {
 	if(!_hasConnection) return false;
-	if (send(sock, msg, strlen(msg), 0) < 0) {
+	if (send(socketFd, msg, strlen(msg), 0) < 0) {
 		strcpy(_tempMsg, "Send: ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");
