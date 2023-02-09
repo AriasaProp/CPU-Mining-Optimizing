@@ -60,7 +60,7 @@ bool _openConnection(const char *server, const unsigned int port) {
   for (unsigned int i = 0; addr_list[i] != NULL; i++) {
     ipAddress = inet_ntoa(*addr_list[i]);
   }
-  if (inet_pton(AF_INET, ipAddress, (const char *)&server.sin_addr) <= 0) {
+  if (inet_pton(AF_INET, ipAddress, (void*)&server.sin_addr) <= 0) {
     strcpy(_tempMsg, "Servername : ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");
