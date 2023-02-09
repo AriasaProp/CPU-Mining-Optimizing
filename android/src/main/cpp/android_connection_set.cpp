@@ -26,7 +26,7 @@ namespace function_set {
 #include <unistd.h>
 
 //define socket
-char *_tempMsg[256];
+char _tempMsg[256];
 int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
