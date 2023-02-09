@@ -82,10 +82,12 @@ char recvBuffer[2048];
 const char *_recvConnection() {
 	if (!_hasConnection) return "No connection already!";
 	for(unsigned int i = 0; i < 3; i++) {
-		unsigned int length = recv(socketFd, recvBuffer, 2048, 0);
-		if (length) {
+		unsigned int length = recv(socketFd, recvBuffer, 2048, MSG_WAITALL);
+		if (length > 0) {
 			recvBuffer[length] = '\0';
 			return recvBuffer;
+		} else (length == 0) {
+			return "No suchs message!";
 		}
 		strcpy(_tempMsg, "Recv: ");
 		strcat(_tempMsg, strerror(errno));
