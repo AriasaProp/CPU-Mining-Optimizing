@@ -86,13 +86,12 @@ const char *_recvConnection() {
 		if (length > 0) {
 			recvBuffer[length] = '\0';
 			return recvBuffer;
-		} else (length == 0) {
-			return "No suchs message!";
+		} else if(length < 0) {
+			strcpy(_tempMsg, "Recv: ");
+			strcat(_tempMsg, strerror(errno));
+			strcat(_tempMsg, ".\0");
+			console::write(4, _tempMsg);
 		}
-		strcpy(_tempMsg, "Recv: ");
-		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, ".\0");
-		console::write(4, _tempMsg);
 		sleep(3); //sleep for 3 seconds
 	}
 	return "No such message!";
