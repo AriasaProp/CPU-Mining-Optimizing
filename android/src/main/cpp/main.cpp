@@ -57,7 +57,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
 	}
 	
   if (env->GetArrayLength(d) < 3){
-  	function_set::afterStart();
+  	function_set::afterStop();
   	return;
   }
   const char *d_a[3];

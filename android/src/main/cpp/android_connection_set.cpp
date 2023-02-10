@@ -31,6 +31,10 @@ int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
 bool _openConnection(const char *server, const unsigned int port) {
+	if (!server) {
+		console::write(4, "server Null!");
+		return false;
+	}
 	if (_hasConnection) _closeConnection();
 	if(socketFd < 0) {
 		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {

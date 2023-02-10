@@ -62,8 +62,8 @@ void miningThread() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
+	char sendToServer[1024];
 	if (running) {
-		char sendToServer[2048];
 		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},");
 		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
 		strcat(sendToServer, mining_user);
@@ -76,13 +76,10 @@ void miningThread() {
 	while (running) {
 		console::write(0, function_set::recvConnection());
 		//do nothing right now
-		
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//receive Mesage
-		
 		mining_mtx.lock();
 		if (mining_req) {
-			
 			if (mining_req&MININGREQ_DESTROY) {
 				running = false;
 			}
