@@ -37,7 +37,7 @@ bool _openConnection(const char *server, const unsigned int port) {
 	}
 	if (_hasConnection) _closeConnection();
 	if(socketFd < 0) {
-		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		if ((socketFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
 			strcpy(_tempMsg, "Error create socket: ");
 			strcat(_tempMsg, strerror(errno));
 			strcat(_tempMsg, ".\0");
@@ -82,7 +82,7 @@ bool _openConnection(const char *server, const unsigned int port) {
 	_hasConnection = true;
 	return true;
 }
-char recvBuffer[2048];
+char recvBuffer[2049];
 const char *_recvConnection() {
 	if (!_hasConnection) return "No connection already!";
 	int length = recv(socketFd, recvBuffer, 2048, MSG_WAITALL);
@@ -95,7 +95,7 @@ const char *_recvConnection() {
 		strcat(_tempMsg, ".\0");
 		console::write(4, _tempMsg);
 	}
-	return "No such message!";
+	return " ";
 }
 bool _sendMessage(const char *msg) {
 	if (!_hasConnection) return false;

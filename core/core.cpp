@@ -75,21 +75,37 @@ void miningThread() {
 		console::write(0, _msgtemp);
 	}
 	console::write(0, "Unlogged App");
+	trying = 0;
 	while (!(running = function_set::openConnection(mining_host, 8080)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
 	char sendToServer[1024];
 	if (running) {
-		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},");
-		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
+		strcpy(sendToServer, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
+		function_set::sendMessage(sendToServer);
+		const char *recvMsgConn;
+		while ( ((recvMsgConn = function_set::recvConnection()) == " ") && (++trying < 3))
+			console::write(0, "No message");
+		if (trying >= 3) {
+			running = false;
+		}
+	}
+	if (running) {
+		strcpy(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
 		strcat(sendToServer, mining_user);
 		strcat(sendToServer, "\",\"");
 		strcat(sendToServer, mining_pass);
-		strcat(sendToServer, "\"]},");
+		strcat(sendToServer, "\"]}\0");
 		function_set::sendMessage(sendToServer);
-		function_set::afterStart();
+		while ( ((recvMsgConn = function_set::recvConnection()) == " ") && (++trying < 3))
+			console::write(0, "No message");
+		if (trying >= 3) {
+			running = false;
+		}
 	}
+	if (running)
+		function_set::afterStart();
 	while (running) {
 		console::write(0, function_set::recvConnection());
 		//do nothing right now
