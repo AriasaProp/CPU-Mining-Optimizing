@@ -81,11 +81,11 @@ void miningThread() {
 		console::write(0, "Try conect again");
 	}
 	char sendToServer[1024];
+	const char *recvMsgConn;
 	if (running) {
 		strcpy(sendToServer, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
 		function_set::sendMessage(sendToServer);
-		const char *recvMsgConn;
-		while ( ((recvMsgConn = function_set::recvConnection()) == " ") && (++trying < 3))
+		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
 			console::write(0, "No message");
 		if (trying >= 3) {
 			running = false;
@@ -98,7 +98,7 @@ void miningThread() {
 		strcat(sendToServer, mining_pass);
 		strcat(sendToServer, "\"]}\0");
 		function_set::sendMessage(sendToServer);
-		while ( ((recvMsgConn = function_set::recvConnection()) == " ") && (++trying < 3))
+		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
 			console::write(0, "No message");
 		if (trying >= 3) {
 			running = false;
