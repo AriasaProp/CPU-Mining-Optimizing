@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <condition_variable>
 #include <cstring>
 
 #include "pass_function_set.h"
@@ -14,21 +15,40 @@
 
 std::thread mining_thread;
 std::mutex mining_mtx;
+std::condition_variable mining_cv;
 unsigned int mining_req;
+char *mining_host;
+char *mining_user;
+char *mining_pass;
 
 void miningThread();
 
-void core::startMining() {
+void core::startMining(const char **data) {
 	mining_mtx.lock();
+	unsigned int l = strlen(data[0]);
+	mining_host = new char[l];
+	memcpy(mining_host, data[0], l);
+	l = strlen(data[1]);
+	mining_user = new char[l];
+	memcpy(mining_host, data[1], l);
+	l = strlen(data[2]);
+	mining_pass = new char[l];
+	memcpy(mining_pass, data[2], l);
 	mining_mtx.unlock();
 	mining_thread = std::thread(miningThread);
 	mining_thread.detach();
 }
 
 void core::stopMining() {
-	mining_mtx.lock();
+	std::lock_guard<std::mutex> lck(mining_mtx);
 	mining_req |= MININGREQ_DESTROY;
-	mining_mtx.unlock();
+	cv.wait(lck, []()->bool{return mining_req == 0;})
+	delete[] mining_host;
+	mining_host = nullptr;
+	delete[] mining_user;
+	mining_user = nullptr;
+	delete[] mining_pass;
+	mining_pass = nullptr;
 }
 //unsigned long countTowards = 0;
 void miningThread() {
@@ -38,21 +58,24 @@ void miningThread() {
 	bool running = true;
 	unsigned int trying = 0;
 	//https://catfact.ninja/fact
-	while (!(running = function_set::openConnection("us2.litecoinpool.org", 8080)) && (trying++ < 3)){
+	while (!(running = function_set::openConnection(mining_host, 8080)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
 	if (running) {
 		char sendToServer[2048];
-		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},\n");
-		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"Ariasa.test\",\"1234\"]}}");
+		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},");
+		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
+		strcat(sendToServer, mining_user);
+		strcat(sendToServer, "\",\"")
+		strcat(sendToServer, mining_pass);
+		strcat(sendToServer, "\"]},");
 		function_set::sendMessage(sendToServer);
 		function_set::afterStart();
 	}
 	while (running) {
 		console::write(0, function_set::recvConnection());
 		//do nothing right now
-		
 		
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		//receive Mesage
@@ -63,7 +86,9 @@ void miningThread() {
 			if (mining_req&MININGREQ_DESTROY) {
 				running = false;
 			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
 			mining_req = 0;
+			cv.notify_all();
 		}
 		mining_mtx.unlock();
 	}

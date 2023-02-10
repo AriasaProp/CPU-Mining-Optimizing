@@ -56,7 +56,11 @@ public class MainActivity extends Activity {
 		      	ed_user.setClickable(false);
 		      	ed_pass.setEnabled(false);
 		      	ed_pass.setClickable(false);
-						MainActivity.this.startMining();
+		      	String[] d = new String[3];
+		      	d[0] = ed_uri.getText().toString();
+		      	d[1] = ed_user.getText().toString();
+		      	d[2] = ed_pass.getText().toString();
+						MainActivity.this.startMining(d);
 						break;
 					case 2: //after start
 		      	btn_mining.setText(R.string.state_button_stop);
@@ -105,6 +109,6 @@ public class MainActivity extends Activity {
   	mHandler.removeCallbacksAndMessages(flag);
   	mHandler.sendMessage(mHandler.obtainMessage(flag,msg));
   }
-  private native void startMining();
+  private native void startMining(String[] datas);
   private native void stopMining();
 }
