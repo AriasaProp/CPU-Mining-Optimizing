@@ -63,9 +63,9 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
   jstring str0 = (jstring)env->GetObjectArrayElement(d, 0);
   const char *c_str0 = env->GetStringUTFChars(str0, 0);
   jstring str1 = (jstring)env->GetObjectArrayElement(d, 1);
-  const char *c_str1 = env->GetStringUTFChars(str1, 1);
+  const char *c_str1 = env->GetStringUTFChars(str1, 0);
   jstring str2 = (jstring)env->GetObjectArrayElement(d, 2);
-  const char *c_str2 = env->GetStringUTFChars(str2, 2);
+  const char *c_str2 = env->GetStringUTFChars(str2, 0);
 	core::startMining(c_str0, c_str1, c_str2);
   env->ReleaseStringUTFChars(str0, c_str0);
   env->ReleaseStringUTFChars(str1, c_str1);
