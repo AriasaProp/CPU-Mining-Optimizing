@@ -42,7 +42,7 @@ void core::startMining(const char **data) {
 void core::stopMining() {
 	std::lock_guard<std::mutex> lck(mining_mtx);
 	mining_req |= MININGREQ_DESTROY;
-	cv.wait(lck, []()->bool{return mining_req == 0;})
+	mining_cv.wait(lck, []()->bool{return mining_req == 0;})
 	delete[] mining_host;
 	mining_host = nullptr;
 	delete[] mining_user;
@@ -67,7 +67,7 @@ void miningThread() {
 		strcpy(sendToServer, "{{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []},");
 		strcat(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
 		strcat(sendToServer, mining_user);
-		strcat(sendToServer, "\",\"")
+		strcat(sendToServer, "\",\"");
 		strcat(sendToServer, mining_pass);
 		strcat(sendToServer, "\"]},");
 		function_set::sendMessage(sendToServer);
@@ -88,7 +88,7 @@ void miningThread() {
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
 			mining_req = 0;
-			cv.notify_all();
+			mining_cv.notify_all();
 		}
 		mining_mtx.unlock();
 	}
