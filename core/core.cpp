@@ -40,7 +40,7 @@ void core::startMining(const char **data) {
 }
 
 void core::stopMining() {
-	std::lock_guard<std::mutex> lck(mining_mtx);
+	std::unique_lock<std::mutex> lck(mining_mtx);
 	mining_req |= MININGREQ_DESTROY;
 	mining_cv.wait(&lck, []()->bool{return mining_req == 0;});
 	delete[] mining_host;
