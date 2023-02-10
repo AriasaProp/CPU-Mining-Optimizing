@@ -2,7 +2,7 @@
 #define _Included_Core_
 
 namespace core {
-	void startMining();
+	void startMining(const char **);
 	void stopMining();
 };
 
