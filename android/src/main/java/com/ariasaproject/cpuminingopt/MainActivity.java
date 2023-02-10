@@ -22,6 +22,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	static final String URI_PREF = "URI";
+	static final String USER_PREF = "USER";
+	static final String PASS_PREF = "PASS";
   static {
     System.loadLibrary("ext");
   }
@@ -34,9 +37,13 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
+    SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
 		ed_uri = (EditText)findViewById(R.id.edt_uri);
+		ed_uri.setText(pref.getString(URI_PREF, "us2.litecoinpool.org"));
 		ed_user = (EditText)findViewById(R.id.edt_user);
+		ed_user.setText(pref.getString(USER_PREF, "Ariasa.test"));
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
+		ed_pass.setText(pref.getString(USER_PREF, "1234"));
 		btn_mining = (Button)findViewById(R.id.btn_mining);
 		console = (TextView)findViewById(R.id.txview_console);
     mHandler = new Handler() {
@@ -47,6 +54,7 @@ public class MainActivity extends Activity {
 					default:
 						break;
 		      case 1: //request start
+		      	btn_mining.setOnClickListener(null);
 		      	btn_mining.setEnabled(false);
 		      	btn_mining.setClickable(false);
 		      	btn_mining.setText(R.string.state_button_onstart);
@@ -63,6 +71,11 @@ public class MainActivity extends Activity {
 						MainActivity.this.startMining(d);
 						break;
 					case 2: //after start
+						SharedPreferences.Editor pref_edit = getPreferences(Context.MODE_PRIVATE).edit();
+						pref_edit.putString(URI_PREF, ed_uri.getText().toString());
+						pref_edit.putString(USER_PREF, ed_user.getText().toString());
+						pref_edit.putString(PASS_PREF, ed_pass.getText().toString());
+						pref_edit.apply();
 		      	btn_mining.setText(R.string.state_button_stop);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
 				        @Override
@@ -74,6 +87,7 @@ public class MainActivity extends Activity {
 						btn_mining.setEnabled(true);
 						break;
 		      case 3: //request stop
+		      	btn_mining.setOnClickListener(null);
 						btn_mining.setEnabled(false);
 		      	btn_mining.setClickable(false);
 		      	btn_mining.setText(R.string.state_button_onstop);

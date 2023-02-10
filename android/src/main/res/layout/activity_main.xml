@@ -29,6 +29,7 @@
 				        android:layout_weight="1"
 				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
+				        android:inputType="textUri|textNoSuggestions"
 				        android:hint="Mining host " />
 				</LinearLayout>
 				<LinearLayout
@@ -47,6 +48,7 @@
 				        android:layout_weight="0.5"
 				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
+				        android:inputType="textVisiblePassword|textNoSuggestions"
 				        android:hint=" user " />
 				    <TextView
 								android:id="@+id/lbl_pass"
@@ -58,6 +60,7 @@
 				        android:layout_weight="0.5"
 				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
+				        android:inputType="textVisiblePassword|textNoSuggestions"
 				        android:hint=" pass" />
 				</LinearLayout>
 				<Button
@@ -71,5 +74,9 @@
 				android:id="@+id/txview_console"
 				android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:enabled="true"
+		    android:textIsSelectable="true"
+		    android:focusable="true"
+		    android:longClickable="true"/>
 </LinearLayout>
