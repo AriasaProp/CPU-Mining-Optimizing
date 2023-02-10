@@ -4,6 +4,6 @@
 namespace core {
 	void startMining(const char*, const char*, const char*);
 	void stopMining();
-};
+}
 
 #endif //_Included_Core_

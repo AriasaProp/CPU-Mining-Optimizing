@@ -18,7 +18,6 @@ namespace function_set {
 #include <netinet/in.h>
 #include <unistd.h>
 
-
 bool initializedOnce = false;
 jmethodID receiveMsgId;
 JavaVM *mainVM;

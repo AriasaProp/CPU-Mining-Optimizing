@@ -58,6 +58,20 @@ void miningThread() {
 	bool running = true;
 	unsigned int trying = 0;
 	//https://catfact.ninja/fact
+	{
+		char _msgtemp[2048];
+		strcpy(_msgtemp, "Host: ");
+		strcat(_msgtemp, mining_host);
+		strcat(_msgtemp, ".\0");
+		console::write(0, _msgtemp);
+		strcpy(_msgtemp, "Auth: ");
+		strcat(_msgtemp, mining_user);
+		strcat(_msgtemp, " : ");
+		strcat(_msgtemp, mining_pass);
+		strcat(_msgtemp, " \0");
+		console::write(0, _msgtemp);
+	}
+	console::write(0, "Unlogged App");
 	while (!(running = function_set::openConnection(mining_host, 8080)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
