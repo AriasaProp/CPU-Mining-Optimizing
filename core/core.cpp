@@ -23,17 +23,17 @@ char *mining_pass;
 
 void miningThread();
 
-void core::startMining(const char **data) {
+void core::startMining(const char *host, const char *user, const char *pass) {
 	mining_mtx.lock();
-	unsigned int l = strlen(data[0]);
+	unsigned int l = strlen(host);
 	mining_host = new char[l];
-	memcpy(mining_host, data[0], l);
-	l = strlen(data[1]);
+	memcpy(mining_host, host, l);
+	l = strlen(user);
 	mining_user = new char[l];
-	memcpy(mining_host, data[1], l);
-	l = strlen(data[2]);
+	memcpy(mining_user, user, l);
+	l = strlen(pass);
 	mining_pass = new char[l];
-	memcpy(mining_pass, data[2], l);
+	memcpy(mining_pass, pass, l);
 	mining_mtx.unlock();
 	mining_thread = std::thread(miningThread);
 	mining_thread.detach();

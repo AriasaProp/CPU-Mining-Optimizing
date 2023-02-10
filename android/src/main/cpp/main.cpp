@@ -60,16 +60,16 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
   	function_set::afterStop();
   	return;
   }
-  const char *d_a[3];
-  for (int i = 0; i < 3; i++) {
-    jstring str = (jstring) (env->GetObjectArrayElement(d, i));
-    d_a[i] = env->GetStringUTFChars(str, 0);
-  }
-	core::startMining(d_a);
-	for (int i = 0; i < 3; i++) {
-    jstring str = (jstring) (env->GetObjectArrayElement(d, i));
-    env->ReleaseStringUTFChars(str, d_a[i]);
-	}
+  jstring str0 = (jstring)env->GetObjectArrayElement(d, 0);
+  const char *c_str0 = env->GetStringUTFChars(str0, 0);
+  jstring str1 = (jstring)env->GetObjectArrayElement(d, 1);
+  const char *c_str1 = env->GetStringUTFChars(str1, 1);
+  jstring str2 = (jstring)env->GetObjectArrayElement(d, 2);
+  const char *c_str2 = env->GetStringUTFChars(str2, 2);
+	core::startMining(c_str0, c_str1, c_str2);
+  env->ReleaseStringUTFChars(str0, c_str0);
+  env->ReleaseStringUTFChars(str1, c_str1);
+  env->ReleaseStringUTFChars(str2, c_str2);
 }
 JNI_Call(void, stopMining) (JNIEnv *, jobject) {
 	core::stopMining();
@@ -89,7 +89,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void*) {
 
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void*) {
   JNIEnv* env;
-  vm->GetEnv((void**)&env,  0);
+  vm->GetEnv((void**)&env, 0);
 	//uninitialize static variable
 	if (initializedOnce) {
 		console::destroy();
