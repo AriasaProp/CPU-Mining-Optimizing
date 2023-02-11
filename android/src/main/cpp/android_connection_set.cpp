@@ -48,7 +48,7 @@ void _openConnection(const char *server, const unsigned int port) {
   	if (addr_list[i] == NULL) throw "Failed to convert hostname to IP address";
 	  if (inet_pton(AF_INET, inet_ntoa(*addr_list[i]), &server_addr.sin_addr.s_addr) > 0)
 	  	break;
-    sprintf(_tempMsg, "Servername[%d] : ", i, strerror(errno));
+    sprintf(_tempMsg, "Servername[%d]: %s", i, strerror(errno));
 		console::write(0, _tempMsg);
   }
   for (unsigned int i = 0;;i++) {
