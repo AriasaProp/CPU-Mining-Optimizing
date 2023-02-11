@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 		ed_uri = (EditText)findViewById(R.id.edt_uri);
 		ed_uri.setText(pref.getString(URI_PREF, "us2.litecoinpool.org"));
 		ed_port = (EditText)findViewById(R.id.edt_port);
-		ed_port.setText(String.valueOf(pref.getInt(URI_PREF, 3333)));
+		ed_port.setText(String.valueOf(pref.getInt(PORT_PREF, 3333)));
 		ed_user = (EditText)findViewById(R.id.edt_user);
 		ed_user.setText(pref.getString(USER_PREF, "Ariasa.test"));
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
