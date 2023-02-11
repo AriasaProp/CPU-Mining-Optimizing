@@ -1,4 +1,3 @@
-
 void _openConnection(const char *, const unsigned int); 
 const char *_recvConnection();
 bool _sendMessage(const char *);
@@ -59,63 +58,63 @@ void _openConnection(const char *server, const unsigned int port) {
 			}
 			console::write(0, "Created socket");
 		}
-		if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-			strcpy(_tempMsg, "Connect: ");
-			switch (errno) {
-				case EBADF:
-					close(socketFd);
-					socketFd = -1;
-					console::write(0, "Bad socket file descriptor");
-					if (i < 3)
-						continue;
-					strcat(_tempMsg, "The socket parameter is not a valid socket descriptor");
-					break;
-				case ETIMEDOUT:
-					close(socketFd);
-					console::write(0, "Connection timeout");
-					if (i < 3) {
-						sleep(1);
-						continue;
-					}
-					strcat(_tempMsg, "The connection establishment timed out before a connection was made");
-					break;
-				case EADDRNOTAVAIL:
-					strcat(_tempMsg, "The specified address is not available from the local machine");
-					break;
-				case EAFNOSUPPORT:
-					strcat(_tempMsg, "The address family is not supported");
-					break;
-				case EALREADY:
-					strcat(_tempMsg, "The socket descriptor socket is marked nonblocking, and a previous connection attempt has not completed");
-					break;
-				case ECONNREFUSED:
-					strcat(_tempMsg, "The connection request was rejected by the destination host");
-					break;
-				case EFAULT:
-					strcat(_tempMsg, "Using address and address_len would result in an attempt to copy the address into a portion of the caller's address space to which data cannot be written");
-					break;
-				case EINTR:
-					strcat(_tempMsg, "The attempt to establish a connection was interrupted by delivery of a signal that was caught. The connection will be established asynchronously");
-					break;
-				case EINVAL:
-					strcat(_tempMsg, "The address_len parameter is not a valid length");
-					break;
-				case EIO:
-					strcat(_tempMsg, "There has been a network or a transport failure");
-					break;
-				case ENETUNREACH:
-					strcat(_tempMsg, "The network cannot be reached from this host");
-					break;
-				case EPROTOTYPE:
-					strcat(_tempMsg, "The protocol is the wrong type for this socket");
-					break;
-				default:
-					strcat(_tempMsg, strerror(errno));
-					break;
-			}
-			strcat(_tempMsg, ".\0");
-			throw _tempMsg;
+		if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) >= 0)
+			break;
+		strcpy(_tempMsg, "Connect: ");
+		switch (errno) {
+			case EBADF:
+				close(socketFd);
+				socketFd = -1;
+				console::write(0, "Bad socket file descriptor");
+				if (i < 3)
+					continue;
+				strcat(_tempMsg, "The socket parameter is not a valid socket descriptor");
+				break;
+			case ETIMEDOUT:
+				close(socketFd);
+				console::write(0, "Connection timeout");
+				if (i < 3) {
+					sleep(1);
+					continue;
+				}
+				strcat(_tempMsg, "The connection establishment timed out before a connection was made");
+				break;
+			case EADDRNOTAVAIL:
+				strcat(_tempMsg, "The specified address is not available from the local machine");
+				break;
+			case EAFNOSUPPORT:
+				strcat(_tempMsg, "The address family is not supported");
+				break;
+			case EALREADY:
+				strcat(_tempMsg, "The socket descriptor socket is marked nonblocking, and a previous connection attempt has not completed");
+				break;
+			case ECONNREFUSED:
+				strcat(_tempMsg, "The connection request was rejected by the destination host");
+				break;
+			case EFAULT:
+				strcat(_tempMsg, "Using address and address_len would result in an attempt to copy the address into a portion of the caller's address space to which data cannot be written");
+				break;
+			case EINTR:
+				strcat(_tempMsg, "The attempt to establish a connection was interrupted by delivery of a signal that was caught. The connection will be established asynchronously");
+				break;
+			case EINVAL:
+				strcat(_tempMsg, "The address_len parameter is not a valid length");
+				break;
+			case EIO:
+				strcat(_tempMsg, "There has been a network or a transport failure");
+				break;
+			case ENETUNREACH:
+				strcat(_tempMsg, "The network cannot be reached from this host");
+				break;
+			case EPROTOTYPE:
+				strcat(_tempMsg, "The protocol is the wrong type for this socket");
+				break;
+			default:
+				strcat(_tempMsg, strerror(errno));
+				break;
 		}
+		strcat(_tempMsg, ".\0");
+		throw _tempMsg;
   }
 	console::write(2, "Connected to server");
 	_hasConnection = true;
