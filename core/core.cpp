@@ -82,10 +82,15 @@ void miningThread() {
 		}
 		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
-		while (trying = 0; ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (trying < 3); trying++)
+		while (trying = 0;;trying++) {
+			if (trying >= 3) {
+				throw "No received message after authentication";
+			}
+			recvMsgConn = function_set::recvConnection();
+			if (recvMsgConn[0] != ' ') {
+				break;
+			}
 			console::write(0, "No message");
-		if (trying >= 3) {
-			throw "No received message after authentication";
 		}
 		function_set::afterStart();
 		bool running = true;
