@@ -1,5 +1,5 @@
 
-bool _openConnection(const char *, const unsigned int); 
+void _openConnection(const char *, const unsigned int); 
 const char *_recvConnection();
 bool _sendMessage(const char *);
 bool _closeConnection();
@@ -7,7 +7,7 @@ bool _closeConnection();
 namespace function_set {
 	//socket connection
 	//return false cause error or has connection 
-	bool (*openConnection) (const char*,const unsigned int) = _openConnection;
+	void (*openConnection) (const char*,const unsigned int) = _openConnection;
 	//return message 
 	const char*(*recvConnection) () = _recvConnection;
 	//send message
@@ -16,6 +16,7 @@ namespace function_set {
 	bool (*closeConnection) () = _closeConnection;
 }
 #include "console.h"
+#include <cstdio>
 #include <cstring>
 #include <cerrno>
 #include <sys/types.h>
@@ -30,11 +31,8 @@ char _tempMsg[256];
 int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
-bool _openConnection(const char *server, const unsigned int port) {
-	if (!server) {
-		console::write(4, "server Null!");
-		return false;
-	}
+void _openConnection(const char *server, const unsigned int port) {
+	if (!server) throw "Server name is null!";
 	if (_hasConnection) _closeConnection();
   server_addr.sin_family = AF_INET;
   //server_addr.sin_addr.s_addr = inet_addr(server);
@@ -42,33 +40,22 @@ bool _openConnection(const char *server, const unsigned int port) {
   //made ip address from host name
   hostent *he = gethostbyname(server);
   if (he == NULL) {
-  	strcpy(_tempMsg, "Hostname : ");
-		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, ".\0");
-		console::write(4, _tempMsg);
-		return false;
+  	sprintf(_tempMsg, "Hostname : %s", strerror(errno));
+		throw _tempMsg;
   }
   in_addr **addr_list = (in_addr **) he->h_addr_list;
   for (unsigned int i = 0;;i++) {
-  	if (addr_list[i] == NULL) return false;
+  	if (addr_list[i] == NULL) throw "Failed to convert hostname to IP address";
 	  if (inet_pton(AF_INET, inet_ntoa(*addr_list[i]), &server_addr.sin_addr.s_addr) > 0)
 	  	break;
-    strcpy(_tempMsg, "Servername"); //this use 10 chars
-    _tempMsg[10] = '0'+i;
-    _tempMsg[11] = '\0';
-		strcat(_tempMsg, " : ");
-		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, ".\0");
-		console::write(4, _tempMsg);
+    sprintf(_tempMsg, "Servername[%d] : ", i, strerror(errno));
+		console::write(0, _tempMsg);
   }
   for (unsigned int i = 0;;i++) {
 	  if(socketFd < 0) {
 			if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-				strcpy(_tempMsg, "Error create socket: ");
-				strcat(_tempMsg, strerror(errno));
-				strcat(_tempMsg, ".\0");
-				console::write(4, _tempMsg);
-				return false;
+				sprintf(_tempMsg, "Socket: %s", strerror(errno));
+				throw _tempMsg;
 			}
 			console::write(0, "Created socket");
 		}
@@ -78,14 +65,14 @@ bool _openConnection(const char *server, const unsigned int port) {
 				case EBADF:
 					close(socketFd);
 					socketFd = -1;
-					if (i < 3) {
-						sleep(1);
+					console::write(0, "Bad socket file descriptor");
+					if (i < 3)
 						continue;
-					}
 					strcat(_tempMsg, "The socket parameter is not a valid socket descriptor");
 					break;
 				case ETIMEDOUT:
 					close(socketFd);
+					console::write(0, "Connection timeout");
 					if (i < 3) {
 						sleep(1);
 						continue;
@@ -116,21 +103,9 @@ bool _openConnection(const char *server, const unsigned int port) {
 				case EIO:
 					strcat(_tempMsg, "There has been a network or a transport failure");
 					break;
-				//case EISCONN: //was protected by hasConnection. maybe?
-					//The socket descriptor socket is already connected.
-					//break;
 				case ENETUNREACH:
 					strcat(_tempMsg, "The network cannot be reached from this host");
 					break;
-				//case ENOTSOCK: prof socket was made by socket()
-					//The descriptor refers to a file, not a socket.
-					//break;
-				//case EOPNOTSUPP: prof socket was made by socket()
-					//The socket parameter is not of type SOCK_STREAM.
-					//break;
-				//case EPERM: i don't know how this works
-					//strcat(_tempMsg, "connect() caller was attempting to extract a user's identity and the caller's process was not verified to be a server. To be server-verified, the caller's process must have permission to the BPX.SERVER profile (or superuser and BPX.SERVER is undefined) and have called either the __passwd() or pthread_security_np() services before calling connect() to propagate identity");
-					//break;
 				case EPROTOTYPE:
 					strcat(_tempMsg, "The protocol is the wrong type for this socket");
 					break;
@@ -139,13 +114,11 @@ bool _openConnection(const char *server, const unsigned int port) {
 					break;
 			}
 			strcat(_tempMsg, ".\0");
-			console::write(4, _tempMsg);
-			return false;
+			throw _tempMsg;
 		}
   }
 	console::write(2, "Connected to server");
 	_hasConnection = true;
-	return true;
 }
 char recvBuffer[2049];
 const char *_recvConnection() {
@@ -155,9 +128,7 @@ const char *_recvConnection() {
 		recvBuffer[length] = '\0';
 		return recvBuffer;
 	} else if(length < 0) {
-		strcpy(_tempMsg, "Recv: ");
-		strcat(_tempMsg, strerror(errno));
-		strcat(_tempMsg, ".\0");
+		sprintf(_tempMsg, "Recv: %s", strerror(errno));
 		console::write(4, _tempMsg);
 	}
 	return " ";
@@ -167,9 +138,7 @@ bool _sendMessage(const char *msg) {
 	for (int sent = 0, total = strlen(msg), n; sent < total; sent += n) {
     n = send(socketFd, msg + sent, total - sent, 0);
     if (n == -1) {
-    	strcpy(_tempMsg, "Send: ");
-			strcat(_tempMsg, strerror(errno));
-			strcat(_tempMsg, ".\0");
+    	sprintf(_tempMsg, "Send: %s", strerror(errno));
 			console::write(4, _tempMsg);
 	    return false;
     }
@@ -178,7 +147,6 @@ bool _sendMessage(const char *msg) {
 }
 bool _closeConnection() {
 	if(!_hasConnection) return false;
-	
 	close(socketFd);
 	_hasConnection = false;
 	console::write(2, "Connection Closed");

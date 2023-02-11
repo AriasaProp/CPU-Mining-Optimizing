@@ -60,57 +60,53 @@ void core::stopMining() {
 void miningThread() {
 	//create state
 	console::write(1, "Start Mining ......");
-	//try connect to server
-	bool running = true;
-	unsigned int trying = 0;
-	//https://catfact.ninja/fact
 	char _msgtemp[1024];
 	//tracing input
 	sprintf(_msgtemp, "URI: %s:%d", mining_host, mining_port);
 	console::write(0, _msgtemp);
 	sprintf(_msgtemp, "Auth: %s:%s", mining_user, mining_pass);
 	console::write(0, _msgtemp);
-	trying = 0;
-	while (!(running = function_set::openConnection(mining_host, mining_port)) && (trying++ < 3)) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
-		console::write(0, "Try conect again");
-	}
-	const char *recvMsgConn;
-	if (running) {
+	try {
+		unsigned int trying = 0; //repeated try limit
+		//try connect to server
+		//https://catfact.ninja/fact
+		function_set::openConnection(mining_host, mining_port);
+		//if open connection failed this loop end directly
+		const char *recvMsgConn;
 		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}");
 		function_set::sendMessage(_msgtemp);
-		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
+		for (trying = 0; ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (trying < 3); trying++)
 			console::write(0, "No message");
 		if (trying >= 3) {
-			running = false;
+			throw "No received message after subscribe";
 		}
-	}
-	if (running) {
 		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
-		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
+		while (trying = 0; ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (trying < 3); trying++)
 			console::write(0, "No message");
 		if (trying >= 3) {
-			running = false;
+			throw "No received message after authentication";
 		}
-	}
-	if (running)
 		function_set::afterStart();
-	while (running) {
-		console::write(0, function_set::recvConnection());
-		//do nothing right now
-		std::this_thread::sleep_for(std::chrono::seconds(1)); 
-		//receive Mesage
-		mining_mtx.lock();
-		if (mining_req) {
-			if (mining_req&MININGREQ_DESTROY) {
-				running = false;
+		bool running = true;
+		do {
+			console::write(0, function_set::recvConnection());
+			//do nothing right now
+			std::this_thread::sleep_for(std::chrono::seconds(1)); 
+			//receive Mesage
+			mining_mtx.lock();
+			if (mining_req) {
+				if (mining_req&MININGREQ_DESTROY) {
+					running = false;
+				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
+				mining_req = 0;
+				mining_cv.notify_all();
 			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
-			mining_req = 0;
-			mining_cv.notify_all();
-		}
-		mining_mtx.unlock();
+			mining_mtx.unlock();
+		} while (running);
+	} catch (const char *exceptionMsg) {
+		console::write(4, exceptionMsg);
 	}
 	//cleaning
 	console::write(1, "End Mining...");
