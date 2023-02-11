@@ -82,7 +82,7 @@ void miningThread() {
 		}
 		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
-		while (trying = 0;;trying++) {
+		for (trying = 0;;trying++) {
 			if (trying >= 3) {
 				throw "No received message after authentication";
 			}
