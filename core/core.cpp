@@ -76,7 +76,7 @@ void miningThread() {
 	}
 	console::write(0, "Unlogged App");
 	trying = 0;
-	while (!(running = function_set::openConnection(mining_host, 8080)) && (trying++ < 3)) {
+	while (!(running = function_set::openConnection(mining_host, 3333)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}

@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 		ed_user = (EditText)findViewById(R.id.edt_user);
 		ed_user.setText(pref.getString(USER_PREF, "Ariasa.test"));
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
-		ed_pass.setText(pref.getString(USER_PREF, "1234"));
+		ed_pass.setText(pref.getString(PASS_PREF, "1234"));
 		btn_mining = (Button)findViewById(R.id.btn_mining);
 		console = (TextView)findViewById(R.id.txview_console);
     mHandler = new Handler() {

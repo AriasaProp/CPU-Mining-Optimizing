@@ -31,13 +31,13 @@ int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
 bool _openConnection(const char *server, const unsigned int port) {
-	if (!server) {
+	if (!server || server == " ") {
 		console::write(4, "server Null!");
 		return false;
 	}
 	if (_hasConnection) _closeConnection();
 	if(socketFd < 0) {
-		if ((socketFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+		if ((socketFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 			strcpy(_tempMsg, "Error create socket: ");
 			strcat(_tempMsg, strerror(errno));
 			strcat(_tempMsg, ".\0");
@@ -50,8 +50,7 @@ bool _openConnection(const char *server, const unsigned int port) {
   //server_addr.sin_addr.s_addr = inet_addr(server);
   server_addr.sin_port = htons(port);
   //made ip address from host name
-  struct hostent *he = gethostbyname(server);
-  struct in_addr **addr_list;
+  hostent *he = gethostbyname(server);
   if (he == NULL) {
   	strcpy(_tempMsg, "Hostname : ");
 		strcat(_tempMsg, strerror(errno));
@@ -59,20 +58,23 @@ bool _openConnection(const char *server, const unsigned int port) {
 		console::write(4, _tempMsg);
 		return false;
   }
-  addr_list = (struct in_addr **) he->h_addr_list;
-  char* ipAddress = nullptr;
-  for (unsigned int i = 0; addr_list[i] != NULL; i++) {
-    ipAddress = inet_ntoa(*addr_list[i]);
-  }
-  if (inet_pton(AF_INET, ipAddress, &server_addr.sin_addr.s_addr) <= 0) {
-    strcpy(_tempMsg, "Servername : ");
+  in_addr **addr_list = (in_addr **) he->h_addr_list;
+  unsigned int i = 0;
+  for (;;) {
+  	if (addr_list[i] == NULL) return false;
+	  if (inet_pton(AF_INET, inet_ntoa(*addr_list[i]), &server_addr.sin_addr.s_addr) > 0)
+	  	break;
+    strcpy(_tempMsg, "Servername");
+    _tempMsg[10] = '0'+i;
+    _tempMsg[11] = '\0';
+		strcat(_tempMsg, " : ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");
 		console::write(4, _tempMsg);
-		return false;
+		i++;
   }
 	if (connect(socketFd, (sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-		strcpy(_tempMsg, "Error: ");
+		strcpy(_tempMsg, "Connect: ");
 		strcat(_tempMsg, strerror(errno));
 		strcat(_tempMsg, ".\0");
 		console::write(4, _tempMsg);
