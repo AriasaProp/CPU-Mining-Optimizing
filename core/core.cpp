@@ -66,9 +66,9 @@ void miningThread() {
 	//https://catfact.ninja/fact
 	char _msgtemp[1024];
 	//tracing input
-	sprintf(_msgtemp, "URI: %s:%d\0", mining_host, mining_port);
+	sprintf(_msgtemp, "URI: %s:%d", mining_host, mining_port);
 	console::write(0, _msgtemp);
-	sprintf(_msgtemp, "Auth: %s:%s\0", mining_user, mining_pass);
+	sprintf(_msgtemp, "Auth: %s:%s", mining_user, mining_pass);
 	console::write(0, _msgtemp);
 	trying = 0;
 	while (!(running = function_set::openConnection(mining_host, mining_port)) && (trying++ < 3)) {
@@ -77,7 +77,7 @@ void miningThread() {
 	}
 	const char *recvMsgConn;
 	if (running) {
-		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
+		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}");
 		function_set::sendMessage(_msgtemp);
 		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
 			console::write(0, "No message");
