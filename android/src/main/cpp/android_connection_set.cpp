@@ -31,7 +31,7 @@ int socketFd = -1;
 sockaddr_in server_addr;
 bool _hasConnection = false;
 bool _openConnection(const char *server, const unsigned int port) {
-	if (!server || server == " ") {
+	if (!server) {
 		console::write(4, "server Null!");
 		return false;
 	}
