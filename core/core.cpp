@@ -66,7 +66,7 @@ void miningThread() {
 	{
 		//tracing input
 		char _msgtemp[2048];
-		strcpy(_msgtemp, "Host: ");
+		strcpy(_msgtemp, "URI: ");
 		strcat(_msgtemp, mining_host);
 		strcat(_msgtemp, ".\0");
 		console::write(0, _msgtemp);
