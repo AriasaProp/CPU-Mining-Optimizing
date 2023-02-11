@@ -115,9 +115,9 @@ bool _openConnection(const char *server, const unsigned int port) {
 				//case EOPNOTSUPP: prof socket was made by socket()
 					//The socket parameter is not of type SOCK_STREAM.
 					//break;
-				case EPERM:
-					strcat(_tempMsg, "connect() caller was attempting to extract a user's identity and the caller's process was not verified to be a server. To be server-verified, the caller's process must have permission to the BPX.SERVER profile (or superuser and BPX.SERVER is undefined) and have called either the __passwd() or pthread_security_np() services before calling connect() to propagate identity.");
-					break;
+				//case EPERM: i don't know how this works
+					//strcat(_tempMsg, "connect() caller was attempting to extract a user's identity and the caller's process was not verified to be a server. To be server-verified, the caller's process must have permission to the BPX.SERVER profile (or superuser and BPX.SERVER is undefined) and have called either the __passwd() or pthread_security_np() services before calling connect() to propagate identity.");
+					//break;
 				case EPROTOTYPE:
 					strcat(_tempMsg, "The protocol is the wrong type for this socket.");
 					break;
