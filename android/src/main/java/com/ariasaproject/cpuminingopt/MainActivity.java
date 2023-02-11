@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
 		      	ed_user.setClickable(false);
 		      	ed_pass.setEnabled(false);
 		      	ed_pass.setClickable(false);
-		      	String[] d = new String[3];
+		      	String[] d = new String[4];
 		      	d[0] = ed_uri.getText().toString();
 		      	d[1] = ed_port.getText().toString();
 		      	d[2] = ed_user.getText().toString();

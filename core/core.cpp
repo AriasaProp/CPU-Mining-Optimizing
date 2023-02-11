@@ -24,7 +24,7 @@ char *mining_pass;
 
 void miningThread();
 
-void core::startMining(const char *host, unsigned int port, const char *user, const char *pass) {
+void core::startMining(const char *host, const unsigned int port, const char *user, const char *pass) {
 	mining_mtx.lock();
 	unsigned int l = strlen(host);
 	mining_host = new char[l+1];
@@ -68,6 +68,8 @@ void miningThread() {
 		char _msgtemp[2048];
 		strcpy(_msgtemp, "URI: ");
 		strcat(_msgtemp, mining_host);
+		strcat(_msgtemp, ":");
+		strcat(_msgtemp, mining_port);
 		strcat(_msgtemp, ".\0");
 		console::write(0, _msgtemp);
 		strcpy(_msgtemp, "Auth: ");

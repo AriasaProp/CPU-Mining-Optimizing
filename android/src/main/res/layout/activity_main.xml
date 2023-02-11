@@ -23,11 +23,10 @@
 								android:id="@+id/lbl_uri"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:text="Mining URI: " />
+				        android:text="URI: " />
 				    <EditText
 								android:id="@+id/edt_uri"
-				        android:layout_weight="0.5"
-				        android:layout_width="0dp"
+				        android:layout_weight="0.7"
 				        android:layout_height="wrap_content"
 				        android:inputType="textUri|textNoSuggestions"
 				        android:hint="Mining host " />
@@ -35,14 +34,13 @@
 								android:id="@+id/lbl_port"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:text="Port: " />
+				        android:text=" : " />
 				    <EditText
 								android:id="@+id/edt_port"
-				        android:layout_weight="0.5"
-				        android:layout_width="0dp"
+				        android:layout_weight="0.3"
 				        android:layout_height="wrap_content"
 				        android:inputType="number"
-				        android:hint="0 - 65535" />
+				        android:hint="port" />
 				</LinearLayout>
 				<LinearLayout
 						android:id="@+id/auth_container"
@@ -58,7 +56,6 @@
 				    <EditText
 								android:id="@+id/edt_user"
 				        android:layout_weight="0.5"
-				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
 				        android:inputType="textVisiblePassword|textNoSuggestions"
 				        android:hint=" user " />
@@ -70,7 +67,6 @@
 				    <EditText
 								android:id="@+id/edt_pass"
 				        android:layout_weight="0.5"
-				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
 				        android:inputType="textVisiblePassword|textNoSuggestions"
 				        android:hint=" pass" />
