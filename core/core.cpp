@@ -7,6 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <cstring>
+#include <cstdio>
 
 #include "pass_function_set.h"
 
@@ -63,32 +64,21 @@ void miningThread() {
 	bool running = true;
 	unsigned int trying = 0;
 	//https://catfact.ninja/fact
-	{
-		//tracing input
-		char _msgtemp[2048];
-		strcpy(_msgtemp, "URI: ");
-		strcat(_msgtemp, mining_host);
-		strcat(_msgtemp, ":");
-		strcat(_msgtemp, mining_port);
-		strcat(_msgtemp, ".\0");
-		console::write(0, _msgtemp);
-		strcpy(_msgtemp, "Auth: ");
-		strcat(_msgtemp, mining_user);
-		strcat(_msgtemp, " : ");
-		strcat(_msgtemp, mining_pass);
-		strcat(_msgtemp, " \0");
-		console::write(0, _msgtemp);
-	}
+	char _msgtemp[1024];
+	//tracing input
+	sprintf(_msgtemp, "URI: %s:%d\0", mining_host, mining_port);
+	console::write(0, _msgtemp);
+	sprintf(_msgtemp, "Auth: %s:%s\0", mining_user, mining_pass);
+	console::write(0, _msgtemp);
 	trying = 0;
 	while (!(running = function_set::openConnection(mining_host, mining_port)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
-	char sendToServer[1024];
 	const char *recvMsgConn;
 	if (running) {
-		strcpy(sendToServer, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
-		function_set::sendMessage(sendToServer);
+		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\0");
+		function_set::sendMessage(_msgtemp);
 		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
 			console::write(0, "No message");
 		if (trying >= 3) {
@@ -96,12 +86,8 @@ void miningThread() {
 		}
 	}
 	if (running) {
-		strcpy(sendToServer, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"");
-		strcat(sendToServer, mining_user);
-		strcat(sendToServer, "\",\"");
-		strcat(sendToServer, mining_pass);
-		strcat(sendToServer, "\"]}\0");
-		function_set::sendMessage(sendToServer);
+		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",mining_user,mining_pass);
+		function_set::sendMessage(_msgtemp);
 		while ( ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (++trying < 3))
 			console::write(0, "No message");
 		if (trying >= 3) {
