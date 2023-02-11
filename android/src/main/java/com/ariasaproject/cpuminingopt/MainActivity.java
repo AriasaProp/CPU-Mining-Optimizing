@@ -63,6 +63,8 @@ public class MainActivity extends Activity {
 		      	btn_mining.setText(R.string.state_button_onstart);
 		      	ed_uri.setEnabled(false);
 		      	ed_uri.setClickable(false);
+		      	ed_port.setEnabled(false);
+		      	ed_port.setClickable(false);
 		      	ed_user.setEnabled(false);
 		      	ed_user.setClickable(false);
 		      	ed_pass.setEnabled(false);
@@ -110,6 +112,8 @@ public class MainActivity extends Activity {
 		      	btn_mining.setClickable(true);
 		      	ed_uri.setEnabled(true);
 		      	ed_uri.setClickable(true);
+		      	ed_port.setEnabled(true);
+		      	ed_port.setClickable(true);
 		      	ed_user.setEnabled(true);
 		      	ed_user.setClickable(true);
 		      	ed_pass.setEnabled(true);
