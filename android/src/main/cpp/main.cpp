@@ -65,10 +65,13 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
   const char *c_str1 = env->GetStringUTFChars(str1, 0);
   jstring str2 = (jstring)env->GetObjectArrayElement(d, 2);
   const char *c_str2 = env->GetStringUTFChars(str2, 0);
-	core::startMining(c_str0, c_str1, c_str2);
+  jstring str3 = (jstring)env->GetObjectArrayElement(d, 3);
+  const char *c_str3 = env->GetStringUTFChars(str3, 0);
+	core::startMining(c_str0, atoi(c_str1), c_str2, c_str3);
   env->ReleaseStringUTFChars(str0, c_str0);
   env->ReleaseStringUTFChars(str1, c_str1);
   env->ReleaseStringUTFChars(str2, c_str2);
+  env->ReleaseStringUTFChars(str3, c_str3);
 }
 JNI_Call(void, stopMining) (JNIEnv *, jobject) {
 	core::stopMining();

@@ -18,17 +18,19 @@ std::mutex mining_mtx;
 std::condition_variable mining_cv;
 unsigned int mining_req;
 char *mining_host;
+unsigned int mining_port;
 char *mining_user;
 char *mining_pass;
 
 void miningThread();
 
-void core::startMining(const char *host, const char *user, const char *pass) {
+void core::startMining(const char *host, unsigned int port, const char *user, const char *pass) {
 	mining_mtx.lock();
 	unsigned int l = strlen(host);
 	mining_host = new char[l+1];
 	memcpy(mining_host, host, l);
 	mining_host[l] = '\0';
+	mining_port = port;
 	l = strlen(user);
 	mining_user = new char[l+1];
 	memcpy(mining_user, user, l);
@@ -62,6 +64,7 @@ void miningThread() {
 	unsigned int trying = 0;
 	//https://catfact.ninja/fact
 	{
+		//tracing input
 		char _msgtemp[2048];
 		strcpy(_msgtemp, "Host: ");
 		strcat(_msgtemp, mining_host);
@@ -74,9 +77,8 @@ void miningThread() {
 		strcat(_msgtemp, " \0");
 		console::write(0, _msgtemp);
 	}
-	console::write(0, "Unlogged App");
 	trying = 0;
-	while (!(running = function_set::openConnection(mining_host, 3333)) && (trying++ < 3)) {
+	while (!(running = function_set::openConnection(mining_host, mining_port)) && (trying++ < 3)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
 		console::write(0, "Try conect again");
 	}
@@ -123,7 +125,7 @@ void miningThread() {
 		mining_mtx.unlock();
 	}
 	//cleaning
-	console::write(1, "Unlogged App");
+	console::write(1, "End Mining...");
 	function_set::closeConnection();
 	function_set::afterStop();
 	/*

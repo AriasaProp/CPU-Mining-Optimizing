@@ -23,13 +23,14 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	static final String URI_PREF = "URI";
+	static final String PORT_PREF = "PORT";
 	static final String USER_PREF = "USER";
 	static final String PASS_PREF = "PASS";
   static {
     System.loadLibrary("ext");
   }
   TextView console;
-  EditText ed_uri, ed_user,ed_pass;
+  EditText ed_uri, ed_port, ed_user,ed_pass;
   Button btn_mining;
   Handler mHandler;
 
@@ -40,6 +41,8 @@ public class MainActivity extends Activity {
     SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
 		ed_uri = (EditText)findViewById(R.id.edt_uri);
 		ed_uri.setText(pref.getString(URI_PREF, "us2.litecoinpool.org"));
+		ed_port = (EditText)findViewById(R.id.edt_port);
+		ed_port.setText(String.valueOf(pref.getInt(URI_PREF, 3333)));
 		ed_user = (EditText)findViewById(R.id.edt_user);
 		ed_user.setText(pref.getString(USER_PREF, "Ariasa.test"));
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
@@ -66,13 +69,15 @@ public class MainActivity extends Activity {
 		      	ed_pass.setClickable(false);
 		      	String[] d = new String[3];
 		      	d[0] = ed_uri.getText().toString();
-		      	d[1] = ed_user.getText().toString();
-		      	d[2] = ed_pass.getText().toString();
+		      	d[1] = ed_port.getText().toString();
+		      	d[2] = ed_user.getText().toString();
+		      	d[3] = ed_pass.getText().toString();
 						MainActivity.this.startMining(d);
 						break;
 					case 2: //after start
 						SharedPreferences.Editor pref_edit = getPreferences(Context.MODE_PRIVATE).edit();
 						pref_edit.putString(URI_PREF, ed_uri.getText().toString());
+						pref_edit.putInt(PORT_PREF, Integer.valueOf(ed_port.getText().toString()));
 						pref_edit.putString(USER_PREF, ed_user.getText().toString());
 						pref_edit.putString(PASS_PREF, ed_pass.getText().toString());
 						pref_edit.apply();

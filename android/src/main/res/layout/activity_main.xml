@@ -26,11 +26,23 @@
 				        android:text="Mining URI: " />
 				    <EditText
 								android:id="@+id/edt_uri"
-				        android:layout_weight="1"
+				        android:layout_weight="0.5"
 				        android:layout_width="0dp"
 				        android:layout_height="wrap_content"
 				        android:inputType="textUri|textNoSuggestions"
 				        android:hint="Mining host " />
+				    <TextView
+								android:id="@+id/lbl_port"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="Port: " />
+				    <EditText
+								android:id="@+id/edt_port"
+				        android:layout_weight="0.5"
+				        android:layout_width="0dp"
+				        android:layout_height="wrap_content"
+				        android:inputType="numberUnsigned"
+				        android:hint="0 - 65535" />
 				</LinearLayout>
 				<LinearLayout
 						android:id="@+id/auth_container"
