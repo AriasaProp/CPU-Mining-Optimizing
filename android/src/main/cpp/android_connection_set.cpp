@@ -47,8 +47,7 @@ void _openConnection(const char *server, const unsigned short port) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
   }
-  char ipstr[64];
-  if (connect(sock, (sockaddr_in*)ip_address, sizeof(addrinfo)) < 0) {
+  if (connect(sock, (sockaddr*)ip_address->ai_addr, sizeof(sockaddr)) < 0) {
     sprintf(_msgTemp, "Connect: %s", strerror(errno));
     close(sock);
     throw _msgTemp;
