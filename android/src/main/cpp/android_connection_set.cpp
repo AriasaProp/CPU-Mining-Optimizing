@@ -33,7 +33,7 @@ void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (_hasConnection) _closeConnection();
   //IP convertion
-  addrinfo *ip_address
+  addrinfo *ip_address;
   {
 	  addrinfo hints;
 	  memset(&hints, 0, sizeof(hints));
