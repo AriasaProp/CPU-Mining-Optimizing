@@ -19,13 +19,13 @@ std::mutex mining_mtx;
 std::condition_variable mining_cv;
 unsigned int mining_req;
 char *mining_host;
-unsigned int mining_port;
+unsigned short mining_port;
 char *mining_user;
 char *mining_pass;
 
 void miningThread();
 
-void core::startMining(const char *host, const unsigned int port, const char *user, const char *pass) {
+void core::startMining(const char *host, const unsigned short port, const char *user, const char *pass) {
 	mining_mtx.lock();
 	unsigned int l = strlen(host);
 	mining_host = new char[l+1];
@@ -73,14 +73,15 @@ void miningThread() {
 		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
 		const char *recvMsgConn;
-		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}");
+		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\n");
 		function_set::sendMessage(_msgtemp);
 		for (trying = 0; ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (trying < 3); trying++)
 			console::write(0, "No message");
 		if (trying >= 3) {
 			throw "No received message after subscribe";
 		}
-		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",mining_user,mining_pass);
+		console::write(0, recvMsgConn);
+		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (trying = 0;;trying++) {
 			if (trying >= 3) {
@@ -92,6 +93,7 @@ void miningThread() {
 			}
 			console::write(0, "No message");
 		}
+		console::write(0, recvMsgConn);
 		function_set::afterStart();
 		bool running = true;
 		do {

@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
     super.onCreate(savedInstanceState);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
 		ed_uri = (EditText)findViewById(R.id.edt_uri);
 		ed_uri.setText(pref.getString(URI_PREF, "us2.litecoinpool.org"));
@@ -82,7 +83,7 @@ public class MainActivity extends Activity {
 						pref_edit.putInt(PORT_PREF, Integer.valueOf(ed_port.getText().toString()));
 						pref_edit.putString(USER_PREF, ed_user.getText().toString());
 						pref_edit.putString(PASS_PREF, ed_pass.getText().toString());
-						pref_edit.apply();
+						pref_edit.commit();
 		      	btn_mining.setText(R.string.state_button_stop);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
 				        @Override
