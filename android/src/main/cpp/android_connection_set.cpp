@@ -61,16 +61,17 @@ void _openConnection(const char *server, const unsigned short port) {
   console::write(2, "Connected to server");
   _hasConnection = true;
 }
-char _recvBuff[1025];
+char _recvBuff[16384];
 const char *_recvConnection() {
   if (!_hasConnection) throw "No connection already!";
-  int received_bytes = recv(sock, _recvBuff, 1024, MSG_WAITALL);
-  if (received_bytes < 0) {
+  int _recv = recv(sock, _recvBuff, 16383, MSG_WAITALL);
+  if (_recv < 0) {
     sprintf(_msgTemp, "Receive: %s", strerror(errno));
-    close(sock);
     throw _msgTemp;
   }
-  _recvBuff[received_bytes] = '\0';
+  if (_recv > 16382)
+  	throw "To big message from container";
+  _recvBuff[_recv] = '\0';
   return _recvBuff;
 }
 bool _sendMessage(const char *msg) {

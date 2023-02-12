@@ -80,6 +80,7 @@ void miningThread() {
 		if (trying >= 3) {
 			throw "No received message after subscribe";
 		}
+		console::write(0, "Message from susbscribe: ");
 		console::write(0, recvMsgConn);
 		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
@@ -93,10 +94,11 @@ void miningThread() {
 			}
 			console::write(0, "No message");
 		}
+		console::write(0, "Message from authentication: ");
 		console::write(0, recvMsgConn);
 		function_set::afterStart();
-		bool running = true;
-		do {
+		bool running = false;
+		while (running){
 			console::write(0, function_set::recvConnection());
 			//do nothing right now
 			std::this_thread::sleep_for(std::chrono::seconds(1)); 
@@ -111,7 +113,7 @@ void miningThread() {
 				mining_cv.notify_all();
 			}
 			mining_mtx.unlock();
-		} while (running);
+		}
 	} catch (const char *exceptionMsg) {
 		console::write(4, exceptionMsg);
 	}
