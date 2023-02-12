@@ -16,63 +16,77 @@ namespace function_set {
 }
 #include "console.h"
 #include <cstdio>
-#include <cstring>
 #include <cerrno>
-#include <sys/types.h>
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
-
 
 bool _hasConnection = false;
-boost::asio::io_context io_context;
-boost::system::error_code error;
-boost::array<char, 1024> response_buf;
-tcp::socket socket = 0;
+int sock = -1;
+char _msgTemp[512];
 void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (_hasConnection) _closeConnection();
-  tcp::resolver resolver(io_context);
-  tcp::resolver::results_type endpoints = resolver.resolve(server, std::to_string(port));
-  socket = tcp::socket(io_context);
-  boost::asio::connect(socket, endpoints, error);
-  if (error) {
-    socket = 0;
-    throw error.message().c_str();
+  //IP convertion
+  addrinfo hints, *ip_address;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  int status = getaddrinfo(server, port, &hints, &ip_address);
+  if (status != 0) {
+    sprintf(_msgTemp, "Address conv: %s", strerror(status));
+    throw _msgTemp;
   }
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock < 0) {
+		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
+    throw _msgTemp;
+  }
+  char ipstr[64];
+  if (connect(sock, (sockaddr_in*)ip_address, sizeof(addrinfo)) < 0) {
+    sprintf(_msgTemp, "Connect: %s", strerror(errno));
+    close(sock);
+    throw _msgTemp;
+  }
+  freeaddrinfo(ip_address);
   console::write(2, "Connected to server");
   _hasConnection = true;
 }
-
+char _recvBuff[1025];
 const char *_recvConnection() {
   if (!_hasConnection) throw "No connection already!";
-  size_t response_length = socket.read_some(boost::asio::buffer(response_buf), error);
-  if (error)
-    throw error.message().c_str();
-  return response_buf.data();
+  int received_bytes = recv(sock, _recvBuff, 1024, MSG_WAITALL);
+  if (received_bytes < 0) {
+    sprintf(_msgTemp, "Receive: %s", strerror(errno));
+    close(sock);
+    throw _msgTemp;
+  }
+  _recvBuff[received_bytes] = '\0';
+  return _recvBuff;
 }
-
 bool _sendMessage(const char *msg) {
   if (!_hasConnection) throw "No connection already!";
-  boost::asio::write(socket, boost::asio::buffer(msg), error);
-  if (error)
-    throw error.message().c_str();
+  for (unsigned int sended = 0, total = strlen(msg), n; sended < total; sended += n) {
+	  n = send(sock, msg + sended, total - sended, 0);
+	  if(n < 0) {
+	    sprintf(_msgTemp, "Send: %s", strerror(errno));
+	    close(sock);
+	    throw _msgTemp;
+	  }
+  }
   return true;
 }
-
 bool _closeConnection() {
   if(!_hasConnection) return false;
-  socket.close(error);
-  if (error) {
-    console::write(4, error.message().c_str());
-    return false;
-  }
-  socket = 0;
+  close(sock);
+  sock = -1;
   _hasConnection = false;
   console::write(2, "Connection Closed");
   return true;
 }
+

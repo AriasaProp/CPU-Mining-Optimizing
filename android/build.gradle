@@ -34,7 +34,5 @@ android {
     }
 }
 
-dependencies {
-    implementation 'com.github.cansik:boost-asio-android:1.69.0-7.1'
-}
+dependencies {}
 
