@@ -33,14 +33,19 @@ void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (_hasConnection) _closeConnection();
   //IP convertion
-  addrinfo hints, *ip_address;
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-  int status = getaddrinfo(server, port, &hints, &ip_address);
-  if (status != 0) {
-    sprintf(_msgTemp, "Address conv: %s", strerror(status));
-    throw _msgTemp;
+  addrinfo *ip_address
+  {
+	  addrinfo hints;
+	  memset(&hints, 0, sizeof(hints));
+	  hints.ai_family = AF_INET;
+	  hints.ai_socktype = SOCK_STREAM;
+	  char port_str[6];
+		sprintf(port_str, "%u", port);
+	  int status = getaddrinfo(server, port_str, &hints, &ip_address);
+	  if (status != 0) {
+	    sprintf(_msgTemp, "Address conv: %s", strerror(status));
+	    throw _msgTemp;
+	  }
   }
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
