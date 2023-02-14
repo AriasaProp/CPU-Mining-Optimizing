@@ -43,7 +43,8 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     private final Semaphore semaphore = new Semaphore(0);
     private ArrayList<SubmitOrder> _submit_q = new ArrayList<SubmitOrder>();
     private ArrayList<StratumJson> _json_q = new ArrayList<StratumJson>();
-
+    
+    @Override
     public void run() {
       for (;;) {
         try {
@@ -81,8 +82,9 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
 		        }
 		        this.semaphore.release();
 		      } else if (iid == StratumJsonResultSubscribe.class) {
-		        synchronized (this._json_q)
+		        synchronized (this._json_q) {
 		          this._json_q.add(json);
+		        }
 		        this.semaphore.release();
 		      }
         } catch (SocketTimeoutException e) {
