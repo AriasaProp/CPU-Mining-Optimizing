@@ -19,7 +19,8 @@ public class Hasher {
     mac = Mac.getInstance("HmacSHA256");
   }
 
-  public boolean hashCheck(byte[] header, byte[] target, int nonce) throws GeneralSecurityException {
+  public boolean hashCheck(byte[] header, byte[] target, int nonce)
+      throws GeneralSecurityException {
     int i, j, k;
 
     arraycopy(header, 0, B, 0, 76);

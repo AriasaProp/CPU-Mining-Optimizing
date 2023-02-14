@@ -24,11 +24,9 @@ import android.os.StrictMode;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.core.text.HtmlCompat;
 import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
@@ -52,7 +50,7 @@ public class MainActivity extends Activity {
 
   String unit = " h/s";
   Handler statusHandler;
-  
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     setContentView(R.layout.activity_main);
@@ -70,67 +68,69 @@ public class MainActivity extends Activity {
     et_pass.setText(settings.getString(PREF_PASS, "1234"));
     cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
     cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
-    statusHandler = new Handler() {
-        final DecimalFormat df = new DecimalFormat("#.##");
-        int acc, recj;
-        @Override
-        public void handleMessage(Message msg) {
-          final Bundle bundle = msg.getData();
-          if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
-            SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-            if (settings.getBoolean(PREF_SCREEN, false)) {
-              getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            }
-            Button b = (Button) findViewById(R.id.status_button_startstop);
-            b.setText(R.string.main_button_stop);
-            b.setEnabled(true);
-            b.setClickable(true);
-          }
-          if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
-            if (imw != null) {
-              CpuMiningWorker w = (CpuMiningWorker) imw;
-              long lastTime = System.currentTimeMillis();
-              long currTime;
-              while (w.getThreadsStatus()) {
-                currTime = System.currentTimeMillis();
-                long deltaTime = currTime - lastTime;
-                if (deltaTime > 15000.0) {
-                  Console.send(0, "Still cooling down...");
-                  lastTime = currTime;
-                }
+    statusHandler =
+        new Handler() {
+          final DecimalFormat df = new DecimalFormat("#.##");
+          int acc, recj;
+
+          @Override
+          public void handleMessage(Message msg) {
+            final Bundle bundle = msg.getData();
+            if ((msg.arg1 & MSG_STARTED) == MSG_STARTED) {
+              SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+              if (settings.getBoolean(PREF_SCREEN, false)) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
               }
-              imw = null;
+              Button b = (Button) findViewById(R.id.status_button_startstop);
+              b.setText(R.string.main_button_stop);
+              b.setEnabled(true);
+              b.setClickable(true);
             }
-            SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-            if (settings.getBoolean(PREF_SCREEN, false)) {
-              getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            if ((msg.arg1 & MSG_TERMINATED) == MSG_TERMINATED) {
+              if (imw != null) {
+                CpuMiningWorker w = (CpuMiningWorker) imw;
+                long lastTime = System.currentTimeMillis();
+                long currTime;
+                while (w.getThreadsStatus()) {
+                  currTime = System.currentTimeMillis();
+                  long deltaTime = currTime - lastTime;
+                  if (deltaTime > 15000.0) {
+                    Console.send(0, "Still cooling down...");
+                    lastTime = currTime;
+                  }
+                }
+                imw = null;
+              }
+              SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+              if (settings.getBoolean(PREF_SCREEN, false)) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+              }
+              Button b = (Button) findViewById(R.id.status_button_startstop);
+              b.setText(R.string.main_button_start);
+              b.setEnabled(true);
+              b.setClickable(true);
             }
-            Button b = (Button) findViewById(R.id.status_button_startstop);
-            b.setText(R.string.main_button_start);
-            b.setEnabled(true);
-            b.setClickable(true);
+            if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
+              TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
+              tv_speed.setText(df.format(bundle.getFloat("speed")) + unit);
+            }
+            if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
+              TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
+              txt_status.setText(bundle.getString("status"));
+            }
+            if ((msg.arg1 & MSG_RESULT_UPDATE) == MSG_RESULT_UPDATE) {
+              TextView txt_result = (TextView) findViewById(R.id.status_textView_result);
+              txt_result.setText(bundle.getString("result"));
+            }
+            /*
+            if ((msg.arg1 & MSG_SIGNAL_UPDATE) == MSG_SIGNAL_UPDATE) {
+              TextView txt_signal = (TextView) findViewById(R.id.status_textView_signal);
+              txt_signal.setText(bundle.getString("signal"));
+            }
+            */
+            super.handleMessage(msg);
           }
-          if ((msg.arg1 & MSG_SPEED_UPDATE) == MSG_SPEED_UPDATE) {
-            TextView tv_speed = (TextView) findViewById(R.id.status_textView_speed);
-            tv_speed.setText(df.format(bundle.getFloat("speed")) + unit);
-          }
-          if ((msg.arg1 & MSG_STATUS_UPDATE) == MSG_STATUS_UPDATE) {
-            TextView txt_status = (TextView) findViewById(R.id.status_textView_status);
-            txt_status.setText(bundle.getString("status"));
-          }
-          if ((msg.arg1 & MSG_RESULT_UPDATE) == MSG_RESULT_UPDATE) {
-            TextView txt_result = (TextView) findViewById(R.id.status_textView_result);
-            txt_result.setText(bundle.getString("result"));
-          }
-          /*
-          if ((msg.arg1 & MSG_SIGNAL_UPDATE) == MSG_SIGNAL_UPDATE) {
-            TextView txt_signal = (TextView) findViewById(R.id.status_textView_signal);
-            txt_signal.setText(bundle.getString("signal"));
-          }
-          */
-          super.handleMessage(msg);
-        }
-      };
+        };
     Console.setReceiver(
         new Console.Receiver() {
           @Override

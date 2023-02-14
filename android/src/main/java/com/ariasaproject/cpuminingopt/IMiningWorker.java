@@ -1,6 +1,5 @@
 package com.ariasaproject.cpuminingopt;
 
-
 public interface IMiningWorker {
   public enum Notification {
     SYSTEM_ERROR,

@@ -10,17 +10,14 @@ public class StratumJsonResultSubscribe extends StratumJsonResult {
 
   public StratumJsonResultSubscribe(JsonNode i_json_node) throws RuntimeException {
     super(i_json_node);
-    if (this.error != null)
-      throw new RuntimeException(this.error.asText());
+    if (this.error != null) throw new RuntimeException(this.error.asText());
     JsonNode n = i_json_node.get("result");
-    if (!n.isArray())
-      throw new RuntimeException();
+    if (!n.isArray()) throw new RuntimeException();
     if ((n.get(0).get(0).get(0) != null)) {
       if (n.get(0).get(0).get(0).asText().compareTo("mining.notify") != 0)
         throw new RuntimeException();
     } else {
-      if (n.get(0).get(0).asText().compareTo("mining.notify") != 0)
-        throw new RuntimeException();
+      if (n.get(0).get(0).asText().compareTo("mining.notify") != 0) throw new RuntimeException();
     }
     this.session_id = n.get(0).get(1).asText();
     // xnonce1

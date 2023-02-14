@@ -125,114 +125,114 @@ public class SingleMiningChief implements Observer {
     Message msg = mainHandler.obtainMessage();
     msg.arg1 = 0;
     Bundle bundle = new Bundle();
-    
+
     if (arg instanceof IMiningWorker.Notification) {
-	    switch ((IMiningWorker.Notification) arg) {
-		    case SYSTEM_ERROR:
-		      Console.send(4, "Miner: System error");
-		      status = STATUS_ERROR;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      break;
-	    	case PERMISSION_ERROR:
-		      Console.send(4, "Miner: Permission error");
-		      status = STATUS_ERROR;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      break;
-	    	case TERMINATED:
-		      Console.send(4, "Miner: Worker terminated");
-		      status = STATUS_TERMINATED;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      bundle.putFloat("speed", 0);
-		      msg.arg1 |= MSG_SPEED_UPDATE;
-		    	break;
-	    	case CONNECTING:
-		      Console.send(1, "Miner: Worker connecting");
-		      status = STATUS_CONNECTING;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      break;
-	    	case AUTHENTICATION_ERROR:
-		      status = STATUS_ERROR;
-		      Console.send(4, "Miner: Authentication error");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-			    break;
-		    case CONNECTION_ERROR:
-		      status = STATUS_ERROR;
-		      Console.send(4, "Miner: Connection error");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      break;
-	    	case COMMUNICATION_ERROR: 
-		      status = STATUS_ERROR;
-		      Console.send(4, "Miner: Communication error");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		    	break;
-	    	case LONG_POLLING_FAILED:
-		      status = STATUS_NOT_MINING;
-		      Console.send(4, "Miner: Long polling failed");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		    	break;
-	    	case LONG_POLLING_ENABLED:
-		      status = STATUS_MINING;
-		      Console.send(1, "Miner: Long polling enabled");
-		      Console.send(1, "Miner: Speed updates as work is completed");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-			    break;
-		    case NEW_BLOCK_DETECTED:
-		      status = STATUS_MINING;
-		      Console.send(1, "Miner: Detected new block");
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-			    break;
-		    case POW_TRUE:
-		      status = STATUS_MINING;
-		      Console.send(2, "Miner: PROOF OF WORK RESULT: true");
-		      accepted += 1;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      msg.arg1 |= MSG_RESULT_UPDATE;
-		      bundle.putString("result", accepted + " / " + (accepted+rejected));
-		    	break;
-	    	case POW_FALSE:
-		      status = STATUS_MINING;
-		      rejected += 1;
-		      msg.arg1 |= MSG_STATUS_UPDATE;
-		      bundle.putString("status", status);
-		      msg.arg1 |= MSG_RESULT_UPDATE;
-		      bundle.putString("result", accepted + " / " + (accepted+rejected));
-			    break;
-		    case SPEED:
-		      if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
-		        speed = 0;
-		      } else {
-		        speed = (float) ((CpuMiningWorker) _worker).get_speed();
-		      }
-		      bundle.putFloat("speed", speed);
-		      msg.arg1 |= MSG_SPEED_UPDATE;
-		      break;
-	      case NEW_WORK:
-		      if (lastWorkTime > 0L) {
-		        long hashes = _worker.getNumberOfHash() - lastWorkHashes;
-		        speed = (float) ((CpuMiningWorker) _worker).get_speed();
-		        status = STATUS_MINING;
-		        bundle.putString("status", status);
-		        msg.arg1 |= MSG_STATUS_UPDATE;
-		        bundle.putFloat("speed", speed);
-		        msg.arg1 |= MSG_SPEED_UPDATE;
-		      }
-		      lastWorkTime = System.currentTimeMillis();
-		      lastWorkHashes = _worker.getNumberOfHash();
-		    	break;
-		    default:
-		    	break;
-	    }
+      switch ((IMiningWorker.Notification) arg) {
+        case SYSTEM_ERROR:
+          Console.send(4, "Miner: System error");
+          status = STATUS_ERROR;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case PERMISSION_ERROR:
+          Console.send(4, "Miner: Permission error");
+          status = STATUS_ERROR;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case TERMINATED:
+          Console.send(4, "Miner: Worker terminated");
+          status = STATUS_TERMINATED;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          bundle.putFloat("speed", 0);
+          msg.arg1 |= MSG_SPEED_UPDATE;
+          break;
+        case CONNECTING:
+          Console.send(1, "Miner: Worker connecting");
+          status = STATUS_CONNECTING;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case AUTHENTICATION_ERROR:
+          status = STATUS_ERROR;
+          Console.send(4, "Miner: Authentication error");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case CONNECTION_ERROR:
+          status = STATUS_ERROR;
+          Console.send(4, "Miner: Connection error");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case COMMUNICATION_ERROR:
+          status = STATUS_ERROR;
+          Console.send(4, "Miner: Communication error");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case LONG_POLLING_FAILED:
+          status = STATUS_NOT_MINING;
+          Console.send(4, "Miner: Long polling failed");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case LONG_POLLING_ENABLED:
+          status = STATUS_MINING;
+          Console.send(1, "Miner: Long polling enabled");
+          Console.send(1, "Miner: Speed updates as work is completed");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case NEW_BLOCK_DETECTED:
+          status = STATUS_MINING;
+          Console.send(1, "Miner: Detected new block");
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          break;
+        case POW_TRUE:
+          status = STATUS_MINING;
+          Console.send(2, "Miner: PROOF OF WORK RESULT: true");
+          accepted += 1;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          msg.arg1 |= MSG_RESULT_UPDATE;
+          bundle.putString("result", accepted + " / " + (accepted + rejected));
+          break;
+        case POW_FALSE:
+          status = STATUS_MINING;
+          rejected += 1;
+          msg.arg1 |= MSG_STATUS_UPDATE;
+          bundle.putString("status", status);
+          msg.arg1 |= MSG_RESULT_UPDATE;
+          bundle.putString("result", accepted + " / " + (accepted + rejected));
+          break;
+        case SPEED:
+          if (status.equals(STATUS_TERMINATED) || status.equals(STATUS_NOT_MINING)) {
+            speed = 0;
+          } else {
+            speed = (float) ((CpuMiningWorker) _worker).get_speed();
+          }
+          bundle.putFloat("speed", speed);
+          msg.arg1 |= MSG_SPEED_UPDATE;
+          break;
+        case NEW_WORK:
+          if (lastWorkTime > 0L) {
+            long hashes = _worker.getNumberOfHash() - lastWorkHashes;
+            speed = (float) ((CpuMiningWorker) _worker).get_speed();
+            status = STATUS_MINING;
+            bundle.putString("status", status);
+            msg.arg1 |= MSG_STATUS_UPDATE;
+            bundle.putFloat("speed", speed);
+            msg.arg1 |= MSG_SPEED_UPDATE;
+          }
+          lastWorkTime = System.currentTimeMillis();
+          lastWorkHashes = _worker.getNumberOfHash();
+          break;
+        default:
+          break;
+      }
     }
     msg.setData(bundle);
     mainHandler.sendMessage(msg);

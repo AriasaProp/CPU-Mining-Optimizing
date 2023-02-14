@@ -1,6 +1,5 @@
 package com.ariasaproject.cpuminingopt;
 
-
 public class Console {
   private static Receiver _receiver;
 
