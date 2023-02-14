@@ -33,14 +33,11 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       this.id = i_id;
       this.work = i_work;
       this.nonce = i_nonce;
-      return;
     }
-
     public final long id;
     public final MiningWork work;
     public final int nonce;
   }
-  public long signal_read = 0;
 
   private class AsyncRxSocketThread extends Thread {
     private final Semaphore semaphore = new Semaphore(0);
@@ -50,22 +47,47 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
     public void run() {
       for (;;) {
         try {
-        	long s = System.currentTimeMillis();
           StratumJson json = StratumMiningConnection.this._sock.recvStratumJson();
           if (json == null) {
             Thread.sleep(1);
             continue;
           }
-          onJsonRx(json);
-          StratumMiningConnection.this.setChanged();
-          StratumMiningConnection.this.signal_read = System.currentTimeMillis() - s;
-        	StratumMiningConnection.this.notifyObservers(Notification.SIGNAL_READ);
+		      Class<?> iid = json.getClass();
+		      if (iid == StratumJsonMethodGetVersion.class) {
+		        // TO DO:
+		      } else if (iid == StratumJsonMethodReconnect.class) {
+		        // TO DO:
+		      } else if (iid == StratumJsonMethodShowMessage.class) {
+		        // TO DO:
+		      } else if (iid == StratumJsonMethodMiningNotify.class) {
+		        StratumMiningConnection.this.cbNewMiningNotify((StratumJsonMethodMiningNotify) json);
+		      } else if (iid == StratumJsonMethodSetDifficulty.class) {
+		        StratumMiningConnection.this.cbNewMiningDifficulty((StratumJsonMethodSetDifficulty) json);
+		      } else if (iid == StratumJsonResultStandard.class) {
+		        StratumJsonResultStandard sjson = (StratumJsonResultStandard) json;
+		        SubmitOrder so = null;
+		        synchronized (this._submit_q) {
+		          for (SubmitOrder i : this._submit_q) {
+		            if (i.id == sjson.id) {
+		              this._submit_q.remove(i);
+		              so = i;
+		              break;
+		            }
+		          }
+		        }
+		        if (so != null) StratumMiningConnection.this.cbSubmitRecv(so, sjson);
+		        synchronized (this._json_q) {
+		          this._json_q.add(json);
+		        }
+		        this.semaphore.release();
+		      } else if (iid == StratumJsonResultSubscribe.class) {
+		        synchronized (this._json_q)
+		          this._json_q.add(json);
+		        this.semaphore.release();
+		      }
         } catch (SocketTimeoutException e) {
-          if (isInterrupted()) {
+          if (isInterrupted())
             break;
-          }
-          StratumMiningConnection.this.setChanged();
-        	StratumMiningConnection.this.notifyObservers(Notification.SIGNAL_ERROR);
         } catch (IOException e) {
         } catch (InterruptedException e) {
           break;
@@ -73,42 +95,6 @@ public class StratumMiningConnection extends Observable implements IMiningConnec
       }
     }
 
-    private void onJsonRx(StratumJson i_json) {
-      Class<?> iid = i_json.getClass();
-      if (iid == StratumJsonMethodGetVersion.class) {
-        // TO DO:
-      } else if (iid == StratumJsonMethodReconnect.class) {
-        // TO DO:
-      } else if (iid == StratumJsonMethodShowMessage.class) {
-        // TO DO:
-      } else if (iid == StratumJsonMethodMiningNotify.class) {
-        StratumMiningConnection.this.cbNewMiningNotify((StratumJsonMethodMiningNotify) i_json);
-      } else if (iid == StratumJsonMethodSetDifficulty.class) {
-        StratumMiningConnection.this.cbNewMiningDifficulty((StratumJsonMethodSetDifficulty) i_json);
-      } else if (iid == StratumJsonResultStandard.class) {
-        StratumJsonResultStandard sjson = (StratumJsonResultStandard) i_json;
-        SubmitOrder so = null;
-        synchronized (this._submit_q) {
-          for (SubmitOrder i : this._submit_q) {
-            if (i.id == sjson.id) {
-              this._submit_q.remove(i);
-              so = i;
-              break;
-            }
-          }
-        }
-        if (so != null) StratumMiningConnection.this.cbSubmitRecv(so, sjson);
-        synchronized (this._json_q) {
-          this._json_q.add(i_json);
-        }
-        this.semaphore.release();
-      } else if (iid == StratumJsonResultSubscribe.class) {
-        synchronized (this._json_q) {
-          this._json_q.add(i_json);
-        }
-        this.semaphore.release();
-      }
-    }
 
     public StratumJson waitForJsonResult(long i_id, Class<?> i_class, int i_wait_for_msec) {
       long time_out = i_wait_for_msec;

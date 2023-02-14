@@ -44,16 +44,6 @@
 		        android:layout_height="wrap_content"
 		        android:hint="password" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/thread_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Threads:" />
-    <Spinner
-        android:id="@+id/spinner1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >

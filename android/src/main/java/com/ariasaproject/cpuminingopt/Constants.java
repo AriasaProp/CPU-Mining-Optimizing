@@ -8,7 +8,6 @@ public class Constants {
   public static final int MSG_SPEED_UPDATE = 8;
   public static final int MSG_STATUS_UPDATE = 16;
   public static final int MSG_RESULT_UPDATE = 32;
-  public static final int MSG_SIGNAL_UPDATE = 64;
 
   public static final String PREF_URL = "URL";
   public static final String PREF_USER = "USER";

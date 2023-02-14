@@ -3,7 +3,6 @@ package com.ariasaproject.cpuminingopt;
 import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_PRIORITY;
 import static com.ariasaproject.cpuminingopt.Constants.DEFAULT_RETRYPAUSE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_RESULT_UPDATE;
-import static com.ariasaproject.cpuminingopt.Constants.MSG_SIGNAL_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STARTED;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
@@ -53,8 +52,26 @@ public class MainActivity extends Activity {
   CheckBox cb_keep_awake;
 
   String unit = " h/s";
-  final Handler statusHandler =
-      new Handler() {
+  Handler statusHandler;
+  
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    setContentView(R.layout.activity_main);
+    super.onCreate(savedInstanceState);
+    final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
+
+    et_serv = (EditText) findViewById(R.id.server_et);
+    et_user = (EditText) findViewById((R.id.user_et));
+    et_pass = (EditText) findViewById(R.id.password_et);
+    cb_background_run = (CheckBox) findViewById(R.id.settings_checkBox_background);
+    cb_keep_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake);
+    SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+    et_serv.setText(settings.getString(PREF_URL, "stratum+tcp://us2.litecoinpool.org:8080"));
+    et_user.setText(settings.getString(PREF_USER, "Ariasa.test"));
+    et_pass.setText(settings.getString(PREF_PASS, "1234"));
+    cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
+    cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
+    statusHandler = new Handler() {
         final DecimalFormat df = new DecimalFormat("#.##");
         int acc, recj;
         @Override
@@ -106,19 +123,15 @@ public class MainActivity extends Activity {
             TextView txt_result = (TextView) findViewById(R.id.status_textView_result);
             txt_result.setText(bundle.getString("result"));
           }
+          /*
           if ((msg.arg1 & MSG_SIGNAL_UPDATE) == MSG_SIGNAL_UPDATE) {
             TextView txt_signal = (TextView) findViewById(R.id.status_textView_signal);
             txt_signal.setText(bundle.getString("signal"));
           }
+          */
           super.handleMessage(msg);
         }
       };
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    setContentView(R.layout.activity_main);
-    super.onCreate(savedInstanceState);
-    final TextView txt_console = (TextView) findViewById(R.id.status_textView_console);
     Console.setReceiver(
         new Console.Receiver() {
           @Override
@@ -136,31 +149,6 @@ public class MainActivity extends Activity {
                 });
           }
         });
-
-    et_serv = (EditText) findViewById(R.id.server_et);
-    et_user = (EditText) findViewById((R.id.user_et));
-    et_pass = (EditText) findViewById(R.id.password_et);
-    cb_background_run = (CheckBox) findViewById(R.id.settings_checkBox_background);
-    cb_keep_awake = (CheckBox) findViewById(R.id.settings_checkBox_keepscreenawake);
-    SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-    et_serv.setText(settings.getString(PREF_URL, "stratum+tcp://us2.litecoinpool.org:8080"));
-    et_user.setText(settings.getString(PREF_USER, "Ariasa.test"));
-    et_pass.setText(settings.getString(PREF_PASS, "1234"));
-    cb_keep_awake.setChecked(settings.getBoolean(PREF_SCREEN, false));
-    cb_background_run.setChecked(settings.getBoolean(PREF_BACKGROUND, false));
-    // set number of Threads posibility use
-    try {
-      Spinner threadList = (Spinner) findViewById(R.id.spinner1);
-      String[] threadsAvailable = new String[Runtime.getRuntime().availableProcessors()];
-      for (int i = 0; i <= Runtime.getRuntime().availableProcessors(); i++) {
-        threadsAvailable[i] = Integer.toString(i + 1);
-        ArrayAdapter threads =
-            new ArrayAdapter<CharSequence>(
-                this, android.R.layout.simple_spinner_item, threadsAvailable);
-        threadList.setAdapter(threads);
-      }
-    } catch (Exception e) {
-    }
     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
     StrictMode.setThreadPolicy(policy);
   }
@@ -178,12 +166,10 @@ public class MainActivity extends Activity {
                   String url = et_serv.getText().toString();
                   String user = et_user.getText().toString();
                   String pass = et_pass.getText().toString();
-                  Spinner threadList = (Spinner) findViewById(R.id.spinner1);
-                  int threads = Integer.parseInt(threadList.getSelectedItem().toString());
                   Console.send(1, "Try to start mining");
                   try {
                     mc = new StratumMiningConnection(url, user, pass);
-                    imw = new CpuMiningWorker(threads, DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
+                    imw = new CpuMiningWorker(DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
                     smc = new SingleMiningChief(mc, imw, statusHandler);
                     smc.startMining();
                     SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
