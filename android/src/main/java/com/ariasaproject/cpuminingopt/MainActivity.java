@@ -172,8 +172,7 @@ public class MainActivity extends Activity {
                     imw = new CpuMiningWorker(DEFAULT_RETRYPAUSE, DEFAULT_PRIORITY);
                     smc = new SingleMiningChief(mc, imw, statusHandler);
                     smc.startMining();
-                    SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = settings.edit();
+                    SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
                     editor.putString(PREF_URL, url);
                     editor.putString(PREF_USER, user);
                     editor.putString(PREF_PASS, pass);

@@ -12,7 +12,6 @@ public class Constants {
   public static final String PREF_URL = "URL";
   public static final String PREF_USER = "USER";
   public static final String PREF_PASS = "PASS";
-  public static final String PREF_THREAD = "THREAD";
   public static final String PREF_THROTTLE = "THROTTLE";
   public static final String PREF_SCANTIME = "SCANTIME";
   public static final String PREF_RETRYPAUSE = "RETRYPAUSE";

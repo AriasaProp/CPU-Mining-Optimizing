@@ -1,6 +1,5 @@
 package com.ariasaproject.cpuminingopt;
 
-import static com.ariasaproject.cpuminingopt.Constants.MSG_SIGNAL_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_RESULT_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_SPEED_UPDATE;
 import static com.ariasaproject.cpuminingopt.Constants.MSG_STATUS_UPDATE;
@@ -234,20 +233,6 @@ public class SingleMiningChief implements Observer {
 		    	break;
 		    default:
 		    	break;
-	    }
-    }
-    if(arg instanceof IMiningConnection.Notification) {
-      msg.arg1 |= MSG_SIGNAL_UPDATE;
-      StratumMiningConnection c = (StratumMiningConnection)_connection;
-	    switch ((IMiningConnection.Notification) arg) {
-				default:
-	    		break;
-				case SIGNAL_READ:
-	    		bundle.putString("signal", c.signal_read+" ms");
-	    		break;
-				case SIGNAL_ERROR:
-	    		bundle.putString("signal", "error");
-	    		break;
 	    }
     }
     msg.setData(bundle);
