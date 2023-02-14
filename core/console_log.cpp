@@ -34,11 +34,10 @@ const char *console_log::write(unsigned int lv, const char *msg, unsigned long l
 		msg1[hL] = '\0';
 		char msg2[hL2];
 		memcpy(msg2,msg+hL,hL2);
-		write(lv,msg1);
-		write(lv,msg2);
-		return;
+		write(lv,msg1, hL);
+		return write(lv,msg2, hL2);
 	}
-	console_log_mtx.lock();
+	console_mtx.lock();
 	memmove(htmlMsg + length + 43, htmlMsg, MAX_MSG_SIZE - length - 43);
 	char *modif = htmlMsg;
 	memcpy(modif, frontKey, 14);
