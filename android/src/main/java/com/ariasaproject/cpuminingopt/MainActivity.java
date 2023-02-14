@@ -176,7 +176,6 @@ public class MainActivity extends Activity {
                     editor.putString(PREF_URL, url);
                     editor.putString(PREF_USER, user);
                     editor.putString(PREF_PASS, pass);
-                    editor.putInt(PREF_THREAD, threads);
                     editor.putBoolean(PREF_BACKGROUND, cb_background_run.isChecked());
                     editor.putBoolean(PREF_SCREEN, cb_keep_awake.isChecked());
                     editor.commit();
