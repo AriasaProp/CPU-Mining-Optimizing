@@ -10,7 +10,6 @@ import static com.ariasaproject.cpuminingopt.Constants.MSG_TERMINATED;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_BACKGROUND;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_PASS;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_SCREEN;
-import static com.ariasaproject.cpuminingopt.Constants.PREF_THREAD;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_URL;
 import static com.ariasaproject.cpuminingopt.Constants.PREF_USER;
 

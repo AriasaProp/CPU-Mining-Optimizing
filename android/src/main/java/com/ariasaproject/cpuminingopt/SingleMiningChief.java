@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import com.ariasaproject.cpuminingopt.connection.IConnectionEvent;
 import com.ariasaproject.cpuminingopt.connection.IMiningConnection;
-import com.ariasaproject.cpuminingopt.connection.IMiningConnection.Notification;
 import com.ariasaproject.cpuminingopt.connection.StratumMiningConnection;
 import java.util.EventListener;
 import java.util.Observable;
