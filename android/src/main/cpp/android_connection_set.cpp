@@ -1,4 +1,4 @@
-void _openConnection(const char *, const unsigned short); 
+void _openConnection(const char *, const unsigned short, bool); 
 const char *_getMessage();
 bool _sendMessage(const char *);
 bool _closeConnection();
@@ -6,7 +6,7 @@ bool _closeConnection();
 namespace function_set {
 	//socket connection
 	//return false cause error or has connection 
-	void (*openConnection) (const char*,const unsigned short) = _openConnection;
+	void (*openConnection) (const char*,const unsigned short, bool) = _openConnection;
 	//return message 
 	const char*(*getMessage) () = _getMessage;
 	//send message
@@ -30,15 +30,16 @@ bool hasConnection = false;
 char _msgTemp[1024];
 int sock = -1;
 
-void _openConnection(const char *server, const unsigned short port) {
+void _openConnection(const char *server, const unsigned short port, bool IPv) {
   if (!server) throw "Server name is null!";
   if (hasConnection) _closeConnection();
   //IP convertion
 	addrinfo hints, *res;
   memset(&hints, 0, sizeof(hints));
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-  char port_str[6];
+  hints.ai_family = IPv?AF_INET6:AF_INET; // IP version
+  hints.ai_socktype = SOCK_STREAM; // TCP
+  hints.ai_protocol = IPPROTO_TCP; // TCP
+  char port_str[64];//as long as possible
 	sprintf(port_str, "%u", port);
   int status = getaddrinfo(server, port_str, &hints, &res);
   if (status != 0) {
@@ -83,7 +84,6 @@ const char *_getMessage() {
     throw _msgTemp;
 	}
 	_recvBuff[_recv] = '\0';
-	console::write(0, _recvBuff);
 	return _recvBuff;
 }
 bool _closeConnection() {

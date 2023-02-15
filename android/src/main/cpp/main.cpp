@@ -24,7 +24,7 @@ JavaVM *mainVM;
 jobject mainobj;
 
 #define JNI_Call(R,M) extern "C" JNIEXPORT R JNICALL Java_com_ariasaproject_cpuminingopt_MainActivity_##M
-JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
+JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d, jint fl) {
 	if (!initializedOnce) {
 		mainobj = env->NewGlobalRef(o);
 		void(*afterStart)() = []{
@@ -67,7 +67,7 @@ JNI_Call(void, startMining) (JNIEnv *env, jobject o, jobjectArray d) {
   const char *c_str2 = env->GetStringUTFChars(str2, 0);
   jstring str3 = (jstring)env->GetObjectArrayElement(d, 3);
   const char *c_str3 = env->GetStringUTFChars(str3, 0);
-	core::startMining(c_str0, atoi(c_str1), c_str2, c_str3);
+	core::startMining(c_str0, atoi(c_str1), c_str2, c_str3, (unsigned int)fl);
   env->ReleaseStringUTFChars(str0, c_str0);
   env->ReleaseStringUTFChars(str1, c_str1);
   env->ReleaseStringUTFChars(str2, c_str2);

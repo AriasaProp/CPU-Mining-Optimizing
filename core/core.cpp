@@ -23,10 +23,11 @@ char *mining_host;
 unsigned short mining_port;
 char *mining_user;
 char *mining_pass;
+unsigned int mining_flags = 0;
 
 void miningThread();
 
-void core::startMining(const char *host, const unsigned short port, const char *user, const char *pass) {
+void core::startMining(const char *host, const unsigned short port, const char *user, const char *pass, unsigned int flags) {
 	mining_mtx.lock();
 	unsigned int l = strlen(host);
 	mining_host = new char[l+1];
@@ -41,6 +42,7 @@ void core::startMining(const char *host, const unsigned short port, const char *
 	mining_pass = new char[l+1];
 	memcpy(mining_pass, pass, l);
 	mining_pass[l] = '\0';
+	mining_flags = flags;
 	mining_mtx.unlock();
 	mining_thread = std::thread(miningThread);
 	mining_thread.detach();
@@ -75,7 +77,7 @@ void miningThread() {
 		unsigned int i = 0; 
 		//try connect to server
 		//https://catfact.ninja/fact
-		function_set::openConnection(mining_host, mining_port);
+		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
 		//if open connection failed this loop end directly
 		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}\n");
@@ -91,49 +93,52 @@ void miningThread() {
 						if ((errM = strstr(response, "\"error\":"))) {
 							errM += 8;
 							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error Subscribe: ");
+								strcpy(_msgtemp, "Error Authentications: ");
 								strncat(_msgtemp, errM, resM-errM-1);
 								throw _msgtemp;
 							}
+							
 							break;
 						}
 					}
-				} else 
-					console::write(0, "Subscribe format not found!");
+				}
 			}
-			std::this_thread::sleep_for(std::chrono::seconds(1)); 
+			console::write(0, "No message");
+			std::this_thread::sleep_for(std::chrono::seconds(2)); 
 		}
-		if (i >= max_trying)
+		if (i >= max_trying) {
 			throw "No received message after subscribe";
+		}
 		console::write(0, "Subscribe succes");
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
 			if (*response != '\0') {
-				if ((response = strstr(response, "\"id\":2"))) {
-					response += 6;
+				if (memcmp(response, "{\"id\":2,", 8) == 0) {
+					response += 8;
 					const char *resM;
 					if ((resM = strstr(response, ",\"result\":"))){
-						if(memcmp(resM+10, "true", 4) != 0) throw "Authorize wrong!";
+						if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
 						const char *errM;
 						if ((errM = strstr(response, "\"error\":"))) {
 							errM += 8;
 							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error authorize: ");
+								strcpy(_msgtemp, "Error Authentications: ");
 								strncat(_msgtemp, errM, resM-errM-1);
 								throw _msgtemp;
 							}
 							break;
 						}
 					}
-				} else 
-					console::write(0, "Authorize format not found");
+				}
 			}
-			std::this_thread::sleep_for(std::chrono::seconds(1)); 
+			console::write(0, "No message");
+			std::this_thread::sleep_for(std::chrono::seconds(2)); 
 		}
-		if (i >= max_trying)
+		if (i >= max_trying) {
 			throw "No received message after authorize";
+		}
 		console::write(0, "Authorize succes");
 		function_set::afterStart();
 		bool running = false;

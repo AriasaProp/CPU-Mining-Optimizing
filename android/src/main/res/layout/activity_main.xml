@@ -30,7 +30,7 @@
 				        android:layout_weight="0.7"
 				        android:layout_height="wrap_content"
 				        android:inputType="textUri|textNoSuggestions"
-				        android:hint="Mining host " />
+				        android:hint="Pool Domain " />
 				    <TextView
 								android:id="@+id/lbl_port"
 				        android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
 				        android:layout_weight="0.3"
 				        android:layout_height="wrap_content"
 				        android:inputType="number"
-				        android:hint="port" />
+				        android:hint="Port" />
 				</LinearLayout>
 				<LinearLayout
 						android:id="@+id/auth_container"
@@ -74,6 +74,20 @@
 				        android:layout_height="wrap_content"
 				        android:inputType="textVisiblePassword|textNoSuggestions"
 				        android:hint=" pass" />
+				</LinearLayout>
+				<LinearLayout
+						android:id="@+id/extra_container"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+				    android:orientation="horizontal">
+						<Switch
+				        android:id="@+id/swtch_IPv"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_horizontal"
+				        android:layout_marginTop="5dp"
+				        android:textOff="IPv4"
+				        android:textOn="IPv6" />
 				</LinearLayout>
 				<Button
 						android:id="@+id/btn_mining"

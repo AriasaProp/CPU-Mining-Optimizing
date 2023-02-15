@@ -18,7 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -26,11 +26,13 @@ public class MainActivity extends Activity {
 	static final String PORT_PREF = "PORT";
 	static final String USER_PREF = "USER";
 	static final String PASS_PREF = "PASS";
+	static final String IPV_PREF = "IPV";
   static {
     System.loadLibrary("ext");
   }
   TextView console;
   EditText ed_uri, ed_port, ed_user,ed_pass;
+  Switch swtch_ipv;
   Button btn_mining;
   Handler mHandler;
 
@@ -48,6 +50,8 @@ public class MainActivity extends Activity {
 		ed_user.setText(pref.getString(USER_PREF, "Ariasa.test"));
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
 		ed_pass.setText(pref.getString(PASS_PREF, "1234"));
+		swtch_ipv = (EditText)findViewById(R.id.swtch_IPv);
+		swtch_ipv.setShowText(pref.getBoolean(IPV_PREF, false));
 		btn_mining = (Button)findViewById(R.id.btn_mining);
 		console = (TextView)findViewById(R.id.txview_console);
     mHandler = new Handler() {
@@ -70,12 +74,18 @@ public class MainActivity extends Activity {
 		      	ed_user.setClickable(false);
 		      	ed_pass.setEnabled(false);
 		      	ed_pass.setClickable(false);
+		      	swtch_ipv.setEnabled(false);
+		      	swtch_ipv.setClickable(false);
 		      	String[] d = new String[4];
 		      	d[0] = ed_uri.getText().toString();
 		      	d[1] = ed_port.getText().toString();
 		      	d[2] = ed_user.getText().toString();
 		      	d[3] = ed_pass.getText().toString();
-						MainActivity.this.startMining(d);
+		      	int flags = 0;
+		      	if (swtch_ipv.getShowText()) {
+		      		flags |= 1;
+		      	}
+						MainActivity.this.startMining(d, flags);
 						break;
 					case 2: //after start
 						SharedPreferences.Editor pref_edit = getPreferences(Context.MODE_PRIVATE).edit();
@@ -83,6 +93,7 @@ public class MainActivity extends Activity {
 						pref_edit.putInt(PORT_PREF, Integer.valueOf(ed_port.getText().toString()));
 						pref_edit.putString(USER_PREF, ed_user.getText().toString());
 						pref_edit.putString(PASS_PREF, ed_pass.getText().toString());
+						pref_edit.putBoolean(IPV_PREF, swtch_ipv.getShowText());
 						pref_edit.commit();
 		      	btn_mining.setText(R.string.state_button_stop);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +130,8 @@ public class MainActivity extends Activity {
 		      	ed_user.setClickable(true);
 		      	ed_pass.setEnabled(true);
 		      	ed_pass.setClickable(true);
+		      	swtch_ipv.setEnabled(true);
+		      	swtch_ipv.setClickable(true);
 						break;
 					case 9: //console tag
 		        console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);
@@ -133,6 +146,6 @@ public class MainActivity extends Activity {
   	mHandler.removeCallbacksAndMessages(flag);
   	mHandler.sendMessage(mHandler.obtainMessage(flag,msg));
   }
-  private native void startMining(String[] datas);
+  private native void startMining(String[] datas, int flags);
   private native void stopMining();
 }
