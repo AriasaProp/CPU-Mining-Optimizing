@@ -82,25 +82,27 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
-			if (*response == '\0') continue;
-			if (memcmp(response, "{\"id\":1,", 8) != 0) continue;
-			response += 8;
-			const char *resM;
-			if ((resM = strstr(response, ",\"result\":"))) {
-				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
-				const char *errM;
-				if ((errM = strstr(response, "\"error\":"))) {
-					errM += 8;
-					if (memcmp(errM,"null",4) != 0) {
-						strcpy(_msgtemp, "Error Authentications: ");
-						strncat(_msgtemp, errM, resM-errM-1);
-						throw _msgtemp;
+			if (*response != '\0') {
+				if (memcmp(response, "{\"id\":1,", 8) == 0) {
+					response += 8;
+					const char *resM;
+					if ((resM = strstr(response, ",\"result\":"))) {
+						const char *errM;
+						if ((errM = strstr(response, "\"error\":"))) {
+							errM += 8;
+							if (memcmp(errM,"null",4) != 0) {
+								strcpy(_msgtemp, "Error Authentications: ");
+								strncat(_msgtemp, errM, resM-errM-1);
+								throw _msgtemp;
+							}
+							
+							break;
+						}
 					}
 				}
 			}
 			console::write(0, "No message");
 			std::this_thread::sleep_for(std::chrono::seconds(2)); 
-//{"id":1,"error":null,"result":[[["mining.notify","57004759bb4b0b2b"],["mining.set_difficulty","57004759bb4b0b2b2"]],"57004759",4]}
 		}
 		if (i >= max_trying) {
 			throw "No received message after subscribe";
@@ -110,19 +112,22 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
-			if (*response == '\0') continue;
-			if (memcmp(response, "{\"id\":2,", 8) != 0) continue;
-			response += 8;
-			const char *resM;
-			if ((resM = strstr(response, ",\"result\":"))){
-				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
-				const char *errM;
-				if ((errM = strstr(response, "\"error\":"))) {
-					errM += 8;
-					if (memcmp(errM,"null",4) != 0) {
-						strcpy(_msgtemp, "Error Authentications: ");
-						strncat(_msgtemp, errM, resM-errM-1);
-						throw _msgtemp;
+			if (*response != '\0') {
+				if (memcmp(response, "{\"id\":2,", 8) == 0) {
+					response += 8;
+					const char *resM;
+					if ((resM = strstr(response, ",\"result\":"))){
+						if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
+						const char *errM;
+						if ((errM = strstr(response, "\"error\":"))) {
+							errM += 8;
+							if (memcmp(errM,"null",4) != 0) {
+								strcpy(_msgtemp, "Error Authentications: ");
+								strncat(_msgtemp, errM, resM-errM-1);
+								throw _msgtemp;
+							}
+							break;
+						}
 					}
 				}
 			}
