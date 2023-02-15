@@ -72,7 +72,7 @@ void miningThread() {
 		//https://catfact.ninja/fact
 		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
-		const char *recvMsgConn;
+		//const char *recvMsgConn;
 		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[AndroidLTCMiner_ForLearningTest]}\n");
 		function_set::sendMessage(_msgtemp);

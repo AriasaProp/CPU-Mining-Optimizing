@@ -8,7 +8,7 @@ namespace function_set {
 	//return false cause error or has connection 
 	void (*openConnection) (const char*,const unsigned short) = _openConnection;
 	//return message 
-	const char*(*getMessage) (const unsigned int&) = _getMessage;
+	const char*(*getMessage) (const char*) = _getMessage;
 	//send message
 	bool (*sendMessage)(const char *) = _sendMessage;
 	//return false cause error or no connection 
@@ -26,6 +26,7 @@ namespace function_set {
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <vector>
 
 char _msgTemp[512];
 static void *recvMessageLoop(void *);
@@ -54,7 +55,7 @@ void _openConnection(const char *server, const unsigned short port) {
 		sprintf(port_str, "%u", port);
 	  int status = getaddrinfo(server, port_str, &hints, &ip_address);
 	  if (status != 0) {
-	    sprintf(_msgTemp, "Address conv: %s", gai_error(status));
+	    sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
 	    throw _msgTemp;
 	  }
   }
@@ -75,7 +76,7 @@ void _openConnection(const char *server, const unsigned short port) {
   }
   freeaddrinfo(ip_address);
   console::write(2, "Connected to server");
-  curr_data->running = true;
+  curr->running = true;
   pthread_mutex_init(&curr->mtx, NULL);
   pthread_cond_init(&curr->cond, NULL);
   pthread_attr_t attr; 
@@ -99,15 +100,15 @@ bool _sendMessage(const char *msg) {
 }
 const char *_getMessage(const char *msg) {
 	const char *result = nullptr;
-  pthread_mutex_lock(&curr_data->mtx);
-  for(std::vector<const char*>::iterator it = curr_data->recv_message.begin(); it != curr_data->recv_message.end(); it++) {
+  pthread_mutex_lock(&curr->mtx);
+  for(std::vector<const char*>::iterator it = curr->recv_message.begin(); it != curr->recv_message.end(); it++) {
   	if (strstr(*it, msg)) {
   		result = *it;
-  		curr_data->recv_message.erase(it);
+  		curr->recv_message.erase(it);
   		break;
   	}
   }
-  pthread_mutex_unlock(&curr_data->mtx);
+  pthread_mutex_unlock(&curr->mtx);
 	return result;
 }
 static void *recvMessageLoop(void *args) {
@@ -140,8 +141,8 @@ bool _closeConnection() {
   if(!curr) return false;
   
   pthread_mutex_lock(&curr->mtx);
-  curr_data->running = false;
-  while(!curr_data->running)
+  curr->running = false;
+  while(!curr->running)
   	pthread_cond_wait(&curr->cond,&curr->mtx);
   for(const char *rm : curr->recv_message) {
   	delete rm;
