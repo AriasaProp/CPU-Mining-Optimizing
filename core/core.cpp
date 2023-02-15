@@ -115,7 +115,7 @@ void miningThread() {
 		function_set::afterStart();
 		bool running = false;
 		while (running){
-			console::write(0, function_set::recvConnection());
+			//console::write(0, function_set::recvConnection());
 			//do nothing right now
 			std::this_thread::sleep_for(std::chrono::seconds(1)); 
 			//receive Mesage
