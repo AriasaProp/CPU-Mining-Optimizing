@@ -76,7 +76,7 @@ void _openConnection(const char *server, const unsigned short port) {
   }
   freeaddrinfo(ip_address);
   console::write(2, "Connected to server");
-  curr->running = true;
+  curr->running = false;
   pthread_mutex_init(&curr->mtx, NULL);
   pthread_cond_init(&curr->cond, NULL);
   pthread_attr_t attr; 
@@ -115,17 +115,21 @@ static void *recvMessageLoop(void *args) {
 	sock_data *curr_data = (sock_data*)args;
 	char _recvBuff[4096];
 	bool run_recv = true;
-	while (run_recv) {
-		int _recv = recv(curr_data->sock, _recvBuff, 4095, 0);
-	  if (_recv < 0) {
-	    sprintf(_msgTemp, "Receive: %s", strerror(errno));
-	    throw _msgTemp;
-	  }
-	  _recvBuff[_recv] = '\0';
+	int _recv;
+	do {
+		_recv = recv(curr_data->sock, _recvBuff, 4095, 0);
+	  if (_recv > 0) {
+		  _recvBuff[_recv] = '\0';
+		  pthread_mutex_lock(&curr_data->mtx);
+		  char *sv = new char[_recv];
+		  memcpy(sv, _recvBuff, _recv);
+		  curr_data->recv_message.push_back(sv);
+		  pthread_mutex_unlock(&curr_data->mtx);
+		  console::write(0, "added message");
+		} else {
+			sleep(1);
+		}
 	  pthread_mutex_lock(&curr_data->mtx);
-	  char *sv = new char[_recv];
-	  memcpy(sv, _recvBuff, _recv);
-	  curr_data->recv_message.push_back(sv);
 	  run_recv = curr_data->running;
 	  pthread_mutex_unlock(&curr_data->mtx);
 	} while (run_recv);
