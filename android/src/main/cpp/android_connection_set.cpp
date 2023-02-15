@@ -34,32 +34,31 @@ void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (hasConnection) _closeConnection();
   //IP convertion
-  addrinfo *ip_address;
-  {
-	  addrinfo hints;
-	  memset(&hints, 0, sizeof(hints));
-	  hints.ai_family = AF_INET;
-	  hints.ai_socktype = SOCK_STREAM;
-	  char port_str[6];
-		sprintf(port_str, "%u", port);
-	  int status = getaddrinfo(server, port_str, &hints, &ip_address);
-	  if (status != 0) {
-	    sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
-	    throw _msgTemp;
-	  }
+	addrinfo hints, *res;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  char port_str[6];
+	sprintf(port_str, "%u", port);
+  int status = getaddrinfo(server, port_str, &hints, &res);
+  if (status != 0) {
+    sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
+    throw _msgTemp;
   }
+  console::write(0, _msgTemp);
+	
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
   }
-  if (connect(sock, (sockaddr*)ip_address->ai_addr, sizeof(sockaddr)) < 0) {
+  if (connect(sock, &res->ai_addr, sizeof res->ai_addr) < 0) {
     sprintf(_msgTemp, "Connect: %s", strerror(errno));
     close(sock);
     sock = -1;
     throw _msgTemp;
   }
-  freeaddrinfo(ip_address);
+	freeaddrinfo(res);
   console::write(2, "Connected to server");
   hasConnection = true;
 }
@@ -82,6 +81,8 @@ const char *_getMessage() {
   if (_recv < 0) {
     sprintf(_msgTemp, "Receive: %s", strerror(errno));
     throw _msgTemp;
+	} else if (recv == 0) {
+		
 	}
 	_recvBuff[_recv] = '\0';
 	console::write(0, _recvBuff);

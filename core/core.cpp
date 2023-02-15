@@ -78,7 +78,7 @@ void miningThread() {
 		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
 		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
-		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[AndroidLTCMiner_ForLearningTest]}\n");
+		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}\n");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
