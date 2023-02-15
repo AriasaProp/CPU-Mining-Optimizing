@@ -52,7 +52,7 @@ void _openConnection(const char *server, const unsigned short port) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
   }
-  if (connect(sock, &res->ai_addr, sizeof res->ai_addr) < 0) {
+  if (connect(sock, res->ai_addr, sizeof(sockaddr)) < 0) {
     sprintf(_msgTemp, "Connect: %s", strerror(errno));
     close(sock);
     sock = -1;
