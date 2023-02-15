@@ -81,8 +81,6 @@ const char *_getMessage() {
   if (_recv < 0) {
     sprintf(_msgTemp, "Receive: %s", strerror(errno));
     throw _msgTemp;
-	} else if (recv == 0) {
-		
 	}
 	_recvBuff[_recv] = '\0';
 	console::write(0, _recvBuff);
