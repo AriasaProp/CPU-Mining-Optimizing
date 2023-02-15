@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 		ed_pass = (EditText)findViewById(R.id.edt_pass);
 		ed_pass.setText(pref.getString(PASS_PREF, "1234"));
 		swtch_ipv = (Switch)findViewById(R.id.swtch_IPv);
-		swtch_ipv.setShowText(pref.getBoolean(IPV_PREF, false));
+		swtch_ipv.setChecked(pref.getBoolean(IPV_PREF, false));
 		btn_mining = (Button)findViewById(R.id.btn_mining);
 		console = (TextView)findViewById(R.id.txview_console);
     mHandler = new Handler() {
@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
 						pref_edit.putInt(PORT_PREF, Integer.valueOf(ed_port.getText().toString()));
 						pref_edit.putString(USER_PREF, ed_user.getText().toString());
 						pref_edit.putString(PASS_PREF, ed_pass.getText().toString());
-						pref_edit.putBoolean(IPV_PREF, swtch_ipv.getShowText());
+						pref_edit.putBoolean(IPV_PREF, swtch_ipv.isChecked());
 						pref_edit.commit();
 		      	btn_mining.setText(R.string.state_button_stop);
 		      	btn_mining.setOnClickListener(new View.OnClickListener() {
