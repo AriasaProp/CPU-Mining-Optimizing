@@ -85,7 +85,7 @@ void miningThread() {
 			if (memcmp(response, "{\"id\":1,", 8) != 0) continue;
 			response += 8;
 			const char *resM;
-			if ((resM = strstr(response, ",\"result\":")) {
+			if ((resM = strstr(response, ",\"result\":"))) {
 				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
 				const char *errM;
 				if ((errM = strstr(response, "\"error\":"))) {
@@ -113,7 +113,7 @@ void miningThread() {
 			if (memcmp(response, "{\"id\":2,", 8) != 0) continue;
 			response += 8;
 			const char *resM;
-			if ((resM = strstr(response, ",\"result\":")) {
+			if ((resM = strstr(response, ",\"result\":"))){
 				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
 				const char *errM;
 				if ((errM = strstr(response, "\"error\":"))) {
