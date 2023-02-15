@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
 		      	d[2] = ed_user.getText().toString();
 		      	d[3] = ed_pass.getText().toString();
 		      	int flags = 0;
-		      	if (swtch_ipv.getShowText()) {
+		      	if (swtch_ipv.isChecked()) {
 		      		flags |= 1;
 		      	}
 						MainActivity.this.startMining(d, flags);
