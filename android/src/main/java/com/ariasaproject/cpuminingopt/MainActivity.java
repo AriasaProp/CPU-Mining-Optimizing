@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 		      	ed_pass.setEnabled(false);
 		      	ed_pass.setClickable(false);
 		      	swtch_ipv.setEnabled(false);
-		      	swtch_ipv.setClickable(false);
+		      	swtch_ipv.setCheckable(false);
 		      	String[] d = new String[4];
 		      	d[0] = ed_uri.getText().toString();
 		      	d[1] = ed_port.getText().toString();
@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
 		      	ed_pass.setEnabled(true);
 		      	ed_pass.setClickable(true);
 		      	swtch_ipv.setEnabled(true);
-		      	swtch_ipv.setClickable(true);
+		      	swtch_ipv.setCheckable(true);
 						break;
 					case 9: //console tag
 		        console.setText(Html.fromHtml((String) msg.obj), TextView.BufferType.SPANNABLE);

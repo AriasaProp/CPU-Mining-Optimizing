@@ -1,22 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient
-        android:type="linear"
-        android:angle="90"
-        android:startColor="#777777"
-        android:endColor="#BBBBBB"
-        android:centerColor="#FFFFFF"
-        android:centerY="0.5"
-        android:gradientRadius="100"
-        android:useLevel="false" />
-    <corners android:radius="2dp" />
-    <padding
-        android:left="8dp"
-        android:top="8dp"
-        android:right="8dp"
-        android:bottom="8dp" />
-    <stroke
-        android:width="0.5dp"
-        android:color="#CCCCCC" />
-    <solid android:color="@android:color/transparent" />
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+		<item
+				android:state_enabled="true"
+				android:state_checkable="true"
+				android:state_checked="true">
+				<shape android:shape="rectangle">
+				    <gradient
+				        android:type="linear"
+				        android:angle="90"
+				        android:startColor="#AAAADD"
+				        android:endColor="#B0B0E4"
+				        android:centerColor="#BBBBFF"
+				        android:centerY="0.5"
+				        android:gradientRadius="100"
+				        android:useLevel="false" />
+				    <corners android:radius="2dp" />
+				    <padding
+				        android:left="8dp"
+				        android:top="8dp"
+				        android:right="8dp"
+				        android:bottom="8dp" />
+				</shape>
+		</item>
+		<item 
+				android:state_enabled="false"
+				android:state_checkable="false"
+				android:state_checked="true">
+				<shape android:shape="rectangle">
+				    <color android:color="#BFBFC4" />
+				    <corners android:radius="2dp" />
+				    <padding
+				        android:left="8dp"
+				        android:top="8dp"
+				        android:right="8dp"
+				        android:bottom="8dp" />
+				</shape>
+		</item>
+		<item
+				android:state_enabled="true"
+				android:state_checkable="true"
+				android:state_checked="false">
+				<shape android:shape="rectangle">
+				    <gradient
+				        android:type="linear"
+				        android:angle="90"
+				        android:startColor="#DDAAAA"
+				        android:endColor="#E4B0B0"
+				        android:centerColor="#FFBBBB"
+				        android:centerY="0.5"
+				        android:gradientRadius="100"
+				        android:useLevel="false" />
+				    <corners android:radius="2dp" />
+				    <padding
+				        android:left="8dp"
+				        android:top="8dp"
+				        android:right="8dp"
+				        android:bottom="8dp" />
+				</shape>
+		</item>
+		<item 
+				android:state_enabled="false"
+				android:state_checkable="false"
+				android:state_checked="false">
+				<shape android:shape="rectangle">
+				    <solid android:color="#C4BFBF"/>
+				    <corners android:radius="2dp" />
+				    <padding
+				        android:left="8dp"
+				        android:top="8dp"
+				        android:right="8dp"
+				        android:bottom="8dp" />
+				</shape>
+		</item>
+</selector>
