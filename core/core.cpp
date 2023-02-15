@@ -111,7 +111,7 @@ void miningThread() {
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
 			if (*response != '\0') {
-				if ((response = strstr(response, "\"id\":2", 8))) {
+				if ((response = strstr(response, "\"id\":2"))) {
 					response += 6;
 					const char *resM;
 					if ((resM = strstr(response, ",\"result\":"))){
