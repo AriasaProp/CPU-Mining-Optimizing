@@ -79,7 +79,7 @@ bool _sendMessage(const char *msg) {
 char _recvBuff[4096];
 const char *_getMessage() {
 	if(!hasConnection) throw "No connection already";
-	_recv = recv(sock, _recvBuff, 4095, 0);
+	int _recv = recv(sock, _recvBuff, 4095, 0);
   if (_recv < 0) {
     sprintf(_msgTemp, "Receive: %s", strerror(errno));
     throw _msgTemp;
