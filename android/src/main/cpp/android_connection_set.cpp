@@ -27,7 +27,7 @@ namespace function_set {
 #include <arpa/inet.h>
 
 bool hasConnection = false;
-char _msgTemp[512];
+char _msgTemp[1024];
 int sock = -1;
 
 void _openConnection(const char *server, const unsigned short port) {
@@ -82,9 +82,9 @@ const char *_getMessage() {
   if (_recv < 0) {
     sprintf(_msgTemp, "Receive: %s", strerror(errno));
     throw _msgTemp;
-	} else {
-	  _recvBuff[_recv] = '\0';
 	}
+	_recvBuff[_recv] = '\0';
+	console::write(0, _recvBuff);
 	return _recvBuff;
 }
 bool _closeConnection() {
