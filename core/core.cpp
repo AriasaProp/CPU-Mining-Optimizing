@@ -73,29 +73,45 @@ void miningThread() {
 		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
 		const char *recvMsgConn;
-		strcpy(_msgtemp, "{\"id\": 1,\"method\": \"mining.subscribe\",\"params\": []}\n");
+		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
+		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[AndroidLTCMiner_ForLearningTest]}\n");
 		function_set::sendMessage(_msgtemp);
-		for (trying = 0; ((recvMsgConn = function_set::recvConnection())[0] == ' ') && (trying < 3); trying++)
-			console::write(0, "No message");
-		if (trying >= 3) {
-			throw "No received message after subscribe";
-		}
-		console::write(0, "Message from susbscribe: ");
-		console::write(0, recvMsgConn);
-		sprintf(_msgtemp, "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}\n",mining_user,mining_pass);
-		function_set::sendMessage(_msgtemp);
-		for (trying = 0;;trying++) {
-			if (trying >= 3) {
-				throw "No received message after authentication";
-			}
-			recvMsgConn = function_set::recvConnection();
-			if (recvMsgConn[0] != ' ') {
+		for (trying = 0; trying < 3; trying++) {
+			const char *response = function_set::getMessage("{\"id\":1");
+			if (response && strstr(response, "\"error\":null")) {
+				delete response;
+				break;
+			} else if (response) {
+				console::write(0, response);
+				delete response;
 				break;
 			}
 			console::write(0, "No message");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
 		}
-		console::write(0, "Message from authentication: ");
-		console::write(0, recvMsgConn);
+		if (trying >= 3) {
+			throw "No received message after subscribe";
+		}
+		console::write(0, "Subscribe succes");
+		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
+		function_set::sendMessage(_msgtemp);
+		for (trying = 0; trying < 3; trying++) {
+			const char *response = function_set::getMessage("{\"id\":2");
+			if (response && strstr(response, "\"error\":null,\"result\":true}")) {
+				delete response;
+				break;
+			} else if (response) {
+				console::write(0, response);
+				delete response;
+				break;
+			}
+			console::write(0, "No message");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100)); 
+		}
+		if (trying >= 3) {
+			throw "No received message after subscribe";
+		}
+		console::write(0, "Authorize succes");
 		function_set::afterStart();
 		bool running = false;
 		while (running){

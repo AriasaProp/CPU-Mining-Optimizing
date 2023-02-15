@@ -7,8 +7,10 @@
 #include <cstring>
 #include <mutex>
 
-
-#define MAX_MSG_SIZE 16383
+//reduce traffic message size
+#define MAX_MSG_SIZE 8192
+//limit received message to fit with html format
+#define MAX_MSG_SEND 8000
 
 std::mutex console_mtx;
 
@@ -29,7 +31,7 @@ void console::initialize() {
 }
 void console::write(const unsigned int &lv, const char *msg) {
 		const unsigned int length = strlen(msg);
-		if (length > 8192) {
+		if (length > MAX_MSG_SEND) {
 				unsigned int hL = length / 2;
 				unsigned int hL2 = length - hL;
 				char msg1[hL+1];
