@@ -9,7 +9,7 @@ namespace function_set {
 	//return false cause error or has connection 
 	extern void (*openConnection) (const char*,const unsigned short);
 	extern const char*(*getMessage) (const char*);
-	extern bool (*sendMessage) (const char *msg);
+	extern bool (*sendMessage) ();
 	//return false cause error or no connection 
 	extern bool (*closeConnection) ();
 	//console receiver msg

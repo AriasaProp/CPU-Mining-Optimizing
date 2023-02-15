@@ -66,49 +66,69 @@ void miningThread() {
 	console::write(0, _msgtemp);
 	sprintf(_msgtemp, "Auth: %s:%s", mining_user, mining_pass);
 	console::write(0, _msgtemp);
+	
+	std::vector<const char*> saved_msg;
+	//const char *recvMsgConn;
 	try {
-		unsigned int trying = 0; //repeated try limit
+		const unsigned int max_trying = 3; //repeated try limit
+		unsigned int i = 0; 
 		//try connect to server
 		//https://catfact.ninja/fact
 		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
-		//const char *recvMsgConn;
 		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[AndroidLTCMiner_ForLearningTest]}\n");
 		function_set::sendMessage(_msgtemp);
-		for (trying = 0; trying < 3; trying++) {
-			const char *response = function_set::getMessage("{\"id\":1");
-			if (response && strstr(response, "\"error\":null")) {
-				delete response;
-				break;
-			} else if (response) {
-				console::write(0, response);
-				delete response;
-				break;
+		for (i = 0; i < max_trying; i++) {
+			const char *response = function_set::getMessage();
+			if (*response == '\0') continue;
+			if (memcmp(response, "{\"id\":1,", 8) != 0) continue;
+			response += 8;
+			const char *resM;
+			if ((resM = strstr(response, ",\"result\":")) {
+				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
+				const char *errM;
+				if ((errM = strstr(response, "\"error\":"))) {
+					errM += 8;
+					if (memcmp(errM,"null",4) != 0) {
+						strcpy(_msgtemp, "Error Authentications: ");
+						strncat(_msgtemp, errM, resM-errM-1);
+						throw _msgtemp;
+					}
+				}
 			}
 			console::write(0, "No message");
 			std::this_thread::sleep_for(std::chrono::seconds(2)); 
+//{"id":1,"error":null,"result":[[["mining.notify","57004759bb4b0b2b"],["mining.set_difficulty","57004759bb4b0b2b2"]],"57004759",4]}
 		}
-		if (trying >= 3) {
+		if (i >= max_trying) {
 			throw "No received message after subscribe";
 		}
 		console::write(0, "Subscribe succes");
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
-		for (trying = 0; trying < 3; trying++) {
-			const char *response = function_set::getMessage("{\"id\":2");
-			if (response && strstr(response, "\"error\":null,\"result\":true}")) {
-				delete response;
-				break;
-			} else if (response) {
-				console::write(0, response);
-				delete response;
-				break;
+		for (i = 0; i < max_trying; i++) {
+			const char *response = function_set::getMessage();
+			if (*response == '\0') continue;
+			if (memcmp(response, "{\"id\":2,", 8) != 0) continue;
+			response += 8;
+			const char *resM;
+			if ((resM = strstr(response, ",\"result\":")) {
+				if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
+				const char *errM;
+				if ((errM = strstr(response, "\"error\":"))) {
+					errM += 8;
+					if (memcmp(errM,"null",4) != 0) {
+						strcpy(_msgtemp, "Error Authentications: ");
+						strncat(_msgtemp, errM, resM-errM-1);
+						throw _msgtemp;
+					}
+				}
 			}
 			console::write(0, "No message");
 			std::this_thread::sleep_for(std::chrono::seconds(2)); 
 		}
-		if (trying >= 3) {
+		if (i >= max_trying) {
 			throw "No received message after authorize";
 		}
 		console::write(0, "Authorize succes");
@@ -133,6 +153,10 @@ void miningThread() {
 	} catch (const char *exceptionMsg) {
 		console::write(4, exceptionMsg);
 	}
+	//clean savedMessage
+	for(const char *m : saved_msg)
+		delete[] m;
+	saved_msg.clear();
 	//cleaning
 	console::write(1, "End Mining...");
 	function_set::closeConnection();
@@ -143,3 +167,4 @@ void miningThread() {
 	*/
 	//countTowards = 0;
 }
+
