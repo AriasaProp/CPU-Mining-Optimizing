@@ -67,7 +67,7 @@ void miningThread() {
 	sprintf(_msgtemp, "Auth: %s:%s", mining_user, mining_pass);
 	console::write(0, _msgtemp);
 	
-	std::vector<const char*> saved_msg;
+	//std::vector<const char*> saved_msg;
 	//const char *recvMsgConn;
 	try {
 		const unsigned int max_trying = 3; //repeated try limit
