@@ -91,52 +91,49 @@ void miningThread() {
 						if ((errM = strstr(response, "\"error\":"))) {
 							errM += 8;
 							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error Authentications: ");
+								strcpy(_msgtemp, "Error Subscribe: ");
 								strncat(_msgtemp, errM, resM-errM-1);
 								throw _msgtemp;
 							}
-							
 							break;
 						}
 					}
-				}
+				} else 
+					console::write(0, "Subscribe format not found!");
 			}
-			console::write(0, "No message");
-			std::this_thread::sleep_for(std::chrono::seconds(2)); 
+			std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		}
-		if (i >= max_trying) {
+		if (i >= max_trying)
 			throw "No received message after subscribe";
-		}
 		console::write(0, "Subscribe succes");
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			const char *response = function_set::getMessage();
 			if (*response != '\0') {
-				if ((response = strstr(response, "{\"id\":2,", 8))) {
-					response += 8;
+				if ((response = strstr(response, "\"id\":2", 8))) {
+					response += 6;
 					const char *resM;
 					if ((resM = strstr(response, ",\"result\":"))){
-						if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
+						if(memcmp(resM+10, "true", 4) != 0) throw "Authorize wrong!";
 						const char *errM;
 						if ((errM = strstr(response, "\"error\":"))) {
 							errM += 8;
 							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error Authentications: ");
+								strcpy(_msgtemp, "Error authorize: ");
 								strncat(_msgtemp, errM, resM-errM-1);
 								throw _msgtemp;
 							}
 							break;
 						}
 					}
-				}
+				} else 
+					console::write(0, "Authorize format not found");
 			}
-			console::write(0, "No message");
-			std::this_thread::sleep_for(std::chrono::seconds(2)); 
+			std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		}
-		if (i >= max_trying) {
+		if (i >= max_trying)
 			throw "No received message after authorize";
-		}
 		console::write(0, "Authorize succes");
 		function_set::afterStart();
 		bool running = false;
