@@ -28,7 +28,6 @@ namespace function_set {
 
 bool hasConnection = false;
 char _msgTemp[512];
-static void *recvMessageLoop(void *);
 int sock = -1;
 
 void _openConnection(const char *server, const unsigned short port) {
