@@ -39,16 +39,14 @@ void _openConnection(const char *server, const unsigned short port, bool IPv) {
   hints.ai_family = IPv?AF_INET6:AF_INET; // IP version
   hints.ai_socktype = SOCK_STREAM; // TCP
   hints.ai_protocol = IPPROTO_TCP; // TCP
-  char port_str[64];//as long as possible
+  char port_str[6];//as long as for store 65536
 	sprintf(port_str, "%u", port);
   int status = getaddrinfo(server, port_str, &hints, &res);
   if (status != 0) {
     sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
     throw _msgTemp;
   }
-  console::write(0, _msgTemp);
-	
-  sock = socket(AF_INET, SOCK_STREAM, 0);
+  sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   if (sock < 0) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
