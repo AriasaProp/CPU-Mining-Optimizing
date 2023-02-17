@@ -59,9 +59,6 @@ void core::stopMining() {
 	mining_user = nullptr;
 	delete[] mining_pass;
 	mining_pass = nullptr;
-	for (auto &el : data_mining) {
-		data_mining.clear();
-	}
 }
 #include <string>
 std::map<std::string, std::string> data_mining;
