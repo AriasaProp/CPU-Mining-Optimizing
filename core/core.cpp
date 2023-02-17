@@ -146,7 +146,7 @@ void miningThread() {
 			}
 			dat = data_mining.find("error");
 			if (dat != data_mining.end()) {
-				sprintf(_msgtemp, "Subscribe Error: %s", dat->second);
+				sprintf(_msgtemp, "Subscribe Error: %s", dat->second.c_str());
 				data_mining.clear();
 				throw _msgtemp;
 			}
@@ -171,7 +171,7 @@ void miningThread() {
 			if ((dat == data_mining.end()) || (dat->second == "false")) {
 				dat = data_mining.find("error");
 				if (dat != data_mining.end()) {
-					sprintf(_msgtemp, "Authentication Error: %s", dat->second);
+					sprintf(_msgtemp, "Authentication Error: %s", dat->second.c_str());
 					data_mining.clear();
 					throw _msgtemp;
 				} else {
