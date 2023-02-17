@@ -143,12 +143,12 @@ void miningThread() {
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
 			std::map<std::string, std::string>::iterator idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (idDat.second == "1")) {
+			if ((idDat == data_mining.end()) || (idDat->second == "1")) {
 				continue;
 			}
 			std::map<std::string, std::string>::iterator errDat = data_mining.find("error");
 			if (errDat == data_mining.end()) {
-				std::string tr = errDat.second;
+				std::string tr = errDat->second;
 				data_mining.clear();
 				throw tr;
 			}
@@ -188,14 +188,14 @@ void miningThread() {
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
 			std::map<std::string, std::string>::iterator idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (idDat.second == "2")) {
+			if ((idDat == data_mining.end()) || (idDat->second == "2")) {
 				continue;
 			}
 			std::map<std::string, std::string>::iterator resDat = data_mining.find("result");
-			if ((resDat == data_mining.end()) || (resDat.second == "false")) {
+			if ((resDat == data_mining.end()) || (resDat->second == "false")) {
 				std::map<std::string, std::string>::iterator errDat = data_mining.find("error");
 				if (errDat != data_mining.end()) {
-					std::string tr = errDat.second;
+					std::string tr = errDat->second;
 					data_mining.clear();
 					throw tr;
 				} else {
