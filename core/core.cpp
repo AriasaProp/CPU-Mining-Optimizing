@@ -58,19 +58,78 @@ void core::stopMining() {
 	mining_user = nullptr;
 	delete[] mining_pass;
 	mining_pass = nullptr;
+	for (auto &el : data_mining) {
+		data_mining.clear();
+	}
+}
+#include <string>
+std::map<std::string, std::string> data_mining();
+void setsData(const char *readit) {
+  std::string key;
+  std::string value;
+  const char *be1,*be2;
+  for (const char *c = readit; *c != '\0'; c++) {
+    c = strchr(c, '{');
+    if (!c) break;
+    while (*c!='}') {
+    	//get the key
+      be1 = strchr(c, '\"') + 1; //quote 1
+      be2 = strchr(be1, '\"');   //quote 2
+      key = std::string(be1, be2);
+      be1 = be2+2; //ignore : and next
+      //get the value
+	    unsigned int bracket = 1;
+      switch (*be1) {
+	      case '{':
+          for (be2 = be1 + 1; bracket; be2++) {
+            switch (*be2) {
+              default:
+                break;
+              case '{':
+                bracket++;
+                break;
+              case '}':
+                bracket--;
+                break;
+            }
+          }
+	      	break;
+	      case '[':
+          for (be2 = be1 + 1; bracket; be2++) {
+            switch (*be2) {
+              default:
+                break;
+              case '[':
+                bracket++;
+                break;
+              case ']':
+                bracket--;
+                break;
+            }
+          }
+	      	break;
+	      case '\"':
+          be2 = strchr(be1+1, '\"')+1;
+          break;
+	      default:
+	      	be2 = be1+1;
+          while(*be2 != ',' && *be2 != '}')
+            be2++;
+          break;
+	    }
+	    value = std::string(be1, be2);
+      c = be2;
+	    if (value == "null") continue;
+      data_mining[key] = value;
+  	}
+	}
 }
 //unsigned long countTowards = 0;
 void miningThread() {
 	//create state
 	console::write(1, "Start Mining ......");
 	char _msgtemp[1024];
-	//tracing input
-	sprintf(_msgtemp, "URI: %s:%d", mining_host, mining_port);
-	console::write(0, _msgtemp);
-	sprintf(_msgtemp, "Auth: %s:%s", mining_user, mining_pass);
-	console::write(0, _msgtemp);
-	
-	std::vector<const char*> saved_msg;
+	//std::vector<const char*> saved_msg;
 	//const char *recvMsgConn;
 	try {
 		const unsigned int max_trying = 3; //repeated try limit
@@ -83,6 +142,18 @@ void miningThread() {
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}\n");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
+			setsData(function_set::getMessage());
+			auto &idDat = data_mining.find("id");
+			if ((idDat == data_mining.end()) || (*idDat == "1")) {
+				continue;
+			}
+			auto &errDat = data_mining.find("error");
+			if (errDat == data_mining.end()) {
+				data_mining.clear();
+				throw *errDat;
+			}
+			break;
+			/*
 			const char *response = function_set::getMessage();
 			if (*response != '\0') {
 				if (memcmp(response, "{\"id\":1,", 8) == 0) {
@@ -105,14 +176,34 @@ void miningThread() {
 			}
 			console::write(0, "No message");
 			std::this_thread::sleep_for(std::chrono::seconds(2)); 
+			*/
 		}
+		console::write(0, data_mining["result"].c_str());
+		data_mining.clear();
 		if (i >= max_trying) {
 			throw "No received message after subscribe";
 		}
-		console::write(0, "Subscribe succes");
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
+			setsData(function_set::getMessage());
+			auto &idDat = data_mining.find("id");
+			if ((idDat == data_mining.end()) || (*idDat == "2")) {
+				continue;
+			}
+			auto &resDat = data_mining.find("result");
+			if ((resDat == data_mining.end()) || (*resDat == "false")) {
+				auto &errDat = data_mining.find("error");
+				if (errDat != data_mining.end()) {
+					data_mining.clear();
+					throw *errDat;
+				} else {
+					data_mining.clear();
+					throw "Wrong Authentication";
+				}
+			}
+			break;
+			/*
 			const char *response = function_set::getMessage();
 			if (*response != '\0') {
 				if (memcmp(response, "{\"id\":2,", 8) == 0) {
@@ -134,7 +225,8 @@ void miningThread() {
 				}
 			}
 			console::write(0, "No message");
-			std::this_thread::sleep_for(std::chrono::seconds(2)); 
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			*/
 		}
 		if (i >= max_trying) {
 			throw "No received message after authorize";
@@ -161,10 +253,6 @@ void miningThread() {
 	} catch (const char *exceptionMsg) {
 		console::write(4, exceptionMsg);
 	}
-	//clean savedMessage
-	for(const char *m : saved_msg)
-		delete[] m;
-	saved_msg.clear();
 	//cleaning
 	console::write(1, "End Mining...");
 	function_set::closeConnection();
@@ -175,4 +263,7 @@ void miningThread() {
 	*/
 	//countTowards = 0;
 }
+
+
+
 
