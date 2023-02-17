@@ -153,7 +153,6 @@ void miningThread() {
 			data_mining.clear();
 			break;
 		}
-		console::write(0, data_mining["result"].c_str());
 		data_mining.clear();
 		if (i >= max_trying) {
 			throw "No received message after subscribe";
