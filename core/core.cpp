@@ -66,8 +66,6 @@ void core::stopMining() {
 #include <string>
 std::map<std::string, std::string> data_mining();
 void setsData(const char *readit) {
-  std::string key;
-  std::string value;
   const char *be1,*be2;
   for (const char *c = readit; *c != '\0'; c++) {
     c = strchr(c, '{');
@@ -76,7 +74,7 @@ void setsData(const char *readit) {
     	//get the key
       be1 = strchr(c, '\"') + 1; //quote 1
       be2 = strchr(be1, '\"');   //quote 2
-      key = std::string(be1, be2);
+      std::string key = std::string(be1, be2);
       be1 = be2+2; //ignore : and next
       //get the value
 	    unsigned int bracket = 1;
@@ -118,7 +116,7 @@ void setsData(const char *readit) {
             be2++;
           break;
 	    }
-	    value = std::string(be1, be2);
+	    std::string value = std::string(be1, be2);
       c = be2;
 	    if (value == "null") continue;
       data_mining[key] = value;
@@ -144,14 +142,15 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
-			auto &idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (*idDat == "1")) {
+			map<std::string, std::string>::iterator idDat = data_mining.find("id");
+			if ((idDat == data_mining.end()) || (idDat.second == "1")) {
 				continue;
 			}
-			auto &errDat = data_mining.find("error");
+			map<std::string, std::string>::iterator errDat = data_mining.find("error");
 			if (errDat == data_mining.end()) {
+				std::string tr = errDat.second;
 				data_mining.clear();
-				throw *errDat;
+				throw tr;
 			}
 			break;
 			/*
@@ -188,16 +187,17 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
-			auto &idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (*idDat == "2")) {
+			map<std::string, std::string>::iterator idDat = data_mining.find("id");
+			if ((idDat == data_mining.end()) || (idDat.second == "2")) {
 				continue;
 			}
-			auto &resDat = data_mining.find("result");
-			if ((resDat == data_mining.end()) || (*resDat == "false")) {
-				auto &errDat = data_mining.find("error");
+			map<std::string, std::string>::iterator resDat = data_mining.find("result");
+			if ((resDat == data_mining.end()) || (resDat.second == "false")) {
+				map<std::string, std::string>::iterator errDat = data_mining.find("error");
 				if (errDat != data_mining.end()) {
+					std::string tr = errDat.second;
 					data_mining.clear();
-					throw *errDat;
+					throw tr;
 				} else {
 					data_mining.clear();
 					throw "Wrong Authentication";
