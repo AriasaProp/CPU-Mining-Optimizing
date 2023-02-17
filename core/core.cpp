@@ -145,10 +145,10 @@ void miningThread() {
 				continue;
 			}
 			dat = data_mining.find("error");
-			if (dat == data_mining.end()) {
-				const char *tr = dat->second.c_str();
+			if (dat != data_mining.end()) {
+				sprintf(_msgtemp, "Subscribe Error: %s", dat->second);
 				data_mining.clear();
-				throw tr;
+				throw _msgtemp;
 			}
 			data_mining.clear();
 			break;
@@ -162,18 +162,18 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
-			std::map<std::string, std::string>::iterator idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (idDat->second != "2")) {
+			std::map<std::string, std::string>::iterator dat = data_mining.find("id");
+			if ((dat == data_mining.end()) || (dat->second != "2")) {
 				data_mining.clear();
 				continue;
 			}
-			std::map<std::string, std::string>::iterator resDat = data_mining.find("result");
-			if ((resDat == data_mining.end()) || (resDat->second == "false")) {
-				std::map<std::string, std::string>::iterator errDat = data_mining.find("error");
-				if (errDat != data_mining.end()) {
-					const char *tr = errDat->second.c_str();
+			dat = data_mining.find("result");
+			if ((dat == data_mining.end()) || (dat->second == "false")) {
+				dat = data_mining.find("error");
+				if (dat != data_mining.end()) {
+					sprintf(_msgtemp, "Authentication Error: %s", dat->second);
 					data_mining.clear();
-					throw tr;
+					throw _msgtemp;
 				} else {
 					data_mining.clear();
 					throw "Wrong Authentication";
