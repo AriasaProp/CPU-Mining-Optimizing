@@ -8,6 +8,7 @@
 #include <condition_variable>
 #include <cstring>
 #include <cstdio>
+#include <map>
 #include <vector>
 
 #include "pass_function_set.h"
