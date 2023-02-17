@@ -139,41 +139,19 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
-			std::map<std::string, std::string>::iterator idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (idDat->second == "1")) {
+			std::map<std::string, std::string>::iterator dat = data_mining.find("id");
+			if ((dat == data_mining.end()) || (dat->second != "1")) {
+				data_mining.clear();
 				continue;
 			}
-			std::map<std::string, std::string>::iterator errDat = data_mining.find("error");
-			if (errDat == data_mining.end()) {
-				std::string tr = errDat->second;
+			dat = data_mining.find("error");
+			if (dat == data_mining.end()) {
+				const char *tr = dat->second.c_str();
 				data_mining.clear();
 				throw tr;
 			}
+			data_mining.clear();
 			break;
-			/*
-			const char *response = function_set::getMessage();
-			if (*response != '\0') {
-				if (memcmp(response, "{\"id\":1,", 8) == 0) {
-					response += 8;
-					const char *resM;
-					if ((resM = strstr(response, ",\"result\":"))) {
-						const char *errM;
-						if ((errM = strstr(response, "\"error\":"))) {
-							errM += 8;
-							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error Authentications: ");
-								strncat(_msgtemp, errM, resM-errM-1);
-								throw _msgtemp;
-							}
-							
-							break;
-						}
-					}
-				}
-			}
-			console::write(0, "No message");
-			std::this_thread::sleep_for(std::chrono::seconds(2)); 
-			*/
 		}
 		console::write(0, data_mining["result"].c_str());
 		data_mining.clear();
@@ -185,14 +163,15 @@ void miningThread() {
 		for (i = 0; i < max_trying; i++) {
 			setsData(function_set::getMessage());
 			std::map<std::string, std::string>::iterator idDat = data_mining.find("id");
-			if ((idDat == data_mining.end()) || (idDat->second == "2")) {
+			if ((idDat == data_mining.end()) || (idDat->second != "2")) {
+				data_mining.clear();
 				continue;
 			}
 			std::map<std::string, std::string>::iterator resDat = data_mining.find("result");
 			if ((resDat == data_mining.end()) || (resDat->second == "false")) {
 				std::map<std::string, std::string>::iterator errDat = data_mining.find("error");
 				if (errDat != data_mining.end()) {
-					std::string tr = errDat->second;
+					const char *tr = errDat->second.c_str();
 					data_mining.clear();
 					throw tr;
 				} else {
@@ -200,31 +179,8 @@ void miningThread() {
 					throw "Wrong Authentication";
 				}
 			}
+			data_mining.clear();
 			break;
-			/*
-			const char *response = function_set::getMessage();
-			if (*response != '\0') {
-				if (memcmp(response, "{\"id\":2,", 8) == 0) {
-					response += 8;
-					const char *resM;
-					if ((resM = strstr(response, ",\"result\":"))){
-						if(memcmp(resM+10, "true", 4) != 0) throw "Authentications wrong!";
-						const char *errM;
-						if ((errM = strstr(response, "\"error\":"))) {
-							errM += 8;
-							if (memcmp(errM,"null",4) != 0) {
-								strcpy(_msgtemp, "Error Authentications: ");
-								strncat(_msgtemp, errM, resM-errM-1);
-								throw _msgtemp;
-							}
-							break;
-						}
-					}
-				}
-			}
-			console::write(0, "No message");
-			std::this_thread::sleep_for(std::chrono::seconds(2));
-			*/
 		}
 		if (i >= max_trying) {
 			throw "No received message after authorize";
