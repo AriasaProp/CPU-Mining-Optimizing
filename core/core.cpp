@@ -86,7 +86,7 @@ static inline void dataLoadOut(json::jobject &dat) {
 	std::string mth = dat["method"];
 	if (mth == "mining.notify") {
 		json::jobject::proxy j_params = dat["params"];
-		mining_job_id = j_params[0];
+		mining_job_id = j_params.array(0);
 		console::write(1, mining_job_id.c_str());
 		mining_prev_hash = j_params[1];
 		console::write(1, mining_prev_hash.c_str());
