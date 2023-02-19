@@ -82,25 +82,26 @@ void core::stopMining() {
 	mining_pass = nullptr;
 }
 
-void dataLoadOut(json::jobject &dat) {
+static inline void dataLoadOut(json::jobject &dat) {
 	std::string mth = dat["method"];
 	if (mth == "mining.notify") {
-		mining_job_id = dat["params"][0];
+		json::jobject::proxy j_params = dat["params"];
+		mining_job_id = j_params[0];
 		console::write(1, mining_job_id.c_str());
-		mining_prev_hash = dat["params"][1];
+		mining_prev_hash = j_params[1];
 		console::write(1, mining_prev_hash.c_str());
-		mining_coinb1 = dat["params"][2];
+		mining_coinb1 = j_params[2];
 		console::write(1, mining_coinb1.c_str());
-		mining_coinb2 = dat["params"][3];
+		mining_coinb2 = j_params[3];
 		console::write(1, mining_coinb2.c_str());
-		if(!dat["params"][4].is_array()) throw "notify error";
-		mining_version = dat["params"][5];
+		if(!j_params[4].is_array()) throw "notify error";
+		mining_version = j_params[5];
 		console::write(1, mining_version.c_str());
-		mining_nbit = dat["params"][6];
+		mining_nbit = j_params[6];
 		console::write(1, mining_nbit.c_str());
-		mining_ntime = dat["params"][7];
+		mining_ntime = j_params[7];
 		console::write(1, mining_ntime.c_str());
-		mining_clean = dat["params"][8];
+		mining_clean = j_params[8];
 	} else if (mth == "client.show_message") {
 		console::write(1, (std::string)dat["params"][0]);
 	} else if (mth == "mining.set_difficulty") {
@@ -128,13 +129,14 @@ void miningThread() {
 			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
 			if (*mC == '\0') continue;
 			do {
-				json::jobject::tryparse(std::string(mC), j_obj);
+				json::jobject::tryparse(std::string(mC), dat);
 				if ((std::string)dat["id"] != "1") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
-					if (dat["result"][0][0] != "mining.notify") throw "error params";
-					mining_sesion_id = dat["result"][0][1];
-					mining_xnonce1 = dat["result"][1];
-					mining_xnonce2_size = dat["result"][2];
+					json::jobject::proxy j_result = dat["result"];
+					if (j_result[0][0] != "mining.notify") throw "error params";
+					mining_sesion_id = j_result[0][1];
+					mining_xnonce1 = j_result[1];
+					mining_xnonce2_size = j_result[2];
 				} else {
 					dataLoadOut(dat);
 				}
@@ -154,7 +156,7 @@ void miningThread() {
 		for (i = 0; i < max_trying; i++) {
 			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
 			do {
-				json::jobject::tryparse(std::string(mC), j_obj);
+				json::jobject::tryparse(std::string(mC), dat);
 				if ((std::string)dat["id"] != "2") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
 					if (!(bool)dat["result"]) throw "false authentications";
