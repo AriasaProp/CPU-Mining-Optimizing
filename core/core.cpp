@@ -128,14 +128,13 @@ void miningThread() {
 			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
 			if (*mC == '\0') continue;
 			do {
-				json::jobject::tryparse(std::string(mC, end_line), j_obj);
-				if (dat["id"] != "1") {
+				json::jobject::tryparse(std::string(mC), j_obj);
+				if ((std::string)dat["id"] != "1") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
 					if (dat["result"][0][0] != "mining.notify") throw "error params";
-					std::string dat["result"][i];
 					mining_sesion_id = dat["result"][0][1];
-					mining_xnonce1 = dat["result"][0][1];
-					mining_xnonce2_size = dat["result"][0][2];
+					mining_xnonce1 = dat["result"][1];
+					mining_xnonce2_size = dat["result"][2];
 				} else {
 					dataLoadOut(dat);
 				}
@@ -144,7 +143,7 @@ void miningThread() {
 			break;
 		}
 		dat.clear();
-		sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id, mining_xnonce1, mining_xnonce2_size);
+		sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id.c_str(), mining_xnonce1.c_str(), mining_xnonce2_size);
 		console::write(0, _msgtemp);
 		//data_mining.clear();
 		if (i >= max_trying) {
@@ -156,7 +155,7 @@ void miningThread() {
 			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
 			do {
 				json::jobject::tryparse(std::string(mC), j_obj);
-				if (dat["id"] != "2") {
+				if ((std::string)dat["id"] != "2") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
 					if (!(bool)dat["result"]) throw "false authentications";
 				} else {
