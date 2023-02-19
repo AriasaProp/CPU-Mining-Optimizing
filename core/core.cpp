@@ -120,7 +120,7 @@ void miningThread() {
 		//https://catfact.ninja/fact
 		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
 		//if open connection failed this loop end directly
-		json::object j_obj;
+		json::object dat;
 		//subscribe message with initialize machine name : AndroidLTCMiner
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
