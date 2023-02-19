@@ -1037,4 +1037,3 @@ std::string json::jobject::pretty(unsigned int indent_level) const
     }
     return result;
 }
-

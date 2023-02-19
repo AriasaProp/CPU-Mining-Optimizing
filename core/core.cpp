@@ -116,9 +116,7 @@ void miningThread() {
 	//const char *recvMsgConn;
 	try { 
 		const unsigned int max_trying = 3; //repeated try limit
-		unsigned int i = 0; 
-		//try connect to server
-		//https://catfact.ninja/fact
+		unsigned int i = 0;
 		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
 		//if open connection failed this loop end directly
 		json::object dat;
