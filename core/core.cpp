@@ -10,8 +10,10 @@
 #include <cstdio>
 #include <map>
 #include <vector>
+#include <string>
 
 #include "pass_function_set.h"
+#include "json/json.h"
 
 #define MININGREQ_CREATE 1
 #define MININGREQ_DESTROY 2
@@ -25,6 +27,25 @@ unsigned short mining_port;
 char *mining_user;
 char *mining_pass;
 unsigned int mining_flags = 0;
+
+//mining data collect from subscribe
+std::string mining_sesion_id;
+//std::string mining_difficulty;
+std::string mining_xnonce1;
+unsigned int mining_xnonce2_size;
+//mining data collect ex
+double mining_cur_difficulty;
+//mining data collect from notify
+std::string mining_job_id;
+std::string mining_version;
+std::string *mining_merkle_arr;
+std::string mining_ntime;
+std::string mining_nbit;
+bool mining_clean;
+std::string mining_prev_hash;
+std::string mining_coinb1;
+std::string mining_coinb2;
+
 
 void miningThread();
 
@@ -60,131 +81,95 @@ void core::stopMining() {
 	delete[] mining_pass;
 	mining_pass = nullptr;
 }
-#include <string>
-std::map<std::string, std::string> data_mining;
-void setsData(const char *readit) {
-  const char *be1,*be2;
-  for (const char *c = readit; *c != '\0'; c++) {
-    c = strchr(c, '{');
-    if (!c) break;
-    while (*c!='}') {
-    	//get the key
-      be1 = strchr(c, '\"') + 1; //quote 1
-      be2 = strchr(be1, '\"');   //quote 2
-      std::string key = std::string(be1, be2);
-      be1 = be2+2; //ignore : and next
-      //get the value
-	    unsigned int bracket = 1;
-      switch (*be1) {
-	      case '{':
-          for (be2 = be1 + 1; bracket; be2++) {
-            switch (*be2) {
-              default:
-                break;
-              case '{':
-                bracket++;
-                break;
-              case '}':
-                bracket--;
-                break;
-            }
-          }
-	      	break;
-	      case '[':
-          for (be2 = be1 + 1; bracket; be2++) {
-            switch (*be2) {
-              default:
-                break;
-              case '[':
-                bracket++;
-                break;
-              case ']':
-                bracket--;
-                break;
-            }
-          }
-	      	break;
-	      case '\"':
-          be2 = strchr(be1+1, '\"')+1;
-          break;
-	      default:
-	      	be2 = be1+1;
-          while(*be2 != ',' && *be2 != '}')
-            be2++;
-          break;
-	    }
-	    std::string value = std::string(be1, be2);
-      c = be2;
-	    if (value == "null") continue;
-      data_mining[key] = value;
-  	}
+
+void dataLoadOut(json::jobject &dat) {
+	std::string mth = dat["method"];
+	if (mth == "mining.notify") {
+		mining_job_id = dat["params"][0];
+		console::write(1, mining_job_id.c_str());
+		mining_prev_hash = dat["params"][1];
+		console::write(1, mining_prev_hash.c_str());
+		mining_coinb1 = dat["params"][2];
+		console::write(1, mining_coinb1.c_str());
+		mining_coinb2 = dat["params"][3];
+		console::write(1, mining_coinb2.c_str());
+		if(!dat["params"][4].is_array()) throw "notify error";
+		mining_version = dat["params"][5];
+		console::write(1, mining_version.c_str());
+		mining_nbit = dat["params"][6];
+		console::write(1, mining_nbit.c_str());
+		mining_ntime = dat["params"][7];
+		console::write(1, mining_ntime.c_str());
+		mining_clean = dat["params"][8];
+	} else if (mth == "client.show_message") {
+		console::write(1, (std::string)dat["params"][0]);
+	} else if (mth == "mining.set_difficulty") {
+		mining_cur_difficulty = dat["params"][0];
 	}
 }
-//unsigned long countTowards = 0;
 void miningThread() {
 	//create state
 	console::write(1, "Start Mining ......");
 	char _msgtemp[1024];
 	//std::vector<const char*> saved_msg;
 	//const char *recvMsgConn;
-	try {
+	try { 
 		const unsigned int max_trying = 3; //repeated try limit
 		unsigned int i = 0; 
 		//try connect to server
 		//https://catfact.ninja/fact
 		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
 		//if open connection failed this loop end directly
-		//subscribe message with initialize machine name : AndroidLTCMiner_ForLearningTest
-		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}\n");
+		json::object j_obj;
+		//subscribe message with initialize machine name : AndroidLTCMiner
+		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			setsData(function_set::getMessage());
-			std::map<std::string, std::string>::iterator dat = data_mining.find("id");
-			if ((dat == data_mining.end()) || (dat->second != "1")) {
-				data_mining.clear();
-				continue;
-			}
-			dat = data_mining.find("error");
-			if (dat != data_mining.end()) {
-				sprintf(_msgtemp, "Subscribe Error: %s", dat->second.c_str());
-				data_mining.clear();
-				throw _msgtemp;
-			}
-			data_mining.clear();
+			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
+			if (*mC == '\0') continue;
+			do {
+				json::jobject::tryparse(std::string(mC, end_line), j_obj);
+				if (dat["id"] != "1") {
+					if (!dat["error"].is_null()) throw (const char*)dat["error"];
+					if (dat["result"][0][0] != "mining.notify") throw "error params";
+					std::string dat["result"][i];
+					mining_sesion_id = dat["result"][0][1];
+					mining_xnonce1 = dat["result"][0][1];
+					mining_xnonce2_size = dat["result"][0][2];
+				} else {
+					dataLoadOut(dat);
+				}
+				mC = strtok(nullptr, "\n");
+			} while(mC != nullptr);
 			break;
 		}
-		data_mining.clear();
+		dat.clear();
+		sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id, mining_xnonce1, mining_xnonce2_size);
+		console::write(0, _msgtemp);
+		//data_mining.clear();
 		if (i >= max_trying) {
 			throw "No received message after subscribe";
 		}
-		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}\n",mining_user,mining_pass);
+		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			setsData(function_set::getMessage());
-			std::map<std::string, std::string>::iterator dat = data_mining.find("id");
-			if ((dat == data_mining.end()) || (dat->second != "2")) {
-				data_mining.clear();
-				continue;
-			}
-			dat = data_mining.find("result");
-			if ((dat == data_mining.end()) || (dat->second == "false")) {
-				dat = data_mining.find("error");
-				if (dat != data_mining.end()) {
-					sprintf(_msgtemp, "Authentication Error: %s", dat->second.c_str());
-					data_mining.clear();
-					throw _msgtemp;
+			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
+			do {
+				json::jobject::tryparse(std::string(mC), j_obj);
+				if (dat["id"] != "2") {
+					if (!dat["error"].is_null()) throw (const char*)dat["error"];
+					if (!(bool)dat["result"]) throw "false authentications";
 				} else {
-					data_mining.clear();
-					throw "Wrong Authentication";
+					dataLoadOut(dat);
 				}
-			}
-			data_mining.clear();
+				mC = strtok(nullptr, "\n");
+			} while (mC != nullptr);
 			break;
 		}
+		dat.clear();
 		if (i >= max_trying) {
 			throw "No received message after authorize";
 		}
-		console::write(0, "Authorize succes");
 		function_set::afterStart();
 		bool running = false;
 		while (running){
