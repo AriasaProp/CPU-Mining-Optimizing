@@ -129,7 +129,7 @@ void miningThread() {
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
 				if ((std::string)dat["id"] == "1") {
-					if (!dat["error"].is_null()) throw (const char*)dat["error"];
+					if (!dat.get("error").is_null()) throw dat.get("error").as_string().c_str();
 					json::jobject::proxy j_result = dat["result"];
 					if (j_result[0][0] != "mining.notify") throw "error params";
 					mining_sesion_id = j_result[0][1];
@@ -157,7 +157,7 @@ void miningThread() {
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
 				if ((std::string)dat["id"] == "2") {
-					if (!dat["error"].is_null()) throw (const char*)dat.get("error").as_string().c_str();
+					if (!dat.get("error").is_null()) throw dat.get("error").as_string().c_str();
 					if (!dat.get("result").as_boolean()) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
