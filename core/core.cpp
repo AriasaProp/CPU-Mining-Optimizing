@@ -124,11 +124,11 @@ void miningThread() {
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
+			char *mC = const_cast<char*>(function_set::getMessage());
 			if (*mC == '\0') continue;
-			do {
-				json::jobject::tryparse(std::string(mC), dat);
-				if ((std::string)dat["id"] != "1") {
+			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
+				json::jobject::tryparse(mC, dat);
+				if ((std::string)dat["id"] == "1") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
 					json::jobject::proxy j_result = dat["result"];
 					if (j_result[0][0] != "mining.notify") throw "error params";
@@ -138,8 +138,8 @@ void miningThread() {
 				} else {
 					dataLoadOut(dat);
 				}
-				mC = strtok(nullptr, "\n");
-			} while(mC != nullptr);
+				
+			}
 			break;
 		}
 		dat.clear();
@@ -152,17 +152,17 @@ void miningThread() {
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			char *mC = strtok(const_cast<char*>(function_set::getMessage()), "\n");
-			do {
-				json::jobject::tryparse(std::string(mC), dat);
-				if ((std::string)dat["id"] != "2") {
+			char *mC = const_cast<char*>(function_set::getMessage());
+			if (*mC == '\0') continue;
+			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
+				json::jobject::tryparse(mC, dat);
+				if ((std::string)dat["id"] == "2") {
 					if (!dat["error"].is_null()) throw (const char*)dat["error"];
 					if (!(bool)dat["result"]) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
 				}
-				mC = strtok(nullptr, "\n");
-			} while (mC != nullptr);
+			}
 			break;
 		}
 		dat.clear();
