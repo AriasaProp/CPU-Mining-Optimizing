@@ -86,26 +86,26 @@ static inline void dataLoadOut(json::jobject &dat) {
 	std::string mth = dat["method"];
 	if (mth == "mining.notify") {
 		json::jobject::proxy j_params = dat["params"];
-		mining_job_id = j_params.array(0);
+		mining_job_id = j_params.array(0).as_string();
 		console::write(1, mining_job_id.c_str());
-		mining_prev_hash = j_params[1];
+		mining_prev_hash = j_params.array(1).as_string();
 		console::write(1, mining_prev_hash.c_str());
-		mining_coinb1 = j_params[2];
+		mining_coinb1 = j_params.array(2).as_string();
 		console::write(1, mining_coinb1.c_str());
-		mining_coinb2 = j_params[3];
+		mining_coinb2 = j_params.array(3).as_string();
 		console::write(1, mining_coinb2.c_str());
-		if(!j_params[4].is_array()) throw "notify error";
-		mining_version = j_params[5];
+		if(!j_params.array(4).is_array()) throw "notify error";
+		mining_version = j_params.array(5).as_string();
 		console::write(1, mining_version.c_str());
-		mining_nbit = j_params[6];
+		mining_nbit = j_params.array(6).as_string();
 		console::write(1, mining_nbit.c_str());
-		mining_ntime = j_params[7];
+		mining_ntime = j_params.array(7).as_string();
 		console::write(1, mining_ntime.c_str());
-		mining_clean = j_params[8];
+		mining_clean = j_params.array(8).as_boolean();
 	} else if (mth == "client.show_message") {
 		console::write(1, (std::string)dat["params"][0]);
 	} else if (mth == "mining.set_difficulty") {
-		mining_cur_difficulty = dat["params"][0];
+		mining_cur_difficulty = dat.get("params").array(0).as_string();
 	}
 }
 void miningThread() {
@@ -157,8 +157,8 @@ void miningThread() {
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
 				if ((std::string)dat["id"] == "2") {
-					if (!dat["error"].is_null()) throw (const char*)dat["error"];
-					if (!(bool)dat["result"]) throw "false authentications";
+					if (!dat["error"].is_null()) throw (const char*)dat.get("error").as_string().c_str();
+					if (!dat.get("result").as_boolean()) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
 				}
