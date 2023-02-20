@@ -158,7 +158,7 @@ void miningThread() {
 				json::jobject::tryparse(mC, dat);
 				if ((std::string)dat["id"] == "2") {
 					if (!dat.get("error").is_null()) throw dat.get("error").as_string().c_str();
-					if (!dat.get("result").as_boolean()) throw "false authentications";
+					if (bool(dat.get("result")) == false) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
 				}
