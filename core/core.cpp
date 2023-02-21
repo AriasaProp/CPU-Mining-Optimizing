@@ -111,9 +111,8 @@ static inline void dataLoadOut(json::jobject &dat) {
 void miningThread() {
 	//create state
 	console::write(1, "Start Mining ......");
-	char _msgtemp[1024];
-	//std::vector<const char*> saved_msg;
-	//const char *recvMsgConn;
+	char _msgtemp[1024]; 
+	
 	try { 
 		const unsigned int max_trying = 3; //repeated try limit
 		unsigned int i = 0;
@@ -125,6 +124,7 @@ void miningThread() {
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
 			char *mC = const_cast<char*>(function_set::getMessage());
+			console::write(0, mC);
 			if (*mC == '\0') continue;
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
@@ -138,14 +138,12 @@ void miningThread() {
 				} else {
 					dataLoadOut(dat);
 				}
-				
 			}
 			break;
 		}
 		dat.clear();
 		sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id.c_str(), mining_xnonce1.c_str(), mining_xnonce2_size);
 		console::write(0, _msgtemp);
-		//data_mining.clear();
 		if (i >= max_trying) {
 			throw "No received message after subscribe";
 		}
