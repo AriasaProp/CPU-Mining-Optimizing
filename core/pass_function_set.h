@@ -8,7 +8,7 @@ namespace function_set {
 	//socket connection
 	//return false cause error or has connection 
 	extern void (*openConnection) (const char*,const unsigned short, bool);
-	extern const char*(*getMessage) ();
+	extern char*(*getMessage) ();
 	extern bool (*sendMessage) (const char *);
 	//return false cause error or no connection 
 	extern bool (*closeConnection) ();

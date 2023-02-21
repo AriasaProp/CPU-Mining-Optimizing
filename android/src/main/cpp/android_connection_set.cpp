@@ -1,5 +1,5 @@
 void _openConnection(const char *, const unsigned short, bool); 
-const char *_getMessage();
+char *_getMessage();
 bool _sendMessage(const char *);
 bool _closeConnection();
 
@@ -8,7 +8,7 @@ namespace function_set {
 	//return false cause error or has connection 
 	void (*openConnection) (const char*,const unsigned short, bool) = _openConnection;
 	//return message 
-	const char*(*getMessage) () = _getMessage;
+	char*(*getMessage) () = _getMessage;
 	//send message
 	bool (*sendMessage)(const char *) = _sendMessage;
 	//return false cause error or no connection 
@@ -30,13 +30,13 @@ bool hasConnection = false;
 char _msgTemp[1024];
 int sock = -1;
 
-void _openConnection(const char *server, const unsigned short port, bool IPv) {
+void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (hasConnection) _closeConnection();
   //IP convertion
 	addrinfo hints, *res;
   memset(&hints, 0, sizeof(hints));
-  hints.ai_family = IPv?AF_INET6:AF_INET; // IP version
+  hints.ai_family = AF_INET; // IP version
   hints.ai_socktype = SOCK_STREAM; // TCP
   hints.ai_protocol = IPPROTO_TCP; // TCP
   char port_str[6];//as long as for store 65536
@@ -46,7 +46,7 @@ void _openConnection(const char *server, const unsigned short port, bool IPv) {
     sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
     throw _msgTemp;
   }
-  sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+  sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (sock < 0) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
@@ -74,7 +74,7 @@ bool _sendMessage(const char *msg) {
   return true;
 }
 char _recvBuff[4096];
-const char *_getMessage() {
+char *_getMessage() {
 	if(!hasConnection) throw "No connection already";
 	int _recv = recv(sock, _recvBuff, 4095, 0);
   if (_recv < 0) {

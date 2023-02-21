@@ -123,10 +123,10 @@ void miningThread() {
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			char *mC = const_cast<char*>(function_set::getMessage());
+			char *mC = function_set::getMessage();
 			console::write(0, mC);
 			if (*mC == '\0') continue;
-			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
+			for(mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
 				if (dat.get("id") == "1") {
 					if (!dat["error"].is_null()) throw dat.get("error").c_str();
@@ -144,13 +144,12 @@ void miningThread() {
 		dat.clear();
 		sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id.c_str(), mining_xnonce1.c_str(), mining_xnonce2_size);
 		console::write(0, _msgtemp);
-		if (i >= max_trying) {
+		if (i >= max_trying)
 			throw "No received message after subscribe";
-		}
 		sprintf(_msgtemp, "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}",mining_user,mining_pass);
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
-			char *mC = const_cast<char*>(function_set::getMessage());
+			char *mC = function_set::getMessage();
 			if (*mC == '\0') continue;
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
@@ -164,9 +163,8 @@ void miningThread() {
 			break;
 		}
 		dat.clear();
-		if (i >= max_trying) {
+		if (i >= max_trying)
 			throw "No received message after authorize";
-		}
 		function_set::afterStart();
 		bool running = false;
 		while (running){
