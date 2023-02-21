@@ -128,11 +128,11 @@ void miningThread() {
 			if (*mC == '\0') continue;
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
-				if ((std::string)dat["id"] == "1") {
-					if (!dat.get("error").is_null()) throw dat.get("error").as_string().c_str();
-					json::jobject::proxy j_result = dat["result"];
-					if (j_result[0][0] != "mining.notify") throw "error params";
-					mining_sesion_id = j_result[0][1];
+				if (dat.get("id") == "1") {
+					if (!dat["error"].is_null()) throw dat.get("error").c_str();
+					json::jobject::entry j_result = dat["result"];
+					if (j_result.array(0).array(0) != "mining.notify") throw "error params";
+					mining_sesion_id = j_result[0]j[1];
 					mining_xnonce1 = j_result[1];
 					mining_xnonce2_size = j_result[2];
 				} else {
@@ -156,9 +156,9 @@ void miningThread() {
 			if (*mC == '\0') continue;
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
-				if ((std::string)dat["id"] == "2") {
-					if (!dat.get("error").is_null()) throw dat.get("error").as_string().c_str();
-					if (bool(dat.get("result")) == false) throw "false authentications";
+				if (dat.get("id") == "2") {
+					if (!dat["error"].is_null()) throw dat["error"].as_string().c_str();
+					if (!dat["result"].is_true()) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
 				}
