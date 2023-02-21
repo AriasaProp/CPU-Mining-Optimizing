@@ -94,7 +94,7 @@ static inline void dataLoadOut(json::jobject &dat) {
 		console::write(1, mining_coinb1.c_str());
 		mining_coinb2 = (std::string)j_params.array(3);
 		console::write(1, mining_coinb2.c_str());
-		if(!(std::string)j_params.array(4).is_array()) throw "notify error";
+		if(!j_params.array(4).is_array()) throw "notify error";
 		mining_version = (std::string)j_params.array(5);
 		console::write(1, mining_version.c_str());
 		mining_nbit = (std::string)j_params.array(6);
@@ -103,9 +103,9 @@ static inline void dataLoadOut(json::jobject &dat) {
 		console::write(1, mining_ntime.c_str());
 		mining_clean = j_params.array(8).is_true();
 	} else if (mth == "client.show_message") {
-		console::write(1, (std::string)dat["params"].array(0));
+		console::write(1, ((std::string)dat["params"].array(0)).c_str());
 	} else if (mth == "mining.set_difficulty") {
-		mining_cur_difficulty = (std::string)dat.get("params").array(0);
+		mining_cur_difficulty = (double)dat["params"].array(0);
 	}
 }
 void miningThread() {
@@ -132,9 +132,9 @@ void miningThread() {
 					if (!dat["error"].is_null()) throw dat.get("error").c_str();
 					json::jobject::proxy j_result = dat["result"];
 					if (j_result.array(0).array(0) != "mining.notify") throw "error params";
-					mining_sesion_id = j_result[0]j[1];
-					mining_xnonce1 = j_result[1];
-					mining_xnonce2_size = j_result[2];
+					mining_sesion_id = (std::string)j_result.array(0).array(1);
+					mining_xnonce1 = (std::string)j_result.array(1);
+					mining_xnonce2_size = (int)j_result.array(2);
 				} else {
 					dataLoadOut(dat);
 				}
