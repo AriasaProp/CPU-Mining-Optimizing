@@ -85,25 +85,25 @@ void core::stopMining() {
 static inline void dataLoadOut(json::jobject &dat) {
 	std::string mth = dat["method"];
 	if (mth == "mining.notify") {
-		json::jobject::proxy j_params = dat["params"];
-		mining_job_id = j_params.array(0).as_string();
+		json::jobject::entry j_params = dat["params"];
+		mining_job_id = (std::string)j_params.array(0);
 		console::write(1, mining_job_id.c_str());
-		mining_prev_hash = j_params.array(1).as_string();
+		mining_prev_hash = (std::string)j_params.array(1);
 		console::write(1, mining_prev_hash.c_str());
-		mining_coinb1 = j_params.array(2).as_string();
+		mining_coinb1 = (std::string)j_params.array(2);
 		console::write(1, mining_coinb1.c_str());
-		mining_coinb2 = j_params.array(3).as_string();
+		mining_coinb2 = (std::string)j_params.array(3);
 		console::write(1, mining_coinb2.c_str());
-		if(!j_params.array(4).is_array()) throw "notify error";
-		mining_version = j_params.array(5).as_string();
+		if(!(std::string)j_params.array(4).is_array()) throw "notify error";
+		mining_version = (std::string)j_params.array(5);
 		console::write(1, mining_version.c_str());
-		mining_nbit = j_params.array(6).as_string();
+		mining_nbit = (std::string)j_params.array(6);
 		console::write(1, mining_nbit.c_str());
-		mining_ntime = j_params.array(7).as_string();
+		mining_ntime = (std::string)j_params.array(7);
 		console::write(1, mining_ntime.c_str());
-		mining_clean = j_params.array(8).as_boolean();
+		mining_clean = j_params.array(8).is_true();
 	} else if (mth == "client.show_message") {
-		console::write(1, (std::string)dat["params"][0]);
+		console::write(1, dat["params"].array(0));
 	} else if (mth == "mining.set_difficulty") {
 		mining_cur_difficulty = dat.get("params").array(0).as_string();
 	}
@@ -119,7 +119,7 @@ void miningThread() {
 		unsigned int i = 0;
 		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
 		//if open connection failed this loop end directly
-		json::object dat;
+		json::jobject dat;
 		//subscribe message with initialize machine name : AndroidLTCMiner
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
