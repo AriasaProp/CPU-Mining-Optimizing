@@ -85,7 +85,7 @@ void core::stopMining() {
 static inline void dataLoadOut(json::jobject &dat) {
 	std::string mth = dat["method"];
 	if (mth == "mining.notify") {
-		json::jobject::entry j_params = dat["params"];
+		json::jobject::proxy j_params = dat["params"];
 		mining_job_id = (std::string)j_params.array(0);
 		console::write(1, mining_job_id.c_str());
 		mining_prev_hash = (std::string)j_params.array(1);
@@ -103,9 +103,9 @@ static inline void dataLoadOut(json::jobject &dat) {
 		console::write(1, mining_ntime.c_str());
 		mining_clean = j_params.array(8).is_true();
 	} else if (mth == "client.show_message") {
-		console::write(1, dat["params"].array(0));
+		console::write(1, (std::string)dat["params"].array(0));
 	} else if (mth == "mining.set_difficulty") {
-		mining_cur_difficulty = dat.get("params").array(0).as_string();
+		mining_cur_difficulty = (std::string)dat.get("params").array(0);
 	}
 }
 void miningThread() {
@@ -130,7 +130,7 @@ void miningThread() {
 				json::jobject::tryparse(mC, dat);
 				if (dat.get("id") == "1") {
 					if (!dat["error"].is_null()) throw dat.get("error").c_str();
-					json::jobject::entry j_result = dat["result"];
+					json::jobject::proxy j_result = dat["result"];
 					if (j_result.array(0).array(0) != "mining.notify") throw "error params";
 					mining_sesion_id = j_result[0]j[1];
 					mining_xnonce1 = j_result[1];
