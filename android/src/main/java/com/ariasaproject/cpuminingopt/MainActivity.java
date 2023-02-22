@@ -133,6 +133,6 @@ public class MainActivity extends Activity {
   	mHandler.removeCallbacksAndMessages(flag);
   	mHandler.sendMessage(mHandler.obtainMessage(flag,msg));
   }
-  private native void startMining(String[] datas, int flags);
+  private native void startMining(String[] datas);
   private native void stopMining();
 }
