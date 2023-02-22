@@ -26,7 +26,6 @@ char *mining_host;
 unsigned short mining_port;
 char *mining_user;
 char *mining_pass;
-unsigned int mining_flags = 0;
 
 //mining data collect from subscribe
 std::string mining_sesion_id;
@@ -49,7 +48,7 @@ std::string mining_coinb2;
 
 void miningThread();
 
-void core::startMining(const char *host, const unsigned short port, const char *user, const char *pass, unsigned int flags) {
+void core::startMining(const char *host, const unsigned short port, const char *user, const char *pass) {
 	mining_mtx.lock();
 	unsigned int l = strlen(host);
 	mining_host = new char[l+1];
@@ -64,7 +63,6 @@ void core::startMining(const char *host, const unsigned short port, const char *
 	mining_pass = new char[l+1];
 	memcpy(mining_pass, pass, l);
 	mining_pass[l] = '\0';
-	mining_flags = flags;
 	mining_mtx.unlock();
 	mining_thread = std::thread(miningThread);
 	mining_thread.detach();
