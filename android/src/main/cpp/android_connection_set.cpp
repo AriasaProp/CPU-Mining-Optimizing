@@ -1,4 +1,4 @@
-void _openConnection(const char *, const unsigned short, bool); 
+void _openConnection(const char *, const unsigned short); 
 char *_getMessage();
 bool _sendMessage(const char *);
 bool _closeConnection();
@@ -6,7 +6,7 @@ bool _closeConnection();
 namespace function_set {
 	//socket connection
 	//return false cause error or has connection 
-	void (*openConnection) (const char*,const unsigned short, bool) = _openConnection;
+	void (*openConnection) (const char*,const unsigned short) = _openConnection;
 	//return message 
 	char*(*getMessage) () = _getMessage;
 	//send message

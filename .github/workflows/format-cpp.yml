@@ -11,12 +11,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Install and run clang-format
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-format
-          clang-format -i **/*.cpp **/*.h
-          git add .
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+      - name: Update clang-format
+        run: sudo apt-get update -y clang-format
+      - name: Run clang-format
+        run: clang-format -i **/*.cpp **/*.h
       - name: Commit changes
         uses: EndBug/add-and-commit@v7
         with:

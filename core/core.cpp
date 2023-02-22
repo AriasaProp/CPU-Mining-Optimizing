@@ -116,7 +116,7 @@ void miningThread() {
 	try { 
 		const unsigned int max_trying = 3; //repeated try limit
 		unsigned int i = 0;
-		function_set::openConnection(mining_host, mining_port, (mining_flags&1)==1);
+		function_set::openConnection(mining_host, mining_port);
 		//if open connection failed this loop end directly
 		json::jobject dat;
 		//subscribe message with initialize machine name : AndroidLTCMiner
