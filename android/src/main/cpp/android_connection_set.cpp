@@ -1,5 +1,5 @@
 void _openConnection(const char *, const unsigned short); 
-char *_getMessage();
+const char *_getMessage();
 bool _sendMessage(const char *);
 bool _closeConnection();
 
@@ -8,7 +8,7 @@ namespace function_set {
 	//return false cause error or has connection 
 	void (*openConnection) (const char*,const unsigned short) = _openConnection;
 	//return message 
-	char*(*getMessage) () = _getMessage;
+	const char*(*getMessage) () = _getMessage;
 	//send message
 	bool (*sendMessage)(const char *) = _sendMessage;
 	//return false cause error or no connection 
@@ -29,40 +29,38 @@ namespace function_set {
 bool hasConnection = false;
 char _msgTemp[1024];
 int sock = -1;
+
 void _openConnection(const char *server, const unsigned short port) {
   if (!server) throw "Server name is null!";
   if (hasConnection) _closeConnection();
-  // IP conversion
-  addrinfo hints, *res, *p;
+  //IP convertion
+	addrinfo hints, *res;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET; // IP version
   hints.ai_socktype = SOCK_STREAM; // TCP
-  char port_str[6]; // as long as for store 65536
-  sprintf(port_str, "%u", port);
+  char port_str[6];//as long as for store 65536
+	sprintf(port_str, "%u", port);
   int status = getaddrinfo(server, port_str, &hints, &res);
   if (status != 0) {
     sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
     throw _msgTemp;
   }
-  for (p = res; p; p = p->ai_next) {
-    sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-    if (sock < 0)
-      continue;
-    if (connect(sock, p->ai_addr, p->ai_addrlen) < 0) {
-      close(sock);
-      sock = -1;
-      continue;
-    }
-    break;
-  }
-  freeaddrinfo(res);
-  if (!p) {
-  	sprintf(_msgTemp, "Can't connect cause %s", strerror(errno));
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock < 0) {
+		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
   }
+  if (connect(sock, res->ai_addr, sizeof(sockaddr)) < 0) {
+    sprintf(_msgTemp, "Connect: %s", strerror(errno));
+    close(sock);
+    sock = -1;
+    throw _msgTemp;
+  }
+	freeaddrinfo(res);
   console::write(2, "Connected to server");
   hasConnection = true;
 }
+
 bool _sendMessage(const char *msg) {
   if (!hasConnection) throw "No connection already!";
   for (unsigned int sended = 0, total = strlen(msg), n; sended < total; sended += n) {
@@ -75,24 +73,15 @@ bool _sendMessage(const char *msg) {
   return true;
 }
 char _recvBuff[4096];
-char *_getMessage() {
+const char *_getMessage() {
 	if(!hasConnection) throw "No connection already";
-	int bytesReceived = 0;
-  while (true) {
-    int bytes = recv(sock, _recvBuff + bytesReceived, sizeof(_recvBuff) - bytesReceived - 1, 0);
-    if (bytes < 0) {
-      sprintf(_msgTemp, "Receive: %s", strerror(errno));
-      throw _msgTemp;
-    } else if (bytes == 0) {
-      break;
-    }
-    bytesReceived += bytes;
-    if (_recvBuff[bytesReceived - 1] == '\n') {
-      break;
-    }
-  }
-  _recvBuff[bytesReceived] = '\0';
-  return _recvBuff;
+	int _recv = recv(sock, _recvBuff, 4095, 0);
+  if (_recv < 0) {
+    sprintf(_msgTemp, "Receive: %s", strerror(errno));
+    throw _msgTemp;
+	}
+	_recvBuff[_recv] = '\0';
+	return _recvBuff;
 }
 bool _closeConnection() {
   if(!hasConnection) return false;
@@ -102,4 +91,3 @@ bool _closeConnection() {
   hasConnection = false;
   return true;
 }
-
