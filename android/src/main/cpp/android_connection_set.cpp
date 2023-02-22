@@ -57,7 +57,7 @@ void _openConnection(const char *server, const unsigned short port) {
   }
   freeaddrinfo(res);
   if (!p) {
-  	sprintf(_msgTemp, "Can't connect cause %s", strerror(errno))
+  	sprintf(_msgTemp, "Can't connect cause %s", strerror(errno));
     throw _msgTemp;
   }
   console::write(2, "Connected to server");
