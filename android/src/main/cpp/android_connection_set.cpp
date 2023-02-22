@@ -38,7 +38,7 @@ void _openConnection(const char *server, const unsigned short port) {
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET; // IP version
   hints.ai_socktype = SOCK_STREAM; // TCP
-  hints.ai_protocol = IPPROTO_TCP; // TCP
+  //hints.ai_protocol = IPPROTO_TCP; // TCP
   char port_str[6];//as long as for store 65536
 	sprintf(port_str, "%u", port);
   int status = getaddrinfo(server, port_str, &hints, &res);
@@ -46,7 +46,7 @@ void _openConnection(const char *server, const unsigned short port) {
     sprintf(_msgTemp, "Address conv: %s", gai_strerror(status));
     throw _msgTemp;
   }
-  sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
 		sprintf(_msgTemp, "Create socket: %s", strerror(errno));
     throw _msgTemp;
