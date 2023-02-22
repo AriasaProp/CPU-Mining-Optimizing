@@ -2,8 +2,9 @@
 #define _Included_Core_
 
 namespace core {
-	void startMining(const char*, const unsigned short, const char*, const char*);
-	void stopMining();
-}
+void startMining(const char *, const unsigned short, const char *,
+                 const char *);
+void stopMining();
+} // namespace core
 
 #endif //_Included_Core_
