@@ -1,0 +1,24 @@
+name: Formating Clang Code
+
+on:
+  push:
+    paths:
+      - 'cpp-formatting.txt'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+      - name: Update clang-format
+        run: sudo apt-get update -y clang-format
+      - name: Run clang-format
+        run: clang-format -i **/*.cpp **/*.h
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: "Auto-format code with clang-format"
+          add: "**/*.cpp **/*.h"
