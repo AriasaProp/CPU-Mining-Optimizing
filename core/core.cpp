@@ -28,7 +28,7 @@ char *mining_user;
 char *mining_pass;
 
 //mining data collect from subscribe
-std::string mining_sesion_id;
+std::string mining_sesion_id = "kosong";
 //std::string mining_difficulty;
 std::string mining_xnonce1;
 unsigned int mining_xnonce2_size;
@@ -107,17 +107,14 @@ static inline void dataLoadOut(json::jobject &dat) {
 	}
 }
 void miningThread() {
-	//create state
 	console::write(1, "Start Mining ......");
 	char _msgtemp[1024]; 
 	
 	try { 
-		const unsigned int max_trying = 3; //repeated try limit
+		const unsigned int max_trying = 5; //repeated try limit
 		unsigned int i = 0;
 		function_set::openConnection(mining_host, mining_port);
-		//if open connection failed this loop end directly
 		json::jobject dat;
-		//subscribe message with initialize machine name : AndroidLTCMiner
 		strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":[\"AndroidLTCteMiner\"]}");
 		function_set::sendMessage(_msgtemp);
 		for (i = 0; i < max_trying; i++) {
@@ -152,7 +149,7 @@ void miningThread() {
 			for(mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
 				json::jobject::tryparse(mC, dat);
 				if (dat.get("id") == "2") {
-					if (!dat["error"].is_null()) throw dat["error"].as_string().c_str();
+					if (!dat["error"].is_null()) throw dat.get("error").c_str();
 					if (!dat["result"].is_true()) throw "false authentications";
 				} else {
 					dataLoadOut(dat);
@@ -167,9 +164,7 @@ void miningThread() {
 		bool running = false;
 		while (running){
 			//console::write(0, function_set::recvConnection());
-			//do nothing right now
 			std::this_thread::sleep_for(std::chrono::seconds(1)); 
-			//receive Mesage
 			mining_mtx.lock();
 			if (mining_req) {
 				if (mining_req&MININGREQ_DESTROY) {
@@ -184,15 +179,9 @@ void miningThread() {
 	} catch (const char *exceptionMsg) {
 		console::write(4, exceptionMsg);
 	}
-	//cleaning
 	console::write(1, "End Mining...");
 	function_set::closeConnection();
 	function_set::afterStop();
-	/*
-	mining_mtx.lock();
-	mining_mtx.unlock();
-	*/
-	//countTowards = 0;
 }
 
 

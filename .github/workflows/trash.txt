@@ -1,5 +1,0 @@
-
-    - name: formating_goole
-      uses: axel-op/googlejavaformat-action@v3
-      with:
-        args: "--replace"
