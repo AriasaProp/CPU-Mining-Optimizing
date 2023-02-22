@@ -125,7 +125,8 @@ void miningThread() {
       if (*mC == '\0')
         continue;
       for (mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
-        json::jobject::tryparse(mC, dat);
+        if (!json::jobject::tryparse(mC, dat))
+        	continue;
         if (dat.get("id") == "1") {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
@@ -139,9 +140,9 @@ void miningThread() {
           dataLoadOut(dat);
         }
       }
+    	dat.clear();
       break;
     }
-    dat.clear();
     sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id.c_str(),
             mining_xnonce1.c_str(), mining_xnonce2_size);
     console::write(0, _msgtemp);
@@ -156,8 +157,9 @@ void miningThread() {
       char *mC = function_set::getMessage();
       if (*mC == '\0')
         continue;
-      for (mC = strtok(mC, "\n"); mC != nullptr; mC = strtok(nullptr, "\n")) {
-        json::jobject::tryparse(mC, dat);
+      for (mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
+        if (!json::jobject::tryparse(mC, dat))
+        	continue;
         if (dat.get("id") == "2") {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
