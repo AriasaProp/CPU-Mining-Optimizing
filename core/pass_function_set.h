@@ -9,7 +9,7 @@ extern void (*afterStop)();
 // return false cause error or has connection
 extern void (*openConnection)(const char *, const unsigned short);
 extern char *(*getMessage)();
-extern bool (*sendMessage)(const char *);
+extern void (*sendMessage)(const char *);
 // return false cause error or no connection
 extern bool (*closeConnection)();
 // console receiver msg
