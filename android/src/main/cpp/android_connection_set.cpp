@@ -56,8 +56,8 @@ void _openConnection(const char *server, const unsigned short port) {
 	  if (connect(sock, p->ai_addr, p->ai_addrlen) != -1)
 	  	break;
     sprintf(_msgTemp, "Connect: %s", strerror(errno));
-    close(sock);
     console::write(4, _msgTemp);
+    close(sock);
   	sock = -1;
   }
 	freeaddrinfo(res);
@@ -86,6 +86,7 @@ const char *_getMessage() {
     throw _msgTemp;
 	}
 	_recvBuff[_recv] = '\0';
+	console::write(0, _recvBuff);
 	return _recvBuff;
 }
 bool _closeConnection() {
