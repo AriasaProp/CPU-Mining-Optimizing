@@ -116,7 +116,8 @@ void miningThread() {
     unsigned int i = 0;
     function_set::openConnection(mining_host, mining_port);
     json::jobject dat;
-    strcpy(_msgtemp, "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"Android_CPU_Test\"]}\n");
+    strcpy(_msgtemp, "{\"id\": 1, \"method\": \"mining.subscribe\", "
+                     "\"params\": [\"Android_CPU_Test\"]}\n");
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
       char *mC = function_set::getMessage();
@@ -124,12 +125,13 @@ void miningThread() {
         continue;
       for (mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
         if (!json::jobject::tryparse(mC, dat))
-        	continue;
+          continue;
         if (dat.get("id") == "1") {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
           json::jobject::proxy j_result = dat["result"];
-          if (j_result.array(0).array(0).array(0).as_string() != "mining.notify")
+          if (j_result.array(0).array(0).array(0).as_string() !=
+              "mining.notify")
             throw "error result";
           mining_sesion_id = (std::string)j_result.array(0).array(0).array(1);
           mining_xnonce1 = (std::string)j_result.array(1);
@@ -138,7 +140,7 @@ void miningThread() {
           dataLoadOut(dat);
         }
       }
-    	dat.clear();
+      dat.clear();
       break;
     }
     sprintf(_msgtemp, "Id: %s,n1: %s,n2: %u", mining_sesion_id.c_str(),
@@ -146,10 +148,10 @@ void miningThread() {
     console::write(0, _msgtemp);
     if (i >= max_trying)
       throw "No received message after subscribe";
-    sprintf(
-        _msgtemp,
-        "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",
-        mining_user, mining_pass);
+    sprintf(_msgtemp,
+            "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": "
+            "[\"%s\",\"%s\"]}",
+            mining_user, mining_pass);
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
       char *mC = function_set::getMessage();
@@ -157,7 +159,7 @@ void miningThread() {
         continue;
       for (mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
         if (!json::jobject::tryparse(mC, dat))
-        	continue;
+          continue;
         if (dat.get("id") == "2") {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
