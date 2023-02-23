@@ -74,7 +74,9 @@ void _sendMessage(const char *msg) {
       sprintf(_msgTemp, "Send: %s", strerror(errno));
       throw _msgTemp;
     }
+    memcpy(_msgTemp, msg, n);
     msg += n;
+		console::write(0, _msgTemp);
   }
 }
 char _recvBuff[4096];
@@ -86,7 +88,6 @@ const char *_getMessage() {
     throw _msgTemp;
 	}
 	_recvBuff[_recv] = '\0';
-	console::write(0, _recvBuff);
 	return _recvBuff;
 }
 bool _closeConnection() {
