@@ -317,15 +317,15 @@ namespace
       0xFF6B144A,0x33C114D4,0xBD4E1337,0x71E413A9,0x7B211AB0,0xB78B1A2E,0x39041DCD,0xF5AE1D53,
       0x2C8E0FFF,0xE0240F61,0x6EAB0882,0xA201081C,0xA8C40105,0x646E019B,0xEAE10678,0x264B06E6 }
   };
-  inline uint32_t swap(uint32_t x) {
+}
+inline uint32_t swap(uint32_t x) {
 #ifdef MSC_VER
-    return _byteswap_ulong(x);
+  return _byteswap_ulong(x);
 #elif defined(__GNUC__) || defined(__clang__)
-    return __builtin_bswap32(x);
+  return __builtin_bswap32(x);
 #else
-    return (x >> 24) | ((x >>  8) & 0x0000FF00) | ((x <<  8) & 0x00FF0000) | (x << 24);
+  return (x >> 24) | ((x >>  8) & 0x0000FF00) | ((x <<  8) & 0x00FF0000) | (x << 24);
 #endif
-  }
 }
 /// add arbitrary number of bytes
 void CRC32::add(const void* data, size_t numBytes) {
