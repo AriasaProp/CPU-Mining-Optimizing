@@ -120,7 +120,6 @@ void miningThread() {
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
       char *mC = function_set::getMessage();
-      console::write(0, mC);
       if (*mC == '\0')
         continue;
       for (mC = strtok(mC, "\n"); mC; mC = strtok(nullptr, "\n")) {
@@ -130,9 +129,9 @@ void miningThread() {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
           json::jobject::proxy j_result = dat["result"];
-          if (j_result.array(0).array(0) != "mining.notify")
-            throw "error params";
-          mining_sesion_id = (std::string)j_result.array(0).array(1);
+          if (j_result.array(0).array(0).array(0).as_string() != "mining.notify")
+            throw "error result";
+          mining_sesion_id = (std::string)j_result.array(0).array(0).array(1);
           mining_xnonce1 = (std::string)j_result.array(1);
           mining_xnonce2_size = (int)j_result.array(2);
         } else {
