@@ -68,7 +68,7 @@ void _openConnection(const char *server, const unsigned short port) {
 void _sendMessage(const char *msg) {
   if (!hasConnection) throw "No connection already!";
   const char *const end = msg + strlen(msg); 
-  while (sended != end;) {
+  while (msg != end) {
     size_t n = send(sock, msg, size_t(end - msg), 0);
     if (n < 0) {
       sprintf(_msgTemp, "Send: %s", strerror(errno));
