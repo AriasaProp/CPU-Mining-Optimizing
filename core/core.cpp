@@ -116,8 +116,7 @@ void miningThread() {
     unsigned int i = 0;
     function_set::openConnection(mining_host, mining_port);
     json::jobject dat;
-    strcpy(_msgtemp, "{\"id\":1,\"method\":\"mining.subscribe\",\"params\":["
-                     "\"AndroidLTCteMiner\"]}");
+    strcpy(_msgtemp, "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"Android_CPU_Test\"]}\n");
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
       char *mC = function_set::getMessage();
@@ -150,7 +149,7 @@ void miningThread() {
       throw "No received message after subscribe";
     sprintf(
         _msgtemp,
-        "{\"id\":2,\"method\":\"mining.authorize\",\"params\":[\"%s\",\"%s\"]}",
+        "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",
         mining_user, mining_pass);
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
