@@ -1,9 +1,3 @@
-// //////////////////////////////////////////////////////////
-// sha1.cpp
-// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
-// see http://create.stephan-brumme.com/disclaimer.html
-//
-
 #include "sha1.h"
 
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
@@ -11,17 +5,14 @@
 #include <endian.h>
 #endif
 
-
 /// same as reset()
-SHA1::SHA1()
-{
+SHA1::SHA1() {
   reset();
 }
 
 
 /// restart
-void SHA1::reset()
-{
+void SHA1::reset() {
   m_numBytes   = 0;
   m_bufferSize = 0;
 
@@ -33,50 +24,36 @@ void SHA1::reset()
   m_hash[4] = 0xc3d2e1f0;
 }
 
-
-namespace
-{
-  // mix functions for processBlock()
-  inline uint32_t f1(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return d ^ (b & (c ^ d)); // original: f = (b & c) | ((~b) & d);
-  }
-
-  inline uint32_t f2(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return b ^ c ^ d;
-  }
-
-  inline uint32_t f3(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return (b & c) | (b & d) | (c & d);
-  }
-
-  inline uint32_t rotate(uint32_t a, uint32_t c)
-  {
-    return (a << c) | (a >> (32 - c));
-  }
-
-  inline uint32_t swap(uint32_t x)
-  {
-#if defined(__GNUC__) || defined(__clang__)
-    return __builtin_bswap32(x);
-#endif
-#ifdef MSC_VER
-    return _byteswap_ulong(x);
-#endif
-
-    return (x >> 24) |
-          ((x >>  8) & 0x0000FF00) |
-          ((x <<  8) & 0x00FF0000) |
-           (x << 24);
-  }
+// mix functions for processBlock()
+inline uint32_t f1(uint32_t b, uint32_t c, uint32_t d) {
+  return d ^ (b & (c ^ d)); // original: f = (b & c) | ((~b) & d);
 }
 
+inline uint32_t f2(uint32_t b, uint32_t c, uint32_t d) {
+  return b ^ c ^ d;
+}
+
+inline uint32_t f3(uint32_t b, uint32_t c, uint32_t d) {
+  return (b & c) | (b & d) | (c & d);
+}
+
+inline uint32_t rotate(uint32_t a, uint32_t c) {
+  return (a << c) | (a >> (32 - c));
+}
+
+inline uint32_t swap(uint32_t x)
+{
+#if defined(__GNUC__) || defined(__clang__)
+  return __builtin_bswap32(x);
+#elif defined(_MSC_VER)
+  return _byteswap_ulong(x);
+#else
+  return (x >> 24) | ((x >> 8) & 0x0000FF00) | ((x << 8) & 0x00FF0000) | (x << 24);
+#endif
+}
 
 /// process 64 bytes
-void SHA1::processBlock(const void* data)
-{
+void SHA1::processBlock(const void* data) {
   // get last hash
   uint32_t a = m_hash[0];
   uint32_t b = m_hash[1];

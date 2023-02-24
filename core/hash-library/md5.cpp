@@ -31,52 +31,46 @@ void MD5::reset()
   m_hash[3] = 0x10325476;
 }
 
-
-namespace
+// mix functions for processBlock()
+inline uint32_t f1(uint32_t b, uint32_t c, uint32_t d)
 {
-  // mix functions for processBlock()
-  inline uint32_t f1(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return d ^ (b & (c ^ d)); // original: f = (b & c) | ((~b) & d);
-  }
+  return d ^ (b & (c ^ d)); // original: f = (b & c) | ((~b) & d);
+}
 
-  inline uint32_t f2(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return c ^ (d & (b ^ c)); // original: f = (b & d) | (c & (~d));
-  }
+inline uint32_t f2(uint32_t b, uint32_t c, uint32_t d)
+{
+  return c ^ (d & (b ^ c)); // original: f = (b & d) | (c & (~d));
+}
 
-  inline uint32_t f3(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return b ^ c ^ d;
-  }
+inline uint32_t f3(uint32_t b, uint32_t c, uint32_t d)
+{
+  return b ^ c ^ d;
+}
 
-  inline uint32_t f4(uint32_t b, uint32_t c, uint32_t d)
-  {
-    return c ^ (b | ~d);
-  }
+inline uint32_t f4(uint32_t b, uint32_t c, uint32_t d)
+{
+  return c ^ (b | ~d);
+}
 
-  inline uint32_t rotate(uint32_t a, uint32_t c)
-  {
-    return (a << c) | (a >> (32 - c));
-  }
+inline uint32_t rotate(uint32_t a, uint32_t c)
+{
+  return (a << c) | (a >> (32 - c));
+}
 
 #if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
-  inline uint32_t swap(uint32_t x)
-  {
+inline uint32_t swap(uint32_t x) {
 #if defined(__GNUC__) || defined(__clang__)
-    return __builtin_bswap32(x);
-#endif
-#ifdef MSC_VER
-    return _byteswap_ulong(x);
-#endif
-
-    return (x >> 24) |
-          ((x >>  8) & 0x0000FF00) |
-          ((x <<  8) & 0x00FF0000) |
-           (x << 24);
-  }
+  return __builtin_bswap32(x);
+#elif defined(MSC_VER)
+  return _byteswap_ulong(x);
+#else
+  return (x >> 24) |
+        ((x >>  8) & 0x0000FF00) |
+        ((x <<  8) & 0x00FF0000) |
+         (x << 24);
 #endif
 }
+#endif
 
 
 /// process 64 bytes

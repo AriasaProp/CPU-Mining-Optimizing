@@ -13,12 +13,8 @@
 
 #include <iostream>
 
-
 /// same as reset()
-SHA3::SHA3(Bits bits)
-: m_blockSize(200 - 2 * (bits / 8)),
-  m_bits(bits)
-{
+SHA3::SHA3(Bits bits): m_blockSize(200 - 2 * (bits / 8)), m_bits(bits){
   reset();
 }
 
@@ -35,73 +31,58 @@ void SHA3::reset()
 
 
 /// constants and local helper functions
-namespace
-{
-  const unsigned int Rounds = 24;
-  const uint64_t XorMasks[Rounds] =
-  {
-    0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808aULL,
-    0x8000000080008000ULL, 0x000000000000808bULL, 0x0000000080000001ULL,
-    0x8000000080008081ULL, 0x8000000000008009ULL, 0x000000000000008aULL,
-    0x0000000000000088ULL, 0x0000000080008009ULL, 0x000000008000000aULL,
-    0x000000008000808bULL, 0x800000000000008bULL, 0x8000000000008089ULL,
-    0x8000000000008003ULL, 0x8000000000008002ULL, 0x8000000000000080ULL,
-    0x000000000000800aULL, 0x800000008000000aULL, 0x8000000080008081ULL,
-    0x8000000000008080ULL, 0x0000000080000001ULL, 0x8000000080008008ULL
-  };
+const unsigned int Rounds = 24;
+const uint64_t XorMasks[Rounds] = {
+  0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808aULL,
+  0x8000000080008000ULL, 0x000000000000808bULL, 0x0000000080000001ULL,
+  0x8000000080008081ULL, 0x8000000000008009ULL, 0x000000000000008aULL,
+  0x0000000000000088ULL, 0x0000000080008009ULL, 0x000000008000000aULL,
+  0x000000008000808bULL, 0x800000000000008bULL, 0x8000000000008089ULL,
+  0x8000000000008003ULL, 0x8000000000008002ULL, 0x8000000000000080ULL,
+  0x000000000000800aULL, 0x800000008000000aULL, 0x8000000080008081ULL,
+  0x8000000000008080ULL, 0x0000000080000001ULL, 0x8000000080008008ULL
+};
 
-  /// rotate left and wrap around to the right
-  inline uint64_t rotateLeft(uint64_t x, uint8_t numBits)
-  {
-    return (x << numBits) | (x >> (64 - numBits));
-  }
-
-  /// convert litte vs big endian
-  inline uint64_t swap(uint64_t x)
-  {
-#if defined(__GNUC__) || defined(__clang__)
-    return __builtin_bswap64(x);
-#endif
-#ifdef _MSC_VER
-    return _byteswap_uint64(x);
-#endif
-
-    return  (x >> 56) |
-           ((x >> 40) & 0x000000000000FF00ULL) |
-           ((x >> 24) & 0x0000000000FF0000ULL) |
-           ((x >>  8) & 0x00000000FF000000ULL) |
-           ((x <<  8) & 0x000000FF00000000ULL) |
-           ((x << 24) & 0x0000FF0000000000ULL) |
-           ((x << 40) & 0x00FF000000000000ULL) |
-            (x << 56);
-  }
-
-
-  /// return x % 5 for 0 <= x <= 9
-  unsigned int mod5(unsigned int x)
-  {
-    if (x < 5)
-      return x;
-
-    return x - 5;
-  }
+/// rotate left and wrap around to the right
+inline uint64_t rotateLeft(uint64_t x, uint8_t numBits) {
+  return (x << numBits) | (x >> (64 - numBits));
 }
 
+/// convert litte vs big endian
+inline uint64_t swap(uint64_t x) {
+#if defined(__GNUC__) || defined(__clang__)
+  return __builtin_bswap64(x);
+#elif defined(_MSC_VER)
+  return _byteswap_uint64(x);
+#else
+  return  (x >> 56) |
+         ((x >> 40) & 0x000000000000FF00ULL) |
+         ((x >> 24) & 0x0000000000FF0000ULL) |
+         ((x >>  8) & 0x00000000FF000000ULL) |
+         ((x <<  8) & 0x000000FF00000000ULL) |
+         ((x << 24) & 0x0000FF0000000000ULL) |
+         ((x << 40) & 0x00FF000000000000ULL) |
+          (x << 56);
+#endif
+}
+/// return x % 5 for 0 <= x <= 9
+unsigned int mod5(unsigned int x) {
+  if (x < 5)
+    return x;
+  return x - 5;
+}
 
 /// process a full block
-void SHA3::processBlock(const void* data)
-{
-#if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
-#define LITTLEENDIAN(x) swap(x)
-#else
-#define LITTLEENDIAN(x) (x)
-#endif
-
+void SHA3::processBlock(const void* data) {
   const uint64_t* data64 = (const uint64_t*) data;
   // mix data into state
-  for (unsigned int i = 0; i < m_blockSize / 8; i++)
-    m_hash[i] ^= LITTLEENDIAN(data64[i]);
-
+  for (unsigned int i = 0; i < m_blockSize / 8; i++) {
+#if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
+    m_hash[i] ^= swap(data64[i]);
+#else
+    m_hash[i] ^= data64[i];
+#endif
+  }
   // re-compute state
   for (unsigned int round = 0; round < Rounds; round++)
   {
