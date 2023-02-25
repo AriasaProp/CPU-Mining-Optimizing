@@ -94,7 +94,7 @@ static inline void dataLoadOut(json::jobject &dat) {
     mining_coinb2 = (std::string)j_params.array(3);
     console::write(1, mining_coinb2.c_str());
     if (!j_params.array(4).is_array()) throw "notify error";
-    mining_merkle_root = (std::vector<std::string>)j_params.array(4);
+    mining_merkle_root = (std::vector<std::string>)j_params.get(4);
     mining_version = (std::string)j_params.array(5);
     console::write(1, mining_version.c_str());
     mining_nbit = (std::string)j_params.array(6);
