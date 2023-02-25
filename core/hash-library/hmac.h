@@ -1,9 +1,3 @@
-// //////////////////////////////////////////////////////////
-// hmac.h
-// Copyright (c) 2015 Stephan Brumme. All rights reserved.
-// see http://create.stephan-brumme.com/disclaimer.html
-//
-
 #pragma once
 
 // based on http://tools.ietf.org/html/rfc2104
@@ -74,10 +68,8 @@ std::string hmac(const void* data, size_t numDataBytes, const void* key, size_t 
   return finalHasher.getHash();
 }
 
-
 /// convenience function for std::string
 template <typename HashMethod>
-std::string hmac(const std::string& data, const std::string& key)
-{
+std::string hmac(const std::string& data, const std::string& key) {
   return hmac<HashMethod>(data.c_str(), data.size(), key.c_str(), key.size());
 }

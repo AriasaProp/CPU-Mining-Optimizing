@@ -39,10 +39,8 @@ class SHA256 //: public Hash
 public:
   /// split into 64 byte blocks (=> 512 bits), hash is 32 bytes long
   enum { BlockSize = 512 / 8, HashBytes = 32 };
-
   /// same as reset()
   SHA256();
-
   /// compute SHA256 of a memory block
   std::string operator()(const void* data, size_t numBytes);
   /// compute SHA256 of a string, excluding final zero
@@ -54,7 +52,7 @@ public:
   /// return latest hash as 64 hex characters
   std::string getHash();
   /// return latest hash as bytes
-  void        getHash(unsigned char buffer[HashBytes]);
+  void getHash(unsigned char buffer[HashBytes]);
 
   /// restart
   void reset();
