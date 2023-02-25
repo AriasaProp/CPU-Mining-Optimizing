@@ -4,7 +4,7 @@
 struct hex {
 private:
   unsigned char *value;
-  unsigned long size = 0;
+  unsigned long _size = 0;
   char *out;
   unsigned long out_s = 0;
 public:

@@ -3,9 +3,9 @@
 
 //constructors
 hex::hex(const char* d) {
-  size = strlen(d)/2;
-  value = new unsigned char[size];
-	for (int i = 0; i < size; ++i) {
+  _size = strlen(d)/2;
+  value = new unsigned char[_size];
+	for (int i = 0; i < _size; ++i) {
     char h = *(d++);
     unsigned char &v = value[i];
     // convert hex char to value
@@ -26,9 +26,9 @@ hex::hex(const char* d) {
 	}
 }
 
-hex::hex(const void *d, const unsigned long l): size(l) {
-	value = new unsigned char[size];
-	memcpy(value, d, size);
+hex::hex(const void *d, const unsigned long l): _size(l) {
+	value = new unsigned char[_size];
+	memcpy(value, d, _size);
 }
 //destructors
 hex::~hex() {
@@ -37,35 +37,35 @@ hex::~hex() {
 }
 //enviroment
 unsigned long hex::size() const {
-	return size;
+	return _size;
 }
 //append value
 hex hex::operator+(const hex &other) {
-	unsigned long new_size = size+other.size;
+	unsigned long new_size = _size+other._size;
 	unsigned char new_value[new_size];
-	memcpy(new_value, value, size);
-	memcpy(new_value+size, other.value, other.size);
+	memcpy(new_value, value, _size);
+	memcpy(new_value+_size, other.value, other._size);
 	return hex(new_value, new_size);
 }
 //append save value
 hex hex::operator+=(const hex &other) {
-	unsigned long new_size = size+other.size;
+	unsigned long new_size = _size+other._size;
 	unsigned char *new_value = new unsigned char[new_size];
-	memcpy(new_value, value, size);
-	memcpy(new_value+size, other.value, other.size);
+	memcpy(new_value, value, _size);
+	memcpy(new_value+_size, other.value, other._size);
 	delete[] value;
 	value = new_value;
-	size = new_size;
+	_size = new_size;
 	return *this;
 }
 //reassign
 hex hex::operator=(const hex &other) {
-	if (other.size != size) {
+	if (other._size != _size) {
 		delete[] value;
-		value = new unsigned char[other.size];
-		size = other.size;
+		value = new unsigned char[other._size];
+		_size = other._size;
 	}
-	memcpy(value, other.value, size);
+	memcpy(value, other.value, _size);
 	return *this;
 }
 //cast
@@ -113,13 +113,13 @@ hex::hex::operator unsigned char*() const {
 }
 const char *hex_num = "0123456789abcdef";
 hex::hex::operator char*() const {
-	if (out_s != size*2) {
+	if (out_s != _size*2) {
 		if (out) delete[] out;
-		out_s = size*2;
+		out_s = _size*2;
 		out = new char[out_s];
 	}
 	char *c = out;
-	unsigned char *v = value, *vend = value + size;
+	unsigned char *v = value, *vend = value + _size;
 	while (v != vend) {
 		*(c++) = hex_num[(*v >> 4) & 15];
 		*(c++) = hex_num[*v & 15];
