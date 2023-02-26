@@ -93,7 +93,7 @@ static inline void dataLoadOut(json::jobject &dat) {
     console::write(1, mining_coinb1.c_str());
     mining_coinb2 = (std::string)j_params.array(3);
     console::write(1, mining_coinb2.c_str());
-    mining_merkle_root = j_params.array(4).as_array<std::string>();
+    mining_merkle_root = (std::vector<std::string>)j_params.array(4);
     mining_version = (std::string)j_params.array(5);
     console::write(1, mining_version.c_str());
     mining_nbit = (std::string)j_params.array(6);
