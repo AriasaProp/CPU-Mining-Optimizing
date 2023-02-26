@@ -85,20 +85,20 @@ static inline void dataLoadOut(json::jobject &dat) {
   std::string mth = dat["method"];
   if (mth == "mining.notify") {
     json::jobject::proxy j_params = dat["params"];
-    mining_job_id = (std::string)j_params.array(0);
+    mining_job_id = j_params.get(0);
     console::write(1, mining_job_id.c_str());
-    mining_prev_hash = (std::string)j_params.array(1);
+    mining_prev_hash = j_params.get(1);
     console::write(1, mining_prev_hash.c_str());
-    mining_coinb1 = (std::string)j_params.array(2);
+    mining_coinb1 = j_params.get(2);
     console::write(1, mining_coinb1.c_str());
-    mining_coinb2 = (std::string)j_params.array(3);
+    mining_coinb2 = j_params.get(3);
     console::write(1, mining_coinb2.c_str());
     mining_merkle_root = (std::vector<std::string>)j_params.array(4);
-    mining_version = (std::string)j_params.array(5);
+    mining_version = j_params.get(5);
     console::write(1, mining_version.c_str());
-    mining_nbit = (std::string)j_params.array(6);
+    mining_nbit = j_params.get(6);
     console::write(1, mining_nbit.c_str());
-    mining_ntime = (std::string)j_params.array(7);
+    mining_ntime = j_params.get(7);
     console::write(1, mining_ntime.c_str());
     mining_clean = j_params.array(8).is_true();
   } else if (mth == "client.show_message") {
