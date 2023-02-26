@@ -1,6 +1,6 @@
 #include "core.h"
-#include "utils/hex.h"
 #include "console.h"
+#include "utils/hex.h"
 
 #include <chrono>
 #include <condition_variable>
@@ -115,7 +115,8 @@ void miningThread() {
     unsigned int i = 0;
     function_set::openConnection(mining_host, mining_port);
     json::jobject dat;
-    strcpy(_msgtemp, "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"Android_CPU_Test\"]}\n");
+    strcpy(_msgtemp, "{\"id\": 1, \"method\": \"mining.subscribe\", "
+                     "\"params\": [\"Android_CPU_Test\"]}\n");
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
       char *mC = function_set::getMessage();
@@ -128,10 +129,15 @@ void miningThread() {
           if (!dat["error"].is_null())
             throw dat.get("error").c_str();
           json::jobject::proxy j_result = dat["result"];
-          if (j_result.array(0).array(0).array(0).as_string() != "mining.notify") throw "no notify";
+          if (j_result.array(0).array(0).array(0).as_string() !=
+              "mining.notify")
+            throw "no notify";
           mining_sesion_id = (std::string)j_result.array(0).array(0).array(1);
-          if (j_result.array(0).array(1).array(0).as_string() != "mining.set_difficulty") throw "no difficulty";
-          mining_cur_difficulty = (double)hex(((std::string)j_result.array(0).array(1).array(1)).c_str());
+          if (j_result.array(0).array(1).array(0).as_string() !=
+              "mining.set_difficulty")
+            throw "no difficulty";
+          mining_cur_difficulty = (double)hex(
+              ((std::string)j_result.array(0).array(1).array(1)).c_str());
           mining_xnonce1 = (std::string)j_result.array(1);
           mining_xnonce2_size = (int)j_result.array(2);
         } else {
@@ -147,7 +153,8 @@ void miningThread() {
     if (i >= max_trying)
       throw "No received message after subscribe";
     sprintf(_msgtemp,
-            "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": [\"%s\",\"%s\"]}",
+            "{\"id\": 2,\"method\": \"mining.authorize\",\"params\": "
+            "[\"%s\",\"%s\"]}",
             mining_user, mining_pass);
     function_set::sendMessage(_msgtemp);
     for (i = 0; i < max_trying; i++) {
