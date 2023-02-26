@@ -843,19 +843,6 @@ json::jobject::entry::operator std::vector<char>() const { return this->get_numb
 json::jobject::entry::operator std::vector<float>() const { return this->get_number_array<float>(FLOAT_FORMAT); }
 json::jobject::entry::operator std::vector<double>() const { return this->get_number_array<double>(DOUBLE_FORMAT); }
 
-void json::jobject::proxy::set_array(const std::vector<std::string> &values, const bool wrap)
-{
-    std::string value = "[";
-    for (size_t i = 0; i < values.size(); i++)
-    {
-        if (wrap) value += json::parsing::encode_string(values[i].c_str()) + ",";
-        else value += values[i] + ",";
-    }
-    if(values.size() > 0) value.erase(value.size() - 1, 1);
-    value += "]";
-    this->sink.set(key, value);
-}
-
 json::jobject json::jobject::parse(const char *input)
 {
     const char error[] = "Input is not a valid object";
