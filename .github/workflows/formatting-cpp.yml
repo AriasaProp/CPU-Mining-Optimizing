@@ -13,10 +13,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Install clang-format
         run: sudo apt-get install -y clang-format
-      - name: Update clang-format
-        run: sudo apt-get update -y clang-format
       - name: Run clang-format
-        run: clang-format -i **/*.cpp **/*.h
+        run: clang-format -style="{BasedOnStyle: llvm, IndentWidth: 2, ColumnLimit: 0, AlignTrailingComments: true, AllowShortIfStatementsOnASingleLine: true, BreakBeforeBraces: false, IndentCaseLabels: true}" -i **/*.cpp **/*.h
       - name: Commit changes
         uses: EndBug/add-and-commit@v7
         with:
